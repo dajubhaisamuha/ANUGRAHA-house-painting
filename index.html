@@ -784,7 +784,7 @@ async function loadHome(){
   document.getElementById('dh-av').textContent=ME?ME[0]:'A';
   document.getElementById('dh-name').textContent=ME||'';
   const hr=new Date().getHours();
-  document.getElementById('dh-greet').textContent=(hr<12?'Good morning':'hr<17?Good afternoon':'Good evening')+' 👋';
+  document.getElementById('dh-greet').textContent=(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+' 👋';
   document.getElementById('h-sub').textContent='📅 आजको मिति: '+bsToday();
   document.getElementById('s-date').textContent='📅 '+bsToday();
   try{
