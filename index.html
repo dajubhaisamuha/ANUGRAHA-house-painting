@@ -3,226 +3,322 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#6C63FF">
+<meta name="theme-color" content="#5B5EFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="अनुग्रह">
-<title>अनुग्रह House Painting</title>
-<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Yatra+One&display=swap" rel="stylesheet">
+<title>अनुग्रह Painting</title>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&family=Yatra+One&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
-:root{--p:#6C63FF;--p2:#4F46E5;--pl:#EEF0FF;--b:#3B9EFF;--b2:#1A7EE0;--bl:#E8F4FF;--bg:#F4F5FF;--w:#FFF;--s2:#F9FAFF;--s3:#F1F2FF;--br:#E4E6F5;--br2:#D0D3F0;--t:#1A1740;--t2:#3D3A6B;--tm:#7B7AA8;--td:#B4B3D0;--g:#22C55E;--gl:#DCFCE7;--r:#EF4444;--rl:#FEE2E2;--o:#F59E0B;--ol:#FEF3C7;--nh:68px;--rr:16px;--rs:12px;--rx:8px;--sh:0 2px 12px rgba(108,99,255,.10);--shm:0 4px 24px rgba(108,99,255,.16)}
+:root{
+  --p:#5B5EFF;--pd:#3F42E0;--pl:#EEEEFF;--plb:#C5C6FF;
+  --b:#2DA8FF;--bl:#E3F4FF;
+  --g:#12B76A;--gl:#D1FADF;
+  --r:#F04438;--rl:#FEE4E2;
+  --o:#F79009;--ol:#FEF0C7;
+  --pur:#9B59B6;--purl:#F4E6FF;
+  --teal:#0EA5E9;--tl:#E0F7FF;
+  --bg:#F8F8FF;--w:#FFF;
+  --t:#101828;--t2:#344054;--tm:#667085;--td:#D0D5DD;
+  --br:#EAECF0;--br2:#D0D5DD;
+  --nh:68px;
+  --sh:0 1px 3px rgba(16,24,40,.1),0 1px 2px rgba(16,24,40,.06);
+  --shm:0 4px 8px rgba(91,94,255,.15),0 2px 4px rgba(91,94,255,.1);
+  --shl:0 12px 16px rgba(16,24,40,.08),0 4px 6px rgba(16,24,40,.03);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
-body{font-family:'Mukta',sans-serif;background:var(--bg);color:var(--t);font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:'Mukta',sans-serif;background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased}
 input,select,textarea,button{font-family:'Mukta',sans-serif}
 
 /* SPLASH */
-#splash{position:fixed;inset:0;background:linear-gradient(145deg,#6C63FF,#3B9EFF);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:8px}
-.sp-logo{width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:40px;border:2px solid rgba(255,255,255,.3);margin-bottom:6px}
-.sp-name{font-family:'Yatra One',sans-serif;font-size:34px;color:#fff}
-.sp-eng{font-size:11px;color:rgba(255,255,255,.7);letter-spacing:3px;text-transform:uppercase}
-.sp-since{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:2px}
-.sdots{display:flex;gap:8px;margin-top:16px}
-.sdot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);animation:sd 1.4s infinite}
-.sdot:nth-child(2){animation-delay:.2s}.sdot:nth-child(3){animation-delay:.4s}
-@keyframes sd{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1)}}
+#splash{position:fixed;inset:0;background:linear-gradient(160deg,#5B5EFF 0%,#3F42E0 50%,#2DA8FF 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999}
+.sp-logo{width:90px;height:90px;border-radius:28px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:46px;margin-bottom:18px;border:2px solid rgba(255,255,255,.25);box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.sp-title{font-family:'Yatra One',sans-serif;font-size:36px;color:#fff;margin-bottom:4px}
+.sp-sub{font-size:12px;color:rgba(255,255,255,.6);letter-spacing:3px;text-transform:uppercase}
+.sp-dots{display:flex;gap:8px;margin-top:24px}
+.sp-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);animation:spd 1.4s infinite}
+.sp-dot:nth-child(2){animation-delay:.2s}.sp-dot:nth-child(3){animation-delay:.4s}
+@keyframes spd{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1)}}
 
 /* LOGIN */
-#login-screen{position:fixed;inset:0;background:linear-gradient(145deg,#6C63FF,#3B9EFF);display:none;flex-direction:column;align-items:center;justify-content:flex-start;z-index:490;overflow-y:auto;padding:56px 20px 40px}
-.lh{text-align:center;margin-bottom:28px}
-.ll{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 10px;border:2px solid rgba(255,255,255,.3)}
-.lt{font-family:'Yatra One',sans-serif;font-size:28px;color:#fff}
-.ls{font-size:11px;color:rgba(255,255,255,.65);letter-spacing:1.5px}
-.lcard{background:rgba(255,255,255,.15);border-radius:20px;padding:22px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);width:100%;max-width:320px}
-.lcard-t{font-size:11px;color:rgba(255,255,255,.8);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;text-align:center}
-.mbtns{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
-.mbtn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:var(--rs);padding:12px 16px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s}
-.mbtn.sel{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.8)}
-.mav{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
-.lfi{width:100%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:var(--rs);padding:12px 14px;color:#fff;font-size:15px;margin-bottom:10px}
-.lfi::placeholder{color:rgba(255,255,255,.5)}
-.lfi:focus{outline:none;border-color:#fff}
-.lbtn{width:100%;padding:13px;border-radius:var(--rs);background:#fff;color:var(--p2);font-size:16px;font-weight:800;border:none;cursor:pointer}
-.lerr{text-align:center;color:#FFD6D6;font-size:12px;font-weight:600;margin-top:8px;min-height:18px}
+#login{position:fixed;inset:0;background:linear-gradient(160deg,#5B5EFF,#2DA8FF);display:none;align-items:center;justify-content:center;z-index:490;padding:20px}
+.lb{background:rgba(255,255,255,.12);border-radius:24px;padding:32px 24px 28px;width:100%;max-width:340px;border:1.5px solid rgba(255,255,255,.2)}
+.lb-logo{text-align:center;margin-bottom:24px}
+.lb-i{font-size:52px}
+.lb-t{font-family:'Yatra One',sans-serif;font-size:30px;color:#fff;margin-top:6px}
+.lb-s{font-size:11px;color:rgba(255,255,255,.55);letter-spacing:2px;margin-top:2px}
+.lf{width:100%;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:14px 16px;color:#fff;font-size:15px;margin-bottom:12px}
+.lf::placeholder{color:rgba(255,255,255,.4)}
+.lf:focus{outline:none;border-color:rgba(255,255,255,.65)}
+.lb-btn{width:100%;padding:15px;border-radius:12px;background:#fff;color:var(--pd);font-size:17px;font-weight:800;border:none;cursor:pointer;margin-top:2px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.lb-btn:active{transform:scale(.98)}
+.l-err{text-align:center;color:#FFD0CC;font-size:13px;font-weight:600;margin-top:10px;min-height:18px}
+.l-hint{text-align:center;font-size:11px;color:rgba(255,255,255,.35);margin-top:8px}
 
 /* PAGES */
 .page{position:fixed;top:0;left:0;right:0;bottom:var(--nh);overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;background:var(--bg)}
-.page.active{display:block;animation:pfade .25s ease}
-@keyframes pfade{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.page.active{display:block}
 
-/* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:0;right:0;height:var(--nh);background:var(--w);border-top:1px solid var(--br);display:flex;z-index:100;box-shadow:0 -4px 20px rgba(108,99,255,.08)}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--td);transition:color .2s;padding-bottom:6px;position:relative}
-.ni.active{color:var(--p)}
-.ni.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:3px;background:linear-gradient(90deg,var(--p),var(--b));border-radius:0 0 4px 4px}
-.nico{font-size:22px;line-height:1}
-.nlbl{font-size:9px;font-weight:700;letter-spacing:.3px}
+/* NAV */
+#nav{position:fixed;bottom:0;left:0;right:0;height:var(--nh);background:var(--w);border-top:1px solid var(--br);display:flex;z-index:100;box-shadow:0 -2px 8px rgba(16,24,40,.06)}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--td);padding-bottom:5px;position:relative;transition:color .2s}
+.ni.on{color:var(--p)}
+.ni.on::after{content:'';position:absolute;top:0;width:36px;height:3px;background:linear-gradient(90deg,var(--p),var(--b));border-radius:0 0 8px 8px}
+.ni-i{font-size:22px;line-height:1}
+.ni-l{font-size:9px;font-weight:700;letter-spacing:.2px}
 
-/* TOPBAR */
-.tb{padding:52px 16px 14px;background:linear-gradient(145deg,var(--p),var(--b));position:relative;overflow:hidden}
-.tb::after{content:'';position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.07)}
-.tb-row{display:flex;justify-content:space-between;align-items:flex-start}
-.tb-name{font-family:'Yatra One',sans-serif;font-size:24px;color:#fff}
-.tb-sub{font-size:10px;color:rgba(255,255,255,.65);letter-spacing:1px;margin-top:1px}
-.tb-bs{font-size:11px;color:rgba(255,255,255,.8);margin-top:3px;font-weight:600}
-.ubadge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap}
-.tbp{padding:52px 16px 14px;background:var(--w);border-bottom:1px solid var(--br)}
-.tbp-row{display:flex;justify-content:space-between;align-items:flex-start}
-.tbp-t{font-family:'Yatra One',sans-serif;font-size:22px;color:var(--p)}
-.tbp-s{font-size:10px;color:var(--tm);margin-top:2px}
-.tbp-bs{font-size:11px;color:var(--p);font-weight:700;margin-top:3px}
+/* DASHBOARD HEADER */
+.dh{background:linear-gradient(135deg,#5B5EFF 0%,#3F42E0 40%,#2DA8FF 100%);padding:52px 20px 20px;position:relative;overflow:hidden}
+.dh::before{content:'';position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+.dh::after{content:'';position:absolute;left:-20px;bottom:-60px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.04)}
+.dh-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.dh-user{display:flex;align-items:center;gap:12px}
+.dh-av{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;border:2px solid rgba(255,255,255,.35);flex-shrink:0}
+.dh-greet{font-size:12px;color:rgba(255,255,255,.65)}
+.dh-name{font-size:17px;font-weight:800;color:#fff}
+.dh-right{display:flex;align-items:center;gap:10px}
+.lo-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;color:#fff;cursor:pointer}
 
-/* HERO */
-.hero{background:linear-gradient(145deg,var(--p),var(--b));padding:0 16px 20px}
-.hg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.hc{background:rgba(255,255,255,.18);border-radius:var(--rs);padding:13px 12px;border:1px solid rgba(255,255,255,.25)}
-.hc-l{font-size:9px;color:rgba(255,255,255,.75);font-weight:700;letter-spacing:.5px;margin-bottom:3px;text-transform:uppercase}
-.hc-v{font-size:20px;font-weight:800;color:#fff;line-height:1}
-.hc-s{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}
+/* HERO CARD */
+.hero-card{background:rgba(255,255,255,.15);border-radius:20px;padding:20px;border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.hero-card::after{content:'📈';position:absolute;right:16px;top:16px;font-size:36px;opacity:.15}
+.hc-lbl{font-size:12px;color:rgba(255,255,255,.65);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.hc-val{font-size:34px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:4px}
+.hc-sub{font-size:12px;color:rgba(255,255,255,.6)}
+.hc-actions{display:flex;gap:8px;margin-top:16px}
+.hca{flex:1;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s}
+.hca:active{background:rgba(255,255,255,.25)}
+.hca-i{font-size:22px;margin-bottom:4px}
+.hca-l{font-size:10px;font-weight:700;color:#fff;letter-spacing:.2px}
 
-/* QSTATS */
-.qsr{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:14px 16px 0}
-.qsr::-webkit-scrollbar{display:none}
-.qs{flex:0 0 auto;background:var(--w);border-radius:var(--rs);border:1px solid var(--br);padding:12px 13px;min-width:108px;box-shadow:var(--sh)}
-.qs-i{font-size:20px;margin-bottom:3px}
-.qs-v{font-size:17px;font-weight:800;color:var(--t)}
-.qs-l{font-size:10px;color:var(--tm);font-weight:600}
+/* OVERVIEW CARDS */
+.ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.ov-card{background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--br);position:relative;overflow:hidden}
+.ov-card::after{position:absolute;right:12px;top:12px;font-size:28px;opacity:.12;content:attr(data-ico)}
+.ov-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ov-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ov-title{font-size:12px;color:var(--tm);font-weight:600}
+.ov-val{font-size:22px;font-weight:800;margin-bottom:3px}
+.ov-trend{font-size:11px;color:var(--tm);display:flex;align-items:center;gap:4px}
+.trend-up{color:var(--g)}.trend-dn{color:var(--r)}
 
-/* SECTION */
-.sec{padding:14px 16px 0}
-.sl{font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.sl::before{content:'';width:3px;height:14px;background:linear-gradient(180deg,var(--p),var(--b));border-radius:2px;display:inline-block}
+/* PROGRESS BAR */
+.prog-wrap{padding:0 16px 16px}
+.prog-card{background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--br)}
+.prog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.prog-title{font-size:14px;font-weight:700}
+.prog-pct{font-size:13px;font-weight:700;color:var(--p)}
+.prog-target{font-size:11px;color:var(--tm);margin-bottom:12px}
+.pbar{height:10px;background:var(--pl);border-radius:6px;overflow:hidden;margin-bottom:12px}
+.pfill{height:100%;background:linear-gradient(90deg,var(--p),var(--b));border-radius:6px;transition:width 1s}
+.prog-foot{display:flex;justify-content:space-between}
+.pf-item{text-align:center}
+.pf-val{font-size:14px;font-weight:800;color:var(--p)}
+.pf-lbl{font-size:10px;color:var(--tm);font-weight:600}
 
-/* CARDS */
-.card{background:var(--w);border-radius:var(--rr);border:1px solid var(--br);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
-.cp{padding:14px}
+/* SECTION HEADER */
+.sec-h{display:flex;justify-content:space-between;align-items:center;padding:4px 16px 10px}
+.sec-title{font-size:15px;font-weight:800}
+.sec-link{font-size:13px;color:var(--p);font-weight:700;cursor:pointer}
+
+/* RECENT TRANSACTIONS */
+.tx-card{background:var(--w);border-radius:16px;box-shadow:var(--sh);border:1px solid var(--br);overflow:hidden;margin:0 16px 16px}
+.tx-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--br);gap:12px;cursor:pointer}
+.tx-row:last-child{border-bottom:none}
+.tx-ico{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tx-mid{flex:1}
+.tx-name{font-size:14px;font-weight:700;margin-bottom:1px}
+.tx-sub{font-size:11px;color:var(--tm)}
+.tx-right{text-align:right}
+.tx-amt{font-size:14px;font-weight:800}
+.tx-time{font-size:10px;color:var(--tm);margin-top:1px}
 
 /* SITE CARDS */
-.sc{background:var(--w);border-radius:var(--rr);border:1px solid var(--br);box-shadow:var(--sh);margin-bottom:10px;overflow:hidden;cursor:pointer;transition:transform .15s}
-.sc:active{transform:scale(.98)}
-.sc-st{height:4px;background:linear-gradient(90deg,var(--p),var(--b))}
-.sc-st.hold{background:linear-gradient(90deg,var(--o),#FBBF24)}
-.sc-st.done{background:linear-gradient(90deg,var(--g),#4ADE80)}
-.sc-body{padding:12px 14px}
-.sc-name{font-size:16px;font-weight:700;margin-bottom:2px}
+.sc{background:var(--w);border-radius:16px;box-shadow:var(--sh);border:1px solid var(--br);margin-bottom:10px;overflow:hidden;cursor:pointer}
+.sc:active{transform:scale(.99)}
+.sc-stripe{height:4px}
+.sc-stripe.a{background:linear-gradient(90deg,var(--p),var(--b))}
+.sc-stripe.h{background:linear-gradient(90deg,var(--o),#FBB605)}
+.sc-stripe.c{background:linear-gradient(90deg,var(--g),#34D399)}
+.sc-body{padding:14px}
+.sc-row1{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.sc-nm{font-size:16px;font-weight:800}
+.stbadge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px}
+.sta{background:var(--gl);color:#027A48}
+.sth{background:var(--ol);color:#B54708}
+.stc{background:var(--pl);color:var(--pd)}
 .sc-cli{font-size:12px;color:var(--tm);margin-bottom:8px}
-.sc-ft{display:flex;justify-content:space-between;align-items:center}
-.ctag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--pl);color:var(--p)}
-.sbg{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
-.sb-a{background:var(--gl);color:#15803D}
-.sb-h{background:var(--ol);color:#B45309}
-.sb-c{background:var(--pl);color:var(--p2)}
-.sc-amt{font-size:14px;font-weight:800;color:var(--p)}
+.sc-foot{display:flex;justify-content:space-between;align-items:center}
+.sc-tag{font-size:11px;font-weight:700;background:var(--pl);color:var(--p);padding:3px 10px;border-radius:20px}
+.sc-amt{font-size:15px;font-weight:800;color:var(--p)}
 
 /* FAB */
-.fab{position:fixed;bottom:calc(var(--nh)+16px);right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));color:#fff;font-size:30px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(108,99,255,.45);display:flex;align-items:center;justify-content:center;z-index:90}
+.fab{position:fixed;bottom:calc(var(--nh)+16px);right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));color:#fff;font-size:28px;border:none;cursor:pointer;box-shadow:var(--shl);display:flex;align-items:center;justify-content:center;z-index:90}
 
-/* FILTER TABS */
+/* FILTER */
 .ftabs{display:flex;gap:8px;padding:14px 16px 0;overflow-x:auto;scrollbar-width:none}
 .ftabs::-webkit-scrollbar{display:none}
-.ft{padding:7px 15px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;border:1.5px solid var(--br);color:var(--tm);background:var(--w);transition:all .2s}
-.ft.active{background:linear-gradient(135deg,var(--p),var(--b));color:#fff;border-color:transparent;box-shadow:0 3px 12px rgba(108,99,255,.3)}
-
-/* PROFIT BOX */
-.pbox{background:linear-gradient(135deg,var(--pl),var(--bl));border:1.5px solid var(--br2);border-radius:var(--rr);padding:16px;margin-bottom:12px}
-.pr{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:8px}
-.pr:last-child{margin-bottom:0}
-.pd{height:1px;background:var(--br2);margin:10px 0}
+.ft{padding:7px 16px;border-radius:22px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;border:1.5px solid var(--br);color:var(--tm);background:var(--w)}
+.ft.on{background:var(--p);color:#fff;border-color:var(--p)}
 
 /* MODALS */
-.mo{position:fixed;inset:0;background:rgba(26,23,64,.5);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(2px)}
+.mo{position:fixed;inset:0;background:rgba(16,24,40,.6);z-index:200;display:none;align-items:flex-end}
 .mo.open{display:flex}
-.ms{background:var(--w);border-radius:24px 24px 0 0;padding:20px 20px 44px;width:100%;max-height:92vh;overflow-y:auto;border-top:2px solid var(--br)}
-.mh{width:44px;height:4px;background:var(--br2);border-radius:2px;margin:0 auto 16px}
-.mt{font-family:'Yatra One',sans-serif;font-size:22px;color:var(--p);margin-bottom:16px}
-
-/* FORMS */
+.ms{background:var(--w);border-radius:24px 24px 0 0;padding:20px 20px 44px;width:100%;max-height:93vh;overflow-y:auto}
+.mhandle{width:44px;height:4px;background:var(--br2);border-radius:2px;margin:0 auto 18px}
+.mtit{font-size:20px;font-weight:800;color:var(--t);margin-bottom:16px}
 .fg{margin-bottom:13px}
 .fl{font-size:11px;font-weight:700;color:var(--tm);letter-spacing:.5px;display:block;margin-bottom:5px;text-transform:uppercase}
-.fi{width:100%;background:var(--s2);border:1.5px solid var(--br);border-radius:var(--rs);padding:11px 13px;color:var(--t);font-size:14px;transition:border-color .2s}
+.fi{width:100%;background:var(--bg);border:1.5px solid var(--br);border-radius:12px;padding:12px 14px;color:var(--t);font-size:15px;transition:border-color .2s}
 .fi:focus{outline:none;border-color:var(--p);background:var(--w)}
 .fi::placeholder{color:var(--td)}
 select.fi option{background:#fff}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fdiv{height:1px;background:var(--br);margin:14px 0}
-.fn{font-size:12px;color:var(--p);font-weight:600;margin-top:-8px;margin-bottom:10px}
-
-/* BUTTONS */
-.btn{padding:13px 20px;border-radius:var(--rs);font-weight:700;font-size:15px;border:none;cursor:pointer;transition:opacity .2s;width:100%;display:block;text-align:center}
-.btn:active{opacity:.85}
-.bp{background:linear-gradient(135deg,var(--p),var(--b));color:#fff;box-shadow:0 4px 16px rgba(108,99,255,.35)}
-.bo{background:transparent;border:1.5px solid var(--br2);color:var(--t2)}
-.bs{padding:8px 14px;font-size:12px;border-radius:var(--rx);width:auto;display:inline-block}
+.fbs{font-size:12px;font-weight:700;color:var(--p);margin-top:4px}
+.fnote{font-size:13px;font-weight:700;color:var(--p);margin-top:-8px;margin-bottom:10px}
+.btn{padding:14px;border-radius:12px;font-weight:800;font-size:16px;border:none;cursor:pointer;width:100%;display:block;text-align:center;margin-bottom:10px}
+.btn:active{opacity:.87;transform:scale(.99)}
+.bp{background:linear-gradient(135deg,var(--p),var(--b));color:#fff;box-shadow:var(--shm)}
+.bo{background:var(--bg);border:1.5px solid var(--br2);color:var(--t2)}
+.bsm{padding:8px 14px;font-size:12px;border-radius:10px;width:auto;display:inline-block;margin-bottom:0}
 
 /* DETAIL OVERLAY */
-#det{position:fixed;inset:0;background:var(--bg);z-index:150;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+#det{position:fixed;inset:0;background:var(--bg);z-index:150;transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
 #det.open{transform:translateX(0)}
-.dh{background:linear-gradient(135deg,var(--p),var(--b));padding:52px 16px 16px;flex-shrink:0;position:relative;overflow:hidden}
-.dh::after{content:'';position:absolute;right:-20px;top:-20px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.07)}
-.bk{background:rgba(255,255,255,.2);border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;padding:6px 14px;border-radius:20px;margin-bottom:10px}
-.dn{font-family:'Yatra One',sans-serif;font-size:22px;color:#fff;margin-bottom:3px}
-.dm{font-size:11px;color:rgba(255,255,255,.7)}
+.det-head{background:linear-gradient(135deg,var(--p),var(--b));padding:52px 16px 16px;flex-shrink:0;position:relative;overflow:hidden}
+.det-back{background:rgba(255,255,255,.18);border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;padding:6px 14px;border-radius:22px;margin-bottom:10px}
+.det-nm{font-size:22px;font-weight:800;color:#fff;margin-bottom:2px}
+.det-mt{font-size:12px;color:rgba(255,255,255,.7)}
 .dtabs{display:flex;background:var(--w);border-bottom:1px solid var(--br);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
 .dtabs::-webkit-scrollbar{display:none}
-.dtab{flex:1;padding:11px 5px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--tm);border-bottom:3px solid transparent;white-space:nowrap}
-.dtab.active{color:var(--p);border-bottom-color:var(--p)}
-.dc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);padding-bottom:30px}
+.dtab{flex:1;padding:12px 5px;font-size:12px;font-weight:700;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--tm);border-bottom:3px solid transparent;white-space:nowrap;min-width:60px}
+.dtab.on{color:var(--p);border-bottom-color:var(--p)}
+.dcont{flex:1;overflow-y:auto;background:var(--bg);padding-bottom:30px}
+
+/* INFO CARD */
+.ic{background:var(--w);border-radius:16px;border:1px solid var(--br);box-shadow:var(--sh);padding:16px;margin-bottom:12px}
+.ic-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);font-size:14px}
+.ic-row:last-child{border-bottom:none}
+.ic-l{color:var(--tm);font-weight:500}
+.ic-v{font-weight:700}
+
+/* PROFIT BOX */
+.pbox{background:linear-gradient(135deg,var(--pl),var(--bl));border:1.5px solid var(--plb);border-radius:16px;padding:16px;margin-bottom:12px}
+.prow{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:9px}
+.prow:last-child{margin-bottom:0}
+.pl2{color:var(--tm)}
+.pdiv{height:1px;background:var(--plb);margin:10px 0}
 
 /* LIST */
-.li{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--br);gap:11px}
+.li{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--br);gap:12px}
 .li:last-child{border-bottom:none}
-.lic{width:38px;height:38px;border-radius:50%;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.lt2{font-size:14px;font-weight:600;margin-bottom:2px}
-.ls2{font-size:11px;color:var(--tm)}
-.lr{margin-left:auto;text-align:right;flex-shrink:0}
-.apos{color:var(--g);font-weight:700;font-size:14px}
-.aneg{color:var(--r);font-weight:700;font-size:14px}
+.li-i{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--pl)}
+.li-t{font-size:14px;font-weight:700;margin-bottom:1px}
+.li-s{font-size:11px;color:var(--tm)}
+.li-r{margin-left:auto;text-align:right}
+.pos{color:var(--g);font-weight:800;font-size:14px}
+.neg{color:var(--r);font-weight:800;font-size:14px}
 
-/* ATTENDANCE */
-.at-bar{background:var(--w);padding:12px 16px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.at-bs{font-size:13px;font-weight:800;color:var(--p)}
-.at-ad{font-size:11px;color:var(--tm)}
-.att-row{display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--br);gap:8px}
-.att-row:last-child{border-bottom:none}
-.att-nm{flex:1;font-size:13px;font-weight:700;min-width:70px}
-.att-btns{display:flex;gap:4px;flex-wrap:wrap}
-.ab{padding:6px 9px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid var(--br);background:transparent;color:var(--tm);cursor:pointer;transition:all .15s}
-.ab.sP{background:var(--gl);color:#15803D;border-color:#86EFAC}
-.ab.sA{background:var(--rl);color:var(--r);border-color:#FCA5A5}
-.ab.sH{background:var(--ol);color:#B45309;border-color:#FCD34D}
-.ab.sV{background:var(--pl);color:var(--p2);border-color:#A5B4FC}
-.tm-mini{width:66px;padding:5px 7px;border-radius:5px;font-size:11px;border:1px solid var(--br);background:var(--s2);color:var(--t)}
-
-/* TEAM CARDS */
-.tmc{background:var(--w);border:1px solid var(--br);border-radius:var(--rr);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
-.tmc-h{background:linear-gradient(135deg,var(--pl),var(--bl));padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--br)}
-.tav{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:800;flex-shrink:0}
-.tmn{font-family:'Yatra One',sans-serif;font-size:19px;color:var(--p)}
-.pb{height:6px;background:var(--s3);border-radius:4px;margin-top:10px;overflow:hidden}
-.pf{height:100%;background:linear-gradient(90deg,var(--p),var(--b));border-radius:4px}
-
-/* WORKER */
-.wc{background:var(--w);border:1px solid var(--br);border-radius:var(--rr);box-shadow:var(--sh);padding:14px;margin-bottom:10px}
-.wst{display:flex;border:1px solid var(--br);border-radius:var(--rx);overflow:hidden;margin-top:10px}
+/* WORKER CARD */
+.wc{background:var(--w);border-radius:16px;border:1px solid var(--br);box-shadow:var(--sh);padding:16px;margin-bottom:10px;cursor:pointer}
+.wc:active{transform:scale(.98)}
+.wc-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.wc-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wc-nm{font-size:16px;font-weight:800}
+.wc-ph{font-size:12px;color:var(--tm)}
+.wc-stats{display:flex;border:1px solid var(--br);border-radius:12px;overflow:hidden}
 .ws{flex:1;padding:10px 8px;text-align:center;border-right:1px solid var(--br)}
 .ws:last-child{border-right:none}
-.ws-v{font-size:14px;font-weight:800;margin-bottom:2px}
+.ws-v{font-size:14px;font-weight:800;margin-bottom:1px}
 .ws-l{font-size:9px;color:var(--tm);font-weight:700;text-transform:uppercase}
+.tap-hint{text-align:center;font-size:11px;color:var(--p);font-weight:700;margin-top:10px}
+
+/* ATTENDANCE */
+.att-topbar{background:linear-gradient(135deg,var(--p),var(--b));padding:52px 16px 16px}
+.att-tb-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px}
+.att-tb-date{font-size:12px;color:rgba(255,255,255,.7);font-weight:600}
+.date-nav{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.15);border-radius:14px;padding:10px 14px;margin-top:12px;border:1px solid rgba(255,255,255,.2)}
+.dn-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:10px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.dn-center{text-align:center}
+.dn-bs{font-size:15px;font-weight:800;color:#fff}
+.dn-ad{font-size:11px;color:rgba(255,255,255,.65)}
+
+.site-att-block{background:var(--w);border-radius:16px;border:1px solid var(--br);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+.sab-head{background:linear-gradient(135deg,var(--pl),var(--bl));padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.sab-nm{font-size:15px;font-weight:800;color:var(--p)}
+.sab-sub{font-size:11px;color:var(--tm)}
+.saved-pill{background:var(--gl);color:#027A48;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px}
+.slot-sel{width:100%;padding:9px 12px;border:1.5px solid var(--br);border-radius:10px;font-size:13px;font-weight:600;color:var(--t);background:var(--bg);margin:8px 16px;width:calc(100% - 32px)}
+.slot-sel:focus{outline:none;border-color:var(--p)}
+.wrow{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--br);gap:8px;flex-wrap:wrap}
+.wrow:last-child{border-bottom:none}
+.wrow-nm{font-size:14px;font-weight:700;flex:1;min-width:85px}
+.att-opts{display:flex;gap:5px}
+.ao{padding:6px 10px;border-radius:8px;font-size:13px;font-weight:800;border:1.5px solid var(--br);background:var(--w);color:var(--tm);cursor:pointer}
+.ao.P{background:var(--gl);color:#027A48;border-color:#6EE7B7}
+.ao.A{background:var(--rl);color:var(--r);border-color:#FCA5A5}
+.ao.H{background:var(--ol);color:#B54708;border-color:#FCD34D}
+.ao.V{background:var(--pl);color:var(--pd);border-color:var(--plb)}
+.time-grp{display:flex;flex-direction:column;gap:3px}
+.tm-in{width:68px;padding:5px 7px;border-radius:8px;font-size:11px;border:1.5px solid var(--br);background:var(--bg);color:var(--t)}
+.sab-save{display:block;width:calc(100% - 32px);margin:12px 16px;padding:11px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--b));color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer;box-shadow:var(--sh)}
+
+/* EXPENSE SITE BLOCKS */
+.esb{background:var(--w);border-radius:16px;border:1px solid var(--br);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+.esb-h{padding:12px 16px;background:linear-gradient(135deg,var(--pl),var(--bl));display:flex;justify-content:space-between;align-items:center}
+.esb-hn{font-size:15px;font-weight:800;color:var(--p)}
+.esb-ht{font-size:16px;font-weight:800;color:var(--r)}
+.esb-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--br);gap:10px}
+.esb-row:last-child{border-bottom:none}
+.esb-ic{font-size:22px;width:32px;text-align:center}
+.esb-tx{flex:1}
+.esb-tn{font-size:13px;font-weight:700}
+.esb-ts{font-size:11px;color:var(--tm)}
+.esb-ta{font-size:14px;font-weight:800;color:var(--r)}
+
+/* TEAM PAGE */
+.team-hero{background:linear-gradient(135deg,var(--p),var(--b));padding:52px 16px 20px}
+.th-title{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px}
+.th-sub{font-size:12px;color:rgba(255,255,255,.7)}
+.total-profit-card{background:rgba(255,255,255,.15);border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,.2);margin-top:14px}
+.tpc-lbl{font-size:12px;color:rgba(255,255,255,.65);margin-bottom:4px}
+.tpc-val{font-size:32px;font-weight:800;color:#fff}
+.tpc-sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:3px}
+.mem-card{background:var(--w);border-radius:16px;border:1px solid var(--br);box-shadow:var(--sh);margin-bottom:12px;overflow:hidden}
+.mc-head{background:linear-gradient(135deg,var(--pl),var(--bl));padding:14px 16px;display:flex;align-items:center;gap:12px}
+.mc-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--b));color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mc-nm{font-family:'Yatra One',sans-serif;font-size:20px;color:var(--p)}
+.mc-role{font-size:11px;color:var(--tm)}
+.mc-share{margin-left:auto;text-align:right}
+.mc-sv{font-size:22px;font-weight:800}
+.mc-sl{font-size:10px;color:var(--tm);font-weight:600}
+.mc-body{padding:14px 16px}
+.mc-row{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;align-items:center}
+.mc-row:last-child{margin-bottom:0}
+.mc-l{color:var(--tm)}
+.mc-v{font-weight:700}
+.prog-bar{height:6px;background:var(--pl);border-radius:4px;margin-top:10px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--b));border-radius:4px}
+
+/* PLAIN TOPBAR */
+.tbp{padding:52px 16px 14px;background:var(--w);border-bottom:1px solid var(--br)}
+.tbp-nm{font-size:22px;font-weight:800;color:var(--t);margin-bottom:2px}
+.tbp-d{font-size:12px;color:var(--tm);font-weight:600}
 
 /* MISC */
-.empty{text-align:center;padding:44px 20px;color:var(--tm)}
-.ei{font-size:48px;margin-bottom:12px}
-.et{font-size:13px;line-height:1.7}
+.empty{text-align:center;padding:44px 20px}
+.ei{font-size:52px;margin-bottom:12px}
+.et{font-size:14px;color:var(--tm);line-height:1.7}
 .ld{text-align:center;padding:30px;color:var(--td);font-size:13px}
-#toast{position:fixed;bottom:calc(var(--nh)+20px);left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:20px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--shm)}
-.dsr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.ds{background:var(--w);border:1px solid var(--br);border-radius:var(--rs);padding:12px;text-align:center;box-shadow:var(--sh)}
-.ds-v{font-size:17px;font-weight:800;margin-bottom:2px}
-.ds-l{font-size:10px;color:var(--tm);font-weight:600;text-transform:uppercase}
-.info-box{background:var(--bl);padding:10px 12px;border-radius:var(--rx);font-size:12px;color:var(--b2);margin-bottom:10px}
-.my-att-card{background:linear-gradient(135deg,var(--p),var(--b));border-radius:var(--rr);padding:16px;margin-bottom:12px;color:#fff}
+#toast{position:fixed;bottom:calc(var(--nh)+18px);left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:22px;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:88vw;text-align:center;box-shadow:var(--shl)}
+.dsrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.dsc{background:var(--w);border:1px solid var(--br);border-radius:12px;padding:12px;text-align:center;box-shadow:var(--sh)}
+.dsc-v{font-size:16px;font-weight:800;margin-bottom:2px}
+.dsc-l{font-size:9px;color:var(--tm);font-weight:700;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -230,186 +326,219 @@ select.fi option{background:#fff}
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-logo">🎨</div>
-  <div class="sp-name">अनुग्रह</div>
-  <div class="sp-eng">ANUGRAHA · A.N.S.</div>
-  <div class="sp-since">HOUSE PAINTING · SINCE 2012</div>
-  <div class="sdots"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+  <div class="sp-title">अनुग्रह</div>
+  <div class="sp-sub">House Painting · A.N.S. · 2012</div>
+  <div class="sp-dots"><div class="sp-dot"></div><div class="sp-dot"></div><div class="sp-dot"></div></div>
 </div>
 
 <!-- LOGIN -->
-<div id="login-screen">
-  <div class="lh">
-    <div class="ll">🎨</div>
-    <div class="lt">अनुग्रह</div>
-    <div class="ls">HOUSE PAINTING · A.N.S.</div>
-  </div>
-  <div class="lcard">
-    <div class="lcard-t">सदस्य छान्नुस्</div>
-    <div class="mbtns">
-      <button class="mbtn" onclick="selMember('AMRIT',this)"><div class="mav">A</div>AMRIT</button>
-      <button class="mbtn" onclick="selMember('NIRAN',this)"><div class="mav">N</div>NIRAN</button>
-      <button class="mbtn" onclick="selMember('SUBEIN',this)"><div class="mav">S</div>SUBEIN</button>
+<div id="login">
+  <div class="lb">
+    <div class="lb-logo">
+      <div class="lb-i">🎨</div>
+      <div class="lb-t">अनुग्रह</div>
+      <div class="lb-s">HOUSE PAINTING · A.N.S.</div>
     </div>
-    <input class="lfi" type="password" id="l-pass" placeholder="पासवर्ड राख्नुस्...">
-    <button class="lbtn" onclick="doLogin()">लगिन गर्नुस्</button>
-    <div class="lerr" id="l-err"></div>
+    <input class="lf" id="lu" type="text" placeholder="Username" autocapitalize="characters" autocomplete="off">
+    <input class="lf" id="lp" type="password" placeholder="Password">
+    <button class="lb-btn" onclick="doLogin()">लगिन गर्नुस् →</button>
+    <div class="l-err" id="lerr"></div>
+    <div class="l-hint">AMRIT / NIRAN / SUBEIN</div>
   </div>
 </div>
 
 <div id="toast"></div>
 
-<!-- BOTTOM NAV -->
-<nav class="bnav" id="main-nav" style="display:none">
-  <div class="ni active" onclick="showPage('dash')"><span class="nico">🏠</span><span class="nlbl">गृह</span></div>
-  <div class="ni" onclick="showPage('sites')"><span class="nico">📋</span><span class="nlbl">साइट</span></div>
-  <div class="ni" onclick="showPage('att')"><span class="nico">✅</span><span class="nlbl">हाजिर</span></div>
-  <div class="ni" onclick="showPage('exp')"><span class="nico">💰</span><span class="nlbl">खर्च</span></div>
-  <div class="ni" onclick="showPage('team')"><span class="nico">👥</span><span class="nlbl">टोली</span></div>
+<!-- NAV -->
+<nav id="nav" style="display:none">
+  <div class="ni on" onclick="go('home')"><span class="ni-i">🏠</span><span class="ni-l">गृह</span></div>
+  <div class="ni" onclick="go('sites')"><span class="ni-i">🏗️</span><span class="ni-l">साइट</span></div>
+  <div class="ni" onclick="go('workers')"><span class="ni-i">👷</span><span class="ni-l">कामदार</span></div>
+  <div class="ni" onclick="go('att')"><span class="ni-i">✅</span><span class="ni-l">हाजिर</span></div>
+  <div class="ni" onclick="go('exp')"><span class="ni-i">💸</span><span class="ni-l">खर्च</span></div>
 </nav>
 
-<!-- ===== DASHBOARD ===== -->
-<div class="page" id="page-dash">
-  <div class="tb">
-    <div class="tb-row">
-      <div>
-        <div class="tb-sub" id="tb-greet">नमस्ते 👋</div>
-        <div class="tb-name">अनुग्रह</div>
-        <div class="tb-bs" id="tb-bs-date">—</div>
+<!-- HOME -->
+<div class="page active" id="pg-home">
+  <div class="dh">
+    <div class="dh-top">
+      <div class="dh-user">
+        <div class="dh-av" id="dh-av">A</div>
+        <div>
+          <div class="dh-greet" id="dh-greet">Good morning 👋</div>
+          <div class="dh-name" id="dh-name">AMRIT</div>
+        </div>
       </div>
-      <button class="ubadge" onclick="doLogout()" id="tb-member">लगआउट</button>
+      <div class="dh-right">
+        <button class="lo-pill" onclick="doLogout()">बाहिर</button>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hc-lbl">💰 कुल प्राप्त रकम</div>
+      <div class="hc-val" id="h-recv">Rs. 0</div>
+      <div class="hc-sub" id="h-sub">आजको मिति: —</div>
+      <div class="hc-actions">
+        <div class="hca" onclick="openSM()"><div class="hca-i">🏗️</div><div class="hca-l">नयाँ साइट</div></div>
+        <div class="hca" onclick="go('att')"><div class="hca-i">✅</div><div class="hca-l">हाजिर</div></div>
+        <div class="hca" onclick="openExpM()"><div class="hca-i">💸</div><div class="hca-l">खर्च</div></div>
+        <div class="hca" onclick="go('team')"><div class="hca-i">👥</div><div class="hca-l">टोली</div></div>
+      </div>
     </div>
   </div>
-  <div class="hero">
-    <div class="hg">
-      <div class="hc"><div class="hc-l">सक्रिय साइट</div><div class="hc-v" id="d-active">—</div><div class="hc-s">हाल चलिरहेको</div></div>
-      <div class="hc"><div class="hc-l">ठेक्का मूल्य</div><div class="hc-v" id="d-val">—</div><div class="hc-s">सम्पूर्ण</div></div>
-      <div class="hc"><div class="hc-l">प्राप्त रकम</div><div class="hc-v" id="d-recv">—</div><div class="hc-s">ग्राहकबाट</div></div>
-      <div class="hc"><div class="hc-l">कुल नाफा</div><div class="hc-v" id="d-profit">—</div><div class="hc-s" id="d-plab">खर्च काटेपछि</div></div>
+
+  <!-- OVERVIEW -->
+  <div class="ov-grid">
+    <div class="ov-card" data-ico="🏗️">
+      <div class="ov-top"><div class="ov-ico" style="background:var(--pl)">🏗️</div><div class="ov-title">सक्रिय साइट</div></div>
+      <div class="ov-val sv-p" id="h-active" style="color:var(--p)">—</div>
+      <div class="ov-trend">हाल चलिरहेको</div>
+    </div>
+    <div class="ov-card" data-ico="💸">
+      <div class="ov-top"><div class="ov-ico" style="background:var(--rl)">💸</div><div class="ov-title">कुल खर्च</div></div>
+      <div class="ov-val" id="h-exp" style="color:var(--r)">—</div>
+      <div class="ov-trend">सम्पूर्ण खर्च</div>
+    </div>
+    <div class="ov-card" data-ico="📈">
+      <div class="ov-top"><div class="ov-ico" style="background:var(--gl)">📈</div><div class="ov-title">कुल नाफा</div></div>
+      <div class="ov-val" id="h-profit" style="color:var(--g)">—</div>
+      <div class="ov-trend" id="h-profit-t">खर्च काटेपछि</div>
+    </div>
+    <div class="ov-card" data-ico="⏳">
+      <div class="ov-top"><div class="ov-ico" style="background:var(--ol)">⏳</div><div class="ov-title">बाँकी रकम</div></div>
+      <div class="ov-val" id="h-pend" style="color:var(--o)">—</div>
+      <div class="ov-trend">ग्राहकबाट</div>
     </div>
   </div>
-  <div class="qsr">
-    <div class="qs"><div class="qs-i">⏳</div><div class="qs-v" id="d-pend">—</div><div class="qs-l">बाँकी रकम</div></div>
-    <div class="qs"><div class="qs-i">👷</div><div class="qs-v" id="d-wkrs">—</div><div class="qs-l">कामदार</div></div>
-    <div class="qs"><div class="qs-i">📋</div><div class="qs-v" id="d-total">—</div><div class="qs-l">जम्मा साइट</div></div>
-    <div class="qs"><div class="qs-i">✅</div><div class="qs-v" id="d-done">—</div><div class="qs-l">सम्पन्न</div></div>
+
+  <!-- RECENT SITES -->
+  <div style="padding:4px 0">
+    <div class="sec-h"><span class="sec-title">मेरा साइट</span><span class="sec-link" onclick="go('sites')">सबै हेर्नुस् →</span></div>
+    <div style="padding:0 16px" id="h-my"></div>
   </div>
-  <div class="sec"><div class="sl">मेरा साइटहरू (मैले ल्याएको)</div><div id="d-mysites"></div></div>
-  <div class="sec"><div class="sl">सक्रिय साइटहरू</div><div id="d-sites"></div></div>
-  <div class="sec"><div class="sl">आजको हाजिर — <span id="d-att-date" style="color:var(--p)"></span></div><div id="d-att-summary"></div></div>
+
+  <!-- RECENT TRANSACTIONS -->
+  <div style="padding:4px 0">
+    <div class="sec-h"><span class="sec-title">हालका गतिविधि</span><span class="sec-link" onclick="go('sites')">सबै →</span></div>
+    <div class="tx-card" id="h-txs"></div>
+  </div>
+
   <div style="height:16px"></div>
 </div>
 
-<!-- ===== SITES ===== -->
-<div class="page" id="page-sites">
-  <div class="tbp">
-    <div class="tbp-row">
-      <div><div class="tbp-t">📋 साइटहरू</div><div class="tbp-s">सम्पूर्ण ठेक्काहरू</div></div>
-    </div>
-    <div class="tbp-bs" id="s-bs-date">—</div>
-  </div>
+<!-- SITES -->
+<div class="page" id="pg-sites">
+  <div class="tbp"><div class="tbp-nm">🏗️ साइटहरू</div><div class="tbp-d" id="s-date">—</div></div>
   <div class="ftabs">
-    <button class="ft active" onclick="filterS('all',this)">सबै</button>
-    <button class="ft" onclick="filterS('active',this)">सक्रिय</button>
-    <button class="ft" onclick="filterS('completed',this)">सम्पन्न</button>
-    <button class="ft" onclick="filterS('hold',this)">रोकिएको</button>
+    <button class="ft on" onclick="fSite('all',this)">सबै</button>
+    <button class="ft" onclick="fSite('active',this)">सक्रिय</button>
+    <button class="ft" onclick="fSite('completed',this)">सम्पन्न</button>
+    <button class="ft" onclick="fSite('hold',this)">रोकिएको</button>
   </div>
-  <div style="padding:14px 16px 80px" id="sites-list"><div class="ld">लोड हुँदैछ...</div></div>
-  <button class="fab" onclick="openAddSite()">+</button>
+  <div style="padding:12px 16px 80px" id="s-list"><div class="ld">लोड...</div></div>
+  <button class="fab" onclick="openSM()">+</button>
 </div>
 
-<!-- ===== ATTENDANCE ===== -->
-<div class="page" id="page-att">
-  <div class="tbp">
-    <div class="tbp-row">
-      <div><div class="tbp-t">✅ हाजिर</div><div class="tbp-s">दैनिक उपस्थिति</div></div>
+<!-- WORKERS -->
+<div class="page" id="pg-workers">
+  <div class="tbp"><div class="tbp-nm">👷 कामदारहरू</div><div class="tbp-d">ट्याप गरेर हाजिर दर्ता गर्नुस्</div></div>
+  <div style="padding:12px 16px 80px" id="w-list"><div class="ld">लोड...</div></div>
+  <button class="fab" onclick="openNewWM()">+</button>
+</div>
+
+<!-- ATTENDANCE -->
+<div class="page" id="pg-att">
+  <div class="att-topbar">
+    <div class="att-tb-title">✅ दैनिक हाजिर</div>
+    <div class="att-tb-date">Daily Attendance Register</div>
+    <div class="date-nav">
+      <button class="dn-btn" onclick="chgD(-1)">◀</button>
+      <div class="dn-center">
+        <div class="dn-bs" id="att-bs">—</div>
+        <div class="dn-ad" id="att-ad">—</div>
+      </div>
+      <button class="dn-btn" onclick="chgD(0)">आज</button>
+      <button class="dn-btn" onclick="chgD(1)">▶</button>
     </div>
-    <div class="tbp-bs" id="a-bs-date">—</div>
   </div>
+  <div style="padding:12px 16px 80px" id="att-body"></div>
+</div>
+
+<!-- EXPENSES -->
+<div class="page" id="pg-exp">
+  <div class="tbp"><div class="tbp-nm">💸 खर्च</div><div class="tbp-d" id="exp-lbl">—</div></div>
   <div class="ftabs">
-    <button class="ft active" onclick="attTab('workers',this)">👷 कामदार</button>
-    <button class="ft" onclick="attTab('team',this)">👥 टोली</button>
-    <button class="ft" onclick="attTab('history',this)">📅 इतिहास</button>
+    <button class="ft on" onclick="fExp('all',this)">सबै</button>
+    <button class="ft" onclick="fExp('paint',this)">🎨 रंग</button>
+    <button class="ft" onclick="fExp('petrol',this)">⛽ पेट्रोल</button>
+    <button class="ft" onclick="fExp('food',this)">🍱 खाना</button>
+    <button class="ft" onclick="fExp('khaja',this)">🥤 खाजा</button>
+    <button class="ft" onclick="fExp('advance',this)">💵 अग्रिम</button>
   </div>
-  <div id="att-content" style="padding:14px 16px 80px"></div>
-  <button class="fab" id="att-fab" onclick="openAttModal()">+</button>
+  <div style="padding:12px 16px 80px" id="e-list"><div class="ld">लोड...</div></div>
+  <button class="fab" onclick="openExpM()">+</button>
 </div>
 
-<!-- ===== EXPENSES ===== -->
-<div class="page" id="page-exp">
-  <div class="tbp">
-    <div class="tbp-row">
-      <div><div class="tbp-t">💰 खर्च</div><div class="tbp-s">सम्पूर्ण खर्च</div></div>
+<!-- TEAM -->
+<div class="page" id="pg-team">
+  <div class="team-hero">
+    <div class="th-title">👥 टोली</div>
+    <div class="th-sub">AMRIT · NIRAN · SUBEIN · नाफा बाँडफाँट</div>
+    <div class="total-profit-card">
+      <div class="tpc-lbl">💰 कुल नाफा</div>
+      <div class="tpc-val" id="tp-val">—</div>
+      <div class="tpc-sub" id="tp-sub">— साइट · — सक्रिय</div>
     </div>
   </div>
-  <div class="ftabs">
-    <button class="ft active" onclick="filterExp('all',this)">सबै</button>
-    <button class="ft" onclick="filterExp('paint',this)">🎨 रंग</button>
-    <button class="ft" onclick="filterExp('food',this)">🍱 खाना</button>
-    <button class="ft" onclick="filterExp('transport',this)">🚐 यातायात</button>
-    <button class="ft" onclick="filterExp('other',this)">📦 अन्य</button>
-  </div>
-  <div style="padding:14px 16px 80px" id="exp-list"><div class="ld">लोड हुँदैछ...</div></div>
-  <button class="fab" onclick="openGlobalExp()">+</button>
+  <div style="padding:14px 16px 20px" id="t-list"><div class="ld">लोड...</div></div>
 </div>
 
-<!-- ===== TEAM ===== -->
-<div class="page" id="page-team">
-  <div class="tbp">
-    <div class="tbp-row">
-      <div><div class="tbp-t">👥 टोली</div><div class="tbp-s">AMRIT · NIRAN · SUBEIN</div></div>
-    </div>
-  </div>
-  <div style="padding:14px 16px 20px" id="team-content"><div class="ld">लोड हुँदैछ...</div></div>
-</div>
-
-<!-- ===== SITE DETAIL ===== -->
+<!-- SITE DETAIL -->
 <div id="det">
-  <div class="dh">
-    <button class="bk" onclick="closeDet()">← फिर्ता</button>
-    <div class="dn" id="d-name">साइट</div>
-    <div class="dm" id="d-meta">ग्राहक</div>
+  <div class="det-head">
+    <button class="det-back" onclick="closeDet()">← फिर्ता</button>
+    <div class="det-nm" id="det-nm">—</div>
+    <div class="det-mt" id="det-mt">—</div>
   </div>
   <div class="dtabs">
-    <button class="dtab active" onclick="showDT('ov',this)">सारांश</button>
-    <button class="dtab" onclick="showDT('pay',this)">भुक्तानी</button>
-    <button class="dtab" onclick="showDT('wk',this)">ज्याला</button>
-    <button class="dtab" onclick="showDT('ex',this)">खर्च</button>
-    <button class="dtab" onclick="showDT('wr',this)">कामदार</button>
+    <button class="dtab on" onclick="dTab('ov',this)">📊 सारांश</button>
+    <button class="dtab" onclick="dTab('pay',this)">💰 भुक्तानी</button>
+    <button class="dtab" onclick="dTab('wg',this)">👷 ज्याला</button>
+    <button class="dtab" onclick="dTab('ex',this)">💸 खर्च</button>
+    <button class="dtab" onclick="dTab('at',this)">✅ हाजिर</button>
   </div>
-  <div class="dc" id="dc"></div>
+  <div class="dcont" id="dcont"></div>
 </div>
 
-<!-- ===== MODAL: ADD SITE ===== -->
-<div class="mo" id="m-site">
+<!-- MODAL: SITE -->
+<div class="mo" id="mS">
   <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">नयाँ साइट</div>
-    <div class="fg"><label class="fl">साइट नाम *</label><input class="fi" id="sn" placeholder="जस्तै: शर्मा घर, काठमाडौं"></div>
-    <div class="fr">
-      <div class="fg"><label class="fl">ग्राहक नाम *</label><input class="fi" id="scl" placeholder="ग्राहकको नाम"></div>
+    <div class="mhandle"></div>
+    <div class="mtit">🏗️ नयाँ साइट</div>
+    <div class="fg"><label class="fl">साइटको नाम *</label><input class="fi" id="sn" placeholder="जस्तै: शर्माको घर, भक्तपुर"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">ग्राहकको नाम *</label><input class="fi" id="scl" placeholder="नाम"></div>
       <div class="fg"><label class="fl">फोन</label><input type="tel" class="fi" id="sph" placeholder="98XXXXXXXX"></div>
     </div>
-    <div class="fg"><label class="fl">ठाउँ</label><input class="fi" id="sloc" placeholder="जस्तै: भक्तपुर"></div>
+    <div class="fg"><label class="fl">ठाउँ</label><input class="fi" id="sloc" placeholder="भक्तपुर, काठमाडौं..."></div>
     <div class="fdiv"></div>
     <div class="fg"><label class="fl">ठेक्काको प्रकार</label>
       <select class="fi" id="sct" onchange="onCT()">
-        <option value="full">पूर्ण ठेक्का (सामग्री+श्रम)</option>
+        <option value="full">पूर्ण ठेक्का — सामग्री + श्रम</option>
         <option value="labour">श्रम मात्र</option>
-        <option value="sqft">प्रति वर्गफिट</option>
+        <option value="sqft">वर्गफिट — Rate × Area</option>
         <option value="daily">दैनिक ज्याला</option>
       </select>
     </div>
     <div id="cg-a" class="fg"><label class="fl">ठेक्का रकम (Rs.)</label><input type="number" class="fi" id="sa" placeholder="0"></div>
     <div id="cg-s" style="display:none">
-      <div class="fr">
-        <div class="fg"><label class="fl">क्षेत्रफल (sqft)</label><input type="number" class="fi" id="ssq" placeholder="0" oninput="calcSQ()"></div>
-        <div class="fg"><label class="fl">दर/sqft</label><input type="number" class="fi" id="srt" placeholder="0" oninput="calcSQ()"></div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">क्षेत्रफल (sqft)</label><input type="number" class="fi" id="ssq" placeholder="0" oninput="cSQ()"></div>
+        <div class="fg"><label class="fl">दर/sqft (Rs.)</label><input type="number" class="fi" id="srt" placeholder="0" oninput="cSQ()"></div>
       </div>
-      <div class="fn" id="sq-note">जम्मा: Rs. 0</div>
+      <div class="fnote" id="sq-r">जम्मा: Rs. 0</div>
     </div>
-    <div id="cg-d" style="display:none;font-size:12px;color:var(--b2);background:var(--bl);padding:10px 12px;border-radius:8px;margin-bottom:13px">💡 दैनिक ज्याला — निश्चित रकम छैन</div>
     <div class="fdiv"></div>
-    <div class="fr">
+    <div class="fr2">
       <div class="fg"><label class="fl">ल्याउने</label>
         <select class="fi" id="sby"><option>AMRIT</option><option>NIRAN</option><option>SUBEIN</option></select>
       </div>
@@ -417,85 +546,74 @@ select.fi option{background:#fff}
         <select class="fi" id="sst"><option value="active">सक्रिय</option><option value="hold">रोकिएको</option></select>
       </div>
     </div>
-    <div class="fr">
-      <div class="fg"><label class="fl">सुरु मिति</label><input type="date" class="fi" id="ssd"><div id="ssd-bs" style="font-size:11px;color:var(--p);margin-top:3px;font-weight:600"></div></div>
-      <div class="fg"><label class="fl">अन्त्य (अनुमान)</label><input type="date" class="fi" id="sed"><div id="sed-bs" style="font-size:11px;color:var(--p);margin-top:3px;font-weight:600"></div></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">सुरु मिति</label><input type="date" class="fi" id="ssd" oninput="bsS('ssd','ssdb')"><div class="fbs" id="ssdb"></div></div>
+      <div class="fg"><label class="fl">अन्त्य (अनुमान)</label><input type="date" class="fi" id="sed" oninput="bsS('sed','sedb')"><div class="fbs" id="sedb"></div></div>
     </div>
     <div class="fg"><label class="fl">नोट</label><input class="fi" id="snote" placeholder="थप जानकारी..."></div>
-    <div style="height:6px"></div>
-    <button class="btn bp" onclick="saveSite()">साइट सेभ गर्नुस्</button>
-    <div style="height:10px"></div>
-    <button class="btn bo" onclick="closeM('m-site')">रद्द</button>
+    <button class="btn bp" onclick="saveSite()">💾 साइट सेभ गर्नुस्</button>
+    <button class="btn bo" onclick="closeM('mS')">रद्द</button>
   </div>
 </div>
 
-<!-- ===== MODAL: PAYMENT ===== -->
-<div class="mo" id="m-pay">
+<!-- MODAL: PAYMENT -->
+<div class="mo" id="mPay">
   <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">भुक्तानी</div>
-    <div style="font-size:12px;color:var(--tm);margin-bottom:12px" id="pm-lbl"></div>
-    <div class="fg"><label class="fl">रकम (Rs.) *</label><input type="number" class="fi" id="pm-a" placeholder="0"></div>
+    <div class="mhandle"></div>
+    <div class="mtit">💰 भुक्तानी थप्नुस्</div>
+    <div style="background:var(--pl);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--p);font-weight:700;margin-bottom:14px" id="pay-lbl"></div>
+    <div class="fg"><label class="fl">रकम (Rs.) *</label><input type="number" class="fi" id="pa" placeholder="0"></div>
     <div class="fg"><label class="fl">प्रकार</label>
-      <select class="fi" id="pm-t"><option value="advance">⚡ अग्रिम</option><option value="installment">📥 किस्ता</option><option value="final">✅ अन्तिम</option></select>
+      <select class="fi" id="pt"><option value="advance">⚡ अग्रिम</option><option value="installment">📥 किस्ता</option><option value="final">✅ अन्तिम</option></select>
     </div>
-    <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="pm-d"><div id="pm-d-bs" style="font-size:11px;color:var(--p);margin-top:3px;font-weight:600"></div></div>
-    <div class="fg"><label class="fl">नोट</label><input class="fi" id="pm-n" placeholder="ऐच्छिक"></div>
-    <div style="height:6px"></div>
-    <button class="btn bp" onclick="savePay()">सेभ</button>
-    <div style="height:10px"></div>
-    <button class="btn bo" onclick="closeM('m-pay')">रद्द</button>
+    <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="pd" oninput="bsS('pd','pdb')"><div class="fbs" id="pdb"></div></div>
+    <div class="fg"><label class="fl">नोट</label><input class="fi" id="pn" placeholder="ऐच्छिक"></div>
+    <button class="btn bp" onclick="savePay()">💾 सेभ</button>
+    <button class="btn bo" onclick="closeM('mPay')">रद्द</button>
   </div>
 </div>
 
-<!-- ===== MODAL: WAGE ENTRY ===== -->
-<div class="mo" id="m-wage">
+<!-- MODAL: WAGE -->
+<div class="mo" id="mWg">
   <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">ज्याला रेकर्ड</div>
-    <div style="font-size:12px;color:var(--tm);margin-bottom:12px" id="wg-lbl"></div>
+    <div class="mhandle"></div>
+    <div class="mtit">👷 ज्याला रेकर्ड</div>
+    <div style="background:var(--pl);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--p);font-weight:700;margin-bottom:14px" id="wg-lbl"></div>
     <div class="fg"><label class="fl">कामदार</label>
-      <select class="fi" id="wg-wk" onchange="onWkSel()">
-        <option value="">छान्नुस्...</option>
-        <option value="__new__">+ नयाँ कामदार</option>
-      </select>
+      <select class="fi" id="wgw" onchange="onWS()"><option value="">छान्नुस्...</option><option value="__new__">+ नयाँ कामदार</option></select>
     </div>
     <div id="wg-new" style="display:none">
-      <div class="fr">
-        <div class="fg"><label class="fl">नाम *</label><input class="fi" id="wg-nm" placeholder="नाम"></div>
-        <div class="fg"><label class="fl">फोन</label><input type="tel" class="fi" id="wg-ph" placeholder="98XXXXXXXX"></div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">नाम *</label><input class="fi" id="wgnm" placeholder="नाम"></div>
+        <div class="fg"><label class="fl">फोन</label><input type="tel" class="fi" id="wgph" placeholder="98XXXXXXXX"></div>
       </div>
     </div>
-    <div class="fr">
-      <div class="fg"><label class="fl">दिन *</label><input type="number" class="fi" id="wg-d" placeholder="0" oninput="calcW()"></div>
-      <div class="fg"><label class="fl">दैनिक ज्याला (Rs.) *</label><input type="number" class="fi" id="wg-r" placeholder="0" oninput="calcW()"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">कति दिन *</label><input type="number" class="fi" id="wgd" placeholder="0" oninput="cWG()"></div>
+      <div class="fg"><label class="fl">दैनिक ज्याला (Rs.) *</label><input type="number" class="fi" id="wgr" placeholder="0" oninput="cWG()"></div>
     </div>
-    <div class="fn" id="wg-earn">कुल कमाइ: Rs. 0</div>
-    <div class="fg"><label class="fl">अग्रिम (Rs.)</label><input type="number" class="fi" id="wg-adv" placeholder="0" oninput="calcW()"></div>
-    <div class="fn" id="wg-bal" style="color:var(--o)">बाँकी: Rs. 0</div>
-    <div class="fr">
-      <div class="fg"><label class="fl">सुरु मिति</label><input type="date" class="fi" id="wg-fd"><div id="wg-fd-bs" style="font-size:11px;color:var(--p);margin-top:3px;font-weight:600"></div></div>
-      <div class="fg"><label class="fl">अन्त्य मिति</label><input type="date" class="fi" id="wg-td"></div>
+    <div class="fnote" id="wg-earn">कुल कमाइ: Rs. 0</div>
+    <div class="fg"><label class="fl">अग्रिम दिइसकेको (Rs.)</label><input type="number" class="fi" id="wga" placeholder="0" oninput="cWG()"></div>
+    <div class="fnote" id="wg-bal" style="color:var(--o)">बाँकी: Rs. 0</div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">सुरु</label><input type="date" class="fi" id="wgfd" oninput="bsS('wgfd','wgfdb')"><div class="fbs" id="wgfdb"></div></div>
+      <div class="fg"><label class="fl">अन्त्य</label><input type="date" class="fi" id="wgtd"></div>
     </div>
-    <div class="fg"><label class="fl">नोट</label><input class="fi" id="wg-note" placeholder="ऐच्छिक"></div>
-    <div style="height:6px"></div>
-    <button class="btn bp" onclick="saveWage()">सेभ</button>
-    <div style="height:10px"></div>
-    <button class="btn bo" onclick="closeM('m-wage')">रद्द</button>
+    <button class="btn bp" onclick="saveWage()">💾 सेभ</button>
+    <button class="btn bo" onclick="closeM('mWg')">रद्द</button>
   </div>
 </div>
 
-<!-- ===== MODAL: EXPENSE ===== -->
-<div class="mo" id="m-exp">
+<!-- MODAL: EXPENSE -->
+<div class="mo" id="mExp">
   <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">खर्च थप्नुस्</div>
-    <div style="font-size:12px;color:var(--tm);margin-bottom:12px" id="ex-lbl"></div>
-    <div class="fg"><label class="fl">साइट</label>
-      <select class="fi" id="ex-site"><option value="">साइट छान्नुस्...</option></select>
+    <div class="mhandle"></div>
+    <div class="mtit">💸 खर्च थप्नुस्</div>
+    <div class="fg"><label class="fl">कुन साइटको खर्च?</label>
+      <select class="fi" id="es"><option value="">साइट छान्नुस्...</option></select>
     </div>
-    <div class="fg"><label class="fl">प्रकार</label>
-      <select class="fi" id="ex-cat">
+    <div class="fg"><label class="fl">खर्चको प्रकार</label>
+      <select class="fi" id="ec">
         <option value="paint">🎨 रंग / पेन्ट</option>
         <option value="material">🧱 सामग्री</option>
         <option value="tools">🔧 औजार</option>
@@ -503,819 +621,634 @@ select.fi option{background:#fff}
         <option value="petrol">⛽ पेट्रोल</option>
         <option value="khaja">🥤 खाजा / नास्ता</option>
         <option value="food">🍱 खाना</option>
+        <option value="advance">💵 अग्रिम नगद</option>
         <option value="other">📦 अन्य</option>
       </select>
     </div>
-    <div class="fg"><label class="fl">रकम (Rs.) *</label><input type="number" class="fi" id="ex-a" placeholder="0"></div>
-    <div class="fr">
-      <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="ex-d"><div id="ex-d-bs" style="font-size:11px;color:var(--p);margin-top:3px;font-weight:600"></div></div>
-      <div class="fg"><label class="fl">कसले तिर्यो</label>
-        <select class="fi" id="ex-by"><option>AMRIT</option><option>NIRAN</option><option>SUBEIN</option><option value="common">साझा</option></select>
+    <div class="fg"><label class="fl">रकम (Rs.) *</label><input type="number" class="fi" id="ea" placeholder="0"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="ed" oninput="bsS('ed','edb')"><div class="fbs" id="edb"></div></div>
+      <div class="fg"><label class="fl">कसले तिर्यो?</label>
+        <select class="fi" id="eby"><option>AMRIT</option><option>NIRAN</option><option>SUBEIN</option><option value="common">साझा</option></select>
       </div>
     </div>
-    <div class="fg"><label class="fl">विवरण</label><input class="fi" id="ex-note" placeholder="जस्तै: Asian Paints 20L"></div>
-    <div style="height:6px"></div>
-    <button class="btn bp" onclick="saveExp()">सेभ</button>
-    <div style="height:10px"></div>
-    <button class="btn bo" onclick="closeM('m-exp')">रद्द</button>
+    <div class="fg"><label class="fl">विवरण</label><input class="fi" id="en" placeholder="जस्तै: Asian Paints 20L, पेट्रोल..."></div>
+    <button class="btn bp" onclick="saveExp()">💾 सेभ</button>
+    <button class="btn bo" onclick="closeM('mExp')">रद्द</button>
   </div>
 </div>
 
-<!-- ===== MODAL: WORKER ATTENDANCE ===== -->
-<div class="mo" id="m-att">
+<!-- MODAL: NEW WORKER -->
+<div class="mo" id="mNW">
   <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">कामदार हाजिर</div>
-    <div class="fr">
-      <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="at-date" oninput="onAtDate()"><div id="at-date-bs" style="font-size:11px;color:var(--p);margin-top:3px;font-weight:600"></div></div>
-      <div class="fg"><label class="fl">खण्ड</label>
-        <select class="fi" id="at-slot">
-          <option value="morning">🌅 बिहान</option>
-          <option value="afternoon">☀️ दिउँसो</option>
-          <option value="full">🌞 पूरा दिन</option>
-        </select>
-      </div>
-    </div>
-    <div class="fg"><label class="fl">साइट</label>
-      <select class="fi" id="at-site"><option value="">साइट छान्नुस्...</option></select>
-    </div>
-    <div class="fdiv"></div>
-    <div style="font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">कामदार उपस्थिति</div>
-    <div id="at-workers-grid"></div>
-    <div style="font-size:11px;color:var(--tm);margin-bottom:12px">P=उपस्थित &nbsp; A=अनुपस्थित &nbsp; H=आधा दिन &nbsp; बि=बिदा</div>
-    <button class="btn bp" onclick="saveAtt()">हाजिर सेभ गर्नुस्</button>
-    <div style="height:10px"></div>
-    <button class="btn bo" onclick="closeM('m-att')">रद्द</button>
+    <div class="mhandle"></div>
+    <div class="mtit">👷 नयाँ कामदार</div>
+    <div class="fg"><label class="fl">नाम *</label><input class="fi" id="nwn" placeholder="पूरा नाम"></div>
+    <div class="fg"><label class="fl">फोन</label><input type="tel" class="fi" id="nwp" placeholder="98XXXXXXXX"></div>
+    <button class="btn bp" onclick="saveNewW()">💾 थप्नुस्</button>
+    <button class="btn bo" onclick="closeM('mNW')">रद्द</button>
   </div>
 </div>
 
-<!-- ===== MODAL: TEAM ATTENDANCE ===== -->
-<div class="mo" id="m-tatt">
+<!-- MODAL: STATUS -->
+<div class="mo" id="mSt">
   <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">मेरो हाजिर</div>
-    <div class="info-box" id="tatt-member-info">—</div>
-    <div class="fr">
-      <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="ta-date" oninput="onTaDate()"><div id="ta-date-bs" style="font-size:11px;color:var(--p);margin-top:3px;font-weight:600"></div></div>
-      <div class="fg"><label class="fl">खण्ड</label>
-        <select class="fi" id="ta-slot">
-          <option value="morning">🌅 बिहान</option>
-          <option value="afternoon">☀️ दिउँसो</option>
-          <option value="full">🌞 पूरा दिन</option>
-        </select>
-      </div>
+    <div class="mhandle"></div>
+    <div class="mtit">स्थिति बदल्नुस्</div>
+    <input type="hidden" id="stid">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn" style="background:var(--gl);color:#027A48;border:1.5px solid #6EE7B7" onclick="doSt('active')">🟢 सक्रिय — काम चलिरहेको</button>
+      <button class="btn" style="background:var(--ol);color:#B54708;border:1.5px solid #FCD34D" onclick="doSt('hold')">🟠 रोकिएको</button>
+      <button class="btn" style="background:var(--gl);color:#027A48;border:1.5px solid #6EE7B7" onclick="doSt('completed')">✅ सम्पन्न — काम सकियो</button>
+      <button class="btn bo" onclick="closeM('mSt')">रद्द</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: WORKER ATT -->
+<div class="mo" id="mWA">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div class="mtit" id="wa-title">👷 हाजिर दर्ता</div>
+    <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="wa-d" oninput="bsS('wa-d','wa-db')"><div class="fbs" id="wa-db"></div></div>
     <div class="fg"><label class="fl">साइट</label>
-      <select class="fi" id="ta-site"><option value="">साइट छान्नुस्...</option></select>
+      <select class="fi" id="wa-s"><option value="">छान्नुस्...</option></select>
+    </div>
+    <div class="fg"><label class="fl">खण्ड</label>
+      <select class="fi" id="wa-sl">
+        <option value="full">🌞 पूरा दिन</option>
+        <option value="morning">🌅 बिहान मात्र</option>
+        <option value="afternoon">☀️ दिउँसो मात्र</option>
+      </select>
     </div>
     <div class="fg"><label class="fl">स्थिति</label>
-      <select class="fi" id="ta-status">
+      <select class="fi" id="wa-st">
         <option value="P">✅ उपस्थित</option>
         <option value="A">❌ अनुपस्थित</option>
         <option value="H">🔶 आधा दिन</option>
+        <option value="V">🏖️ बिदा</option>
       </select>
     </div>
-    <div class="fr">
-      <div class="fg"><label class="fl">आएको समय</label><input type="time" class="fi" id="ta-in"></div>
-      <div class="fg"><label class="fl">गएको समय</label><input type="time" class="fi" id="ta-out"></div>
+    <div class="fr2">
+      <div class="fg"><label class="fl">आएको समय</label><input type="time" class="fi" id="wa-in"></div>
+      <div class="fg"><label class="fl">गएको समय</label><input type="time" class="fi" id="wa-out"></div>
     </div>
-    <div style="height:6px"></div>
-    <button class="btn bp" onclick="saveTeamAtt()">हाजिर सेभ</button>
-    <div style="height:10px"></div>
-    <button class="btn bo" onclick="closeM('m-tatt')">रद्द</button>
-  </div>
-</div>
-
-<!-- ===== MODAL: STATUS ===== -->
-<div class="mo" id="m-st">
-  <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">स्थिति बदल्नुस्</div>
-    <input type="hidden" id="st-id">
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn" style="background:var(--gl);color:#15803D;border:1.5px solid #86EFAC" onclick="doSt('active')">🟢 सक्रिय</button>
-      <button class="btn" style="background:var(--ol);color:#B45309;border:1.5px solid #FCD34D" onclick="doSt('hold')">🟠 रोकिएको</button>
-      <button class="btn" style="background:var(--pl);color:var(--p2);border:1.5px solid #A5B4FC" onclick="doSt('completed')">✅ सम्पन्न</button>
-      <div style="height:4px"></div>
-      <button class="btn bo" onclick="closeM('m-st')">रद्द</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== MODAL: ADD WORKER ===== -->
-<div class="mo" id="m-wkr">
-  <div class="ms">
-    <div class="mh"></div>
-    <div class="mt">नयाँ कामदार</div>
-    <div class="fg"><label class="fl">नाम *</label><input class="fi" id="wo-n" placeholder="पूरा नाम"></div>
-    <div class="fg"><label class="fl">फोन</label><input type="tel" class="fi" id="wo-p" placeholder="98XXXXXXXX"></div>
-    <div style="height:6px"></div>
-    <button class="btn bp" onclick="saveWkr()">थप्नुस्</button>
-    <div style="height:10px"></div>
-    <button class="btn bo" onclick="closeM('m-wkr')">रद्द</button>
+    <input type="hidden" id="wa-wid"><input type="hidden" id="wa-wn">
+    <button class="btn bp" onclick="saveWA()">💾 हाजिर सेभ</button>
+    <button class="btn bo" onclick="closeM('mWA')">रद्द</button>
   </div>
 </div>
 
 <script>
-// ===== FIREBASE =====
-const fbCfg={apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"};
-firebase.initializeApp(fbCfg);
+// ── FIREBASE ──
+firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});
 const db=firebase.firestore();
 
-// ===== AUTH =====
-const AUTH={AMRIT:'amrit@2082',NIRAN:'niran@2082',SUBEIN:'subein@2082'};
+// ── AUTH ──
+const CREDS={AMRIT:'amrit@2082',NIRAN:'niran@2082',SUBEIN:'subein@2082'};
 let ME=sessionStorage.getItem('anm')||null;
-let selMem=null;
-
-function selMember(m,btn){
-  selMem=m;
-  document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-}
 function doLogin(){
-  if(!selMem){document.getElementById('l-err').textContent='सदस्य छान्नुस्';return}
-  const p=document.getElementById('l-pass').value;
-  if(AUTH[selMem]===p){
-    ME=selMem;
-    sessionStorage.setItem('anm',ME);
-    document.getElementById('login-screen').style.display='none';
-    initApp();
-  } else {
-    document.getElementById('l-err').textContent='गलत पासवर्ड! फेरि प्रयास गर्नुस्';
-    document.getElementById('l-pass').value='';
-  }
+  const u=document.getElementById('lu').value.trim().toUpperCase(),p=document.getElementById('lp').value;
+  if(!CREDS[u]){document.getElementById('lerr').textContent='❌ Username भेटिएन';return}
+  if(CREDS[u]!==p){document.getElementById('lerr').textContent='❌ Password गलत!';return}
+  ME=u;sessionStorage.setItem('anm',ME);
+  document.getElementById('login').style.display='none';boot();
 }
-document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 function doLogout(){
-  if(!confirm('लगआउट गर्ने?'))return;
+  if(!confirm('बाहिर निस्कने?'))return;
   ME=null;sessionStorage.removeItem('anm');
-  document.getElementById('main-nav').style.display='none';
+  document.getElementById('nav').style.display='none';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('login-screen').style.display='flex';
-  selMem=null;
-  document.getElementById('l-pass').value='';
-  document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('login').style.display='flex';
+  document.getElementById('lu').value='';document.getElementById('lp').value='';document.getElementById('lerr').textContent='';
 }
 
-// ===== BS DATE =====
-const BSY={2080:[31,32,31,32,31,30,30,30,29,29,30,31],2081:[31,31,32,32,31,30,30,29,30,29,30,30],2082:[31,31,32,32,31,30,30,30,29,30,30,30],2083:[31,32,31,32,31,30,30,30,29,30,30,30],2084:[31,31,32,32,31,30,30,29,30,30,29,31],2085:[30,32,31,32,31,30,30,30,29,30,30,30],2086:[31,31,32,32,31,30,30,30,29,30,30,30]};
+// ── BS DATE ──
+const BSY={2080:[31,32,31,32,31,30,30,30,29,29,30,31],2081:[31,31,32,32,31,30,30,29,30,29,30,30],2082:[31,31,32,32,31,30,30,30,29,30,30,30],2083:[31,32,31,32,31,30,30,30,29,30,30,30],2084:[31,31,32,32,31,30,30,29,30,30,29,31],2085:[30,32,31,32,31,30,30,30,29,30,30,30]};
 const NM=['बैशाख','जेठ','असार','साउन','भदौ','असोज','कार्तिक','मंसिर','पुष','माघ','फागुन','चैत'];
 const NMS=['बै','जे','अ','सा','भ','अ','का','मं','पु','मा','फा','चै'];
-const REF=new Date(2025,3,14);
+const REF=Date.UTC(2025,3,14);
 function bsMD(y,m){return(BSY[y]||BSY[2082])[m-1]}
+function todStr(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`}
 function adToBS(s){
   if(!s)return null;
-  const diff=Math.round((new Date(s)-REF)/86400000);
-  let y=2082,m=1,d=1,rem=diff;
-  if(rem>=0){while(rem>0){const md=bsMD(y,m)-d;if(rem<=md){d+=rem;rem=0}else{rem-=md+1;m++;d=1;if(m>12){m=1;y++}}}}
-  else{rem=-rem;while(rem>0){if(d>rem){d-=rem;rem=0}else{rem-=d;m--;if(m<1){m=12;y--}d=bsMD(y,m)}}}
-  return{y,m,d}
+  try{const pts=s.split('-');const d=Date.UTC(+pts[0],+pts[1]-1,+pts[2]);let diff=Math.round((d-REF)/86400000);
+  let y=2082,m=1,dd=1,rem=diff;
+  if(rem>=0){while(rem>0){const md=bsMD(y,m)-dd;if(rem<=md){dd+=rem;rem=0}else{rem-=md+1;m++;dd=1;if(m>12){m=1;y++;}}}}
+  else{rem=-rem;while(rem>0){if(dd>rem){dd-=rem;rem=0}else{rem-=dd;m--;if(m<1){m=12;y--}dd=bsMD(y,m);}}}
+  return{y,m,d:dd}}catch{return null}
 }
 function fBS(s){const b=adToBS(s);return b?`${NM[b.m-1]} ${b.d}, ${b.y}`:''}
 function fBSS(s){const b=adToBS(s);return b?`${NMS[b.m-1]} ${b.d}`:''}
-function todStr(){return new Date().toISOString().split('T')[0]}
-function fBSToday(){return fBS(todStr())}
+function bsToday(){return fBS(todStr())}
+function bsS(i,o){const v=document.getElementById(i)?.value;document.getElementById(o).textContent=v?fBS(v):''}
 
-// ===== STATE =====
-let curPage='dash',curSite=null,curDT='ov',curAttTab='workers',expFilter='all',sitFilter='all';
-let allSites=[],allWorkers=[];
+// ── HELPERS ──
+const Rs=n=>{if(n==null||isNaN(n))return'—';n=Number(n);if(Math.abs(n)>=100000)return'Rs.'+(n/100000).toFixed(1)+'L';if(Math.abs(n)>=1000)return'Rs.'+n.toLocaleString('en-IN');return'Rs.'+n};
+const fD=s=>{try{return new Date(s).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}catch{return s||''}};
+const sCV=s=>s.contract_type==='sqft'?(s.sqft||0)*(s.sqft_rate||0):s.contract_type==='daily'?null:s.contract_amount||0;
+const ET={paint:'🎨 रंग',material:'🧱 सामग्री',tools:'🔧 औजार',transport:'🚐 यातायात',petrol:'⛽ पेट्रोल',khaja:'🥤 खाजा',food:'🍱 खाना',advance:'💵 अग्रिम',other:'📦 अन्य'};
+const SN={full:'पूर्ण',labour:'श्रम',sqft:'वर्गफिट',daily:'दैनिक'};
+function toast(m,ok=true){const el=document.getElementById('toast');el.textContent=m;el.style.background=ok?'var(--g)':'var(--r)';el.style.color='#fff';el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2600)}
 
-// ===== HELPERS =====
-const Rs=n=>{if(n===null||n===undefined||isNaN(n))return'—';n=Number(n);if(Math.abs(n)>=100000)return'Rs.'+(n/100000).toFixed(1)+'L';if(Math.abs(n)>=1000)return'Rs.'+n.toLocaleString('en-IN');return'Rs.'+n};
-const fd=d=>{try{return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'})}catch{return d||''}};
-const tod=()=>new Date().toISOString().split('T')[0];
-const siteCV=s=>s.contract_type==='sqft'?(s.sqft||0)*(s.sqft_rate||0):s.contract_type==='daily'?null:s.contract_amount||0;
-function toast(msg,t='ok'){const el=document.getElementById('toast');el.textContent=msg;el.style.background=t==='err'?'var(--r)':t==='ok'?'var(--g)':'var(--p)';el.style.color='#fff';el.style.opacity='1';setTimeout(()=>el.style.opacity='0',2500)}
+// ── STATE ──
+let CUR='home',CS=null,CDT='ov',sFil='all',eFil='all';
+let SITES=[],WKRS=[];let AD=todStr(),ATT={};
 
-// ===== ROUTER =====
-function showPage(p){
+// ── ROUTER ──
+function go(p){
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  ['dash','sites','att','exp','team'].forEach((x,i)=>{if(x===p)document.querySelectorAll('.ni')[i].classList.add('active')});
-  curPage=p;
-  if(p==='dash')loadDash();
-  if(p==='sites')loadSites();
-  if(p==='att')loadAtt();
-  if(p==='exp')loadExp();
-  if(p==='team')loadTeam();
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('active');
+  ['home','sites','workers','att','exp'].forEach((x,i)=>{if(x===p)document.querySelectorAll('.ni')[i].classList.add('on')});
+  // Show team page
+  if(p==='team'){document.getElementById('pg-exp').classList.remove('active');document.getElementById('pg-team').classList.add('active')}
+  CUR=p;
+  if(p==='home')loadHome();else if(p==='sites')loadSites();else if(p==='workers')loadWorkers();
+  else if(p==='att'){AD=todStr();loadAtt();}else if(p==='exp')loadExp();else if(p==='team')loadTeam();
 }
 const openM=id=>document.getElementById(id).classList.add('open');
 const closeM=id=>document.getElementById(id).classList.remove('open');
 document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 
-// ===== DB =====
-async function dGet(col,w1,w2){
-  try{let q=db.collection(col);if(w1)q=q.where(w1[0],w1[1],w1[2]);if(w2)q=q.where(w2[0],w2[1],w2[2]);return(await q.get()).docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.error(e);return[]}
-}
-async function dAdd(col,data){
-  data.created_at=firebase.firestore.FieldValue.serverTimestamp();
-  return(await db.collection(col).add(data)).id;
-}
-async function dUp(col,id,data){await db.collection(col).doc(id).update(data)}
+// ── DB ──
+async function dG(col,w1,w2){try{let q=db.collection(col);if(w1)q=q.where(w1[0],w1[1],w1[2]);if(w2)q=q.where(w2[0],w2[1],w2[2]);return(await q.get()).docs.map(d=>({id:d.id,...d.data()}))}catch(e){console.error(e);return[]}}
+async function dA(col,d){d.ca=firebase.firestore.FieldValue.serverTimestamp();return(await db.collection(col).add(d)).id}
+async function dSet(col,id,d){await db.collection(col).doc(id).set(d,{merge:true})}
+async function dUp(col,id,d){await db.collection(col).doc(id).update(d)}
 
-// ===== DASHBOARD =====
-async function loadDash(){
-  document.getElementById('tb-member').textContent=ME+' | बाहिर';
-  document.getElementById('tb-greet').textContent=`नमस्ते ${ME} 👋`;
-  document.getElementById('tb-bs-date').textContent=fBSToday();
-  document.getElementById('s-bs-date').textContent=fBSToday();
-  document.getElementById('a-bs-date').textContent=fBSToday();
-  document.getElementById('d-att-date').textContent=fBSToday();
+// ── HOME ──
+async function loadHome(){
+  const td=todStr();
+  document.getElementById('dh-av').textContent=ME?ME[0]:'A';
+  document.getElementById('dh-name').textContent=ME||'';
+  const hr=new Date().getHours();
+  document.getElementById('dh-greet').textContent=(hr<12?'Good morning':'hr<17?Good afternoon':'Good evening')+' 👋';
+  document.getElementById('h-sub').textContent='📅 आजको मिति: '+bsToday();
+  document.getElementById('s-date').textContent='📅 '+bsToday();
+  try{
+    const [sites,pays,work,exps,wkrs]=await Promise.all([dG('sites'),dG('payments'),dG('work_entries'),dG('expenses'),dG('workers')]);
+    SITES=sites;WKRS=wkrs;
+    const active=sites.filter(s=>s.status==='active');
+    document.getElementById('h-active').textContent=active.length;
+    let totR=0;pays.forEach(p=>totR+=Number(p.amount||0));
+    document.getElementById('h-recv').textContent=Rs(totR);
+    let totE=0;exps.forEach(e=>totE+=Number(e.amount||0));
+    document.getElementById('h-exp').textContent=Rs(totE);
+    let totL=0;work.forEach(w=>totL+=Number(w.days||0)*Number(w.daily_rate||0));
+    const profit=totR-totL-totE;
+    document.getElementById('h-profit').textContent=Rs(Math.abs(profit));
+    document.getElementById('h-profit').style.color=profit>=0?'var(--g)':'var(--r)';
+    document.getElementById('h-profit-t').textContent=profit>=0?'💹 नाफा':'📉 घाटा';
+    let totCV=0;sites.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
+    document.getElementById('h-pend').textContent=Rs(totCV-totR);
 
-  const [sites,pays,work,exps,wkrs]=await Promise.all([dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('workers')]);
-  allSites=sites;allWorkers=wkrs;
+    const myS=active.filter(s=>s.brought_by===ME);
+    document.getElementById('h-my').innerHTML=myS.length?myS.map(mkSC).join(''):`<div style="font-size:13px;color:var(--tm);padding:8px 0">तपाईंले ल्याएको कुनै सक्रिय साइट छैन</div>`;
 
-  const active=sites.filter(s=>s.status==='active');
-  const done=sites.filter(s=>s.status==='completed');
-  document.getElementById('d-active').textContent=active.length;
-  document.getElementById('d-wkrs').textContent=wkrs.length;
-  document.getElementById('d-total').textContent=sites.length;
-  document.getElementById('d-done').textContent=done.length;
-
-  let totCV=0;sites.forEach(s=>{const v=siteCV(s);if(v)totCV+=v});
-  document.getElementById('d-val').textContent=Rs(totCV);
-  let totR=0;pays.forEach(p=>totR+=Number(p.amount||0));
-  document.getElementById('d-recv').textContent=Rs(totR);
-  let totL=0,totE=0;
-  work.forEach(w=>totL+=Number(w.days||0)*Number(w.daily_rate||0));
-  exps.forEach(e=>totE+=Number(e.amount||0));
-  const profit=totR-totL-totE;
-  document.getElementById('d-profit').textContent=Rs(Math.abs(profit));
-  document.getElementById('d-profit').style.color=profit>=0?'#fff':'#FCA5A5';
-  document.getElementById('d-plab').textContent=profit>=0?'खर्च काटेपछि':'घाटा';
-  document.getElementById('d-pend').textContent=Rs(totCV-totR);
-
-  // My sites
-  const mySites=active.filter(s=>s.brought_by===ME);
-  const mEl=document.getElementById('d-mysites');
-  if(!mySites.length)mEl.innerHTML=`<div style="font-size:12px;color:var(--tm);padding:8px 0">तपाईंले ल्याएको कोई सक्रिय साइट छैन</div>`;
-  else mEl.innerHTML=mySites.map(s=>siteCard(s)).join('');
-
-  // All active
-  const aEl=document.getElementById('d-sites');
-  if(!active.length)aEl.innerHTML=`<div class="empty"><div class="ei">🏗️</div><div class="et">कोई सक्रिय साइट छैन</div></div>`;
-  else aEl.innerHTML=active.filter(s=>s.brought_by!==ME).slice(0,3).map(s=>siteCard(s)).join('');
-
-  // Today's attendance summary
-  const todAtt=await dGet('daily_attendance',['date','==',tod()]);
-  const todTeam=await dGet('team_att',['date','==',tod()]);
-  const attEl=document.getElementById('d-att-summary');
-  if(!todAtt.length&&!todTeam.length){
-    attEl.innerHTML=`<div class="card cp" style="text-align:center;color:var(--tm);font-size:13px">आजको हाजिर अझै भरिएको छैन</div>`;
-  } else {
-    let html=`<div class="card" style="padding:0">`;
-    todTeam.forEach(t=>{
-      html+=`<div class="li"><div class="lic">👤</div><div style="flex:1"><div class="lt2">${t.member}</div><div class="ls2">${t.site_name||'—'} · ${t.slot==='morning'?'बिहान':t.slot==='afternoon'?'दिउँसो':'पूरा दिन'}</div></div><div class="lr"><span style="font-size:13px;font-weight:700;color:${t.status==='P'?'var(--g)':t.status==='A'?'var(--r)':'var(--o)'}">${t.status==='P'?'उपस्थित':t.status==='A'?'अनुपस्थित':'आधा दिन'}</span></div></div>`;
-    });
-    html+=`</div>`;
-    attEl.innerHTML=html;
-  }
+    // Recent transactions
+    const allPays=[...pays].sort((a,b)=>((b.date||'')>(a.date||'')?1:-1)).slice(0,5);
+    const txEl=document.getElementById('h-txs');
+    if(!allPays.length){txEl.innerHTML='<div class="empty"><div class="ei">💰</div><div class="et">कुनै भुक्तानी छैन</div></div>';return}
+    txEl.innerHTML=allPays.map(p=>{
+      const site=sites.find(x=>x.id===p.site_id);
+      return`<div class="tx-row" onclick="if(${JSON.stringify(!!site)})openDet('${p.site_id}')">
+        <div class="tx-ico" style="background:var(--gl)">${p.type==='advance'?'⚡':p.type==='final'?'✅':'📥'}</div>
+        <div class="tx-mid">
+          <div class="tx-name">${{advance:'अग्रिम भुक्तानी',installment:'किस्ता',final:'अन्तिम'}[p.type]}</div>
+          <div class="tx-sub">${site?.name||'—'}${p.note?' · '+p.note:''}</div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-amt pos">+${Rs(p.amount)}</div>
+          <div class="tx-time">${fBS(p.date)||fD(p.date)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){console.error(e)}
 }
 
-// ===== SITE CARD =====
-function siteCard(s){
-  const stripe=s.status==='hold'?'hold':s.status==='completed'?'done':'';
-  const badge=s.status==='active'?'<span class="sbg sb-a">सक्रिय</span>':s.status==='completed'?'<span class="sbg sb-c">सम्पन्न</span>':'<span class="sbg sb-h">रोकिएको</span>';
-  const v=siteCV(s);
-  return `<div class="sc" onclick="openDet('${s.id}')">
-    <div class="sc-st ${stripe}"></div>
+// ── SITE CARD ──
+function mkSC(s){
+  const tc=s.status==='hold'?'h':s.status==='completed'?'c':'a';
+  const badge=s.status==='active'?'<span class="stbadge sta">सक्रिय</span>':s.status==='completed'?'<span class="stbadge stc">सम्पन्न</span>':'<span class="stbadge sth">रोकिएको</span>';
+  const v=sCV(s);
+  return`<div class="sc" onclick="openDet('${s.id}')">
+    <div class="sc-stripe ${tc}"></div>
     <div class="sc-body">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px"><div class="sc-name">${s.name}</div>${badge}</div>
-      <div class="sc-cli">👤 ${s.client_name}${s.location?' · 📍'+s.location:''}</div>
-      <div style="font-size:11px;color:var(--tm);margin-bottom:7px">ल्याउने: <b style="color:var(--p)">${s.brought_by}</b>${s.start_date?' · '+fBSS(s.start_date):''}${s.days_taken?' · ⏱️'+s.days_taken+' दिन':''}</div>
-      <div class="sc-ft"><span class="ctag">${{full:'पूर्ण',labour:'श्रम',sqft:'वर्गफिट',daily:'दैनिक'}[s.contract_type]||s.contract_type}</span>${v!=null?`<span class="sc-amt">${Rs(v)}</span>`:'<span style="font-size:12px;color:var(--tm)">दैनिक</span>'}</div>
+      <div class="sc-row1"><div class="sc-nm">${s.name}</div>${badge}</div>
+      <div class="sc-cli">👤 ${s.client_name}${s.location?' &nbsp;·&nbsp; 📍'+s.location:''}</div>
+      <div style="font-size:11px;color:var(--tm);margin-bottom:8px">ल्याउने: <b style="color:var(--p)">${s.brought_by}</b>${s.start_date?' &nbsp;·&nbsp; '+fBSS(s.start_date):''}${s.days_taken?' &nbsp;·&nbsp; ⏱️'+s.days_taken+'दिन':''}</div>
+      <div class="sc-foot"><span class="sc-tag">${SN[s.contract_type]||s.contract_type}</span>${v!=null?`<span class="sc-amt">${Rs(v)}</span>`:'<span style="font-size:12px;color:var(--tm)">दैनिक</span>'}</div>
     </div>
   </div>`;
 }
 
-// ===== SITES =====
+// ── SITES ──
 async function loadSites(){
-  document.getElementById('s-bs-date').textContent=fBSToday();
-  document.getElementById('sites-list').innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  allSites=await dGet('sites');
-  allSites.sort((a,b)=>(b.created_at?.seconds||0)-(a.created_at?.seconds||0));
-  renderSites();
+  document.getElementById('s-list').innerHTML='<div class="ld">लोड...</div>';
+  SITES=await dG('sites');SITES.sort((a,b)=>(b.ca?.seconds||0)-(a.ca?.seconds||0));renderSites();
 }
-function filterS(f,btn){sitFilter=f;document.querySelectorAll('.ft').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderSites()}
+function fSite(f,btn){sFil=f;document.querySelectorAll('#pg-sites .ft').forEach(t=>t.classList.remove('on'));btn.classList.add('on');renderSites()}
 function renderSites(){
-  const list=sitFilter==='all'?allSites:allSites.filter(s=>s.status===sitFilter);
-  const el=document.getElementById('sites-list');
-  if(!list.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><div class="et">कुनै साइट भेटिएन</div></div>';return}
-  el.innerHTML=list.map(s=>siteCard(s)).join('');
+  const list=sFil==='all'?SITES:SITES.filter(s=>s.status===sFil);
+  document.getElementById('s-list').innerHTML=list.length?list.map(mkSC).join(''):`<div class="empty"><div class="ei">📋</div><div class="et">कुनै साइट भेटिएन</div></div>`;
 }
-
-// ===== SITE MODAL =====
-function openAddSite(){
+function openSM(){
   ['sn','scl','sph','sloc','sa','ssq','srt','snote'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
   document.getElementById('sct').value='full';document.getElementById('sst').value='active';
-  document.getElementById('ssd').value=tod();document.getElementById('sed').value='';
-  document.getElementById('ssd-bs').textContent=fBS(tod());document.getElementById('sed-bs').textContent='';
-  document.getElementById('sby').value='AMRIT';
-  onCT();openM('m-site');
+  document.getElementById('ssd').value=todStr();document.getElementById('ssdb').textContent=bsToday();
+  document.getElementById('sed').value='';document.getElementById('sedb').textContent='';
+  document.getElementById('sby').value=ME||'AMRIT';onCT();openM('mS');
 }
-function onCT(){
-  const t=document.getElementById('sct').value;
-  document.getElementById('cg-a').style.display=(t==='full'||t==='labour')?'block':'none';
-  document.getElementById('cg-s').style.display=t==='sqft'?'block':'none';
-  document.getElementById('cg-d').style.display=t==='daily'?'block':'none';
-}
-function calcSQ(){const sq=Number(document.getElementById('ssq').value||0),rt=Number(document.getElementById('srt').value||0);document.getElementById('sq-note').textContent='जम्मा: '+Rs(sq*rt)}
-document.getElementById('ssd').addEventListener('input',e=>document.getElementById('ssd-bs').textContent=fBS(e.target.value));
-document.getElementById('sed').addEventListener('input',e=>document.getElementById('sed-bs').textContent=fBS(e.target.value));
+function onCT(){const t=document.getElementById('sct').value;document.getElementById('cg-a').style.display=(t==='full'||t==='labour')?'block':'none';document.getElementById('cg-s').style.display=t==='sqft'?'block':'none'}
+function cSQ(){document.getElementById('sq-r').textContent='जम्मा: '+Rs((+document.getElementById('ssq').value||0)*(+document.getElementById('srt').value||0))}
 async function saveSite(){
-  const name=document.getElementById('sn').value.trim(),client=document.getElementById('scl').value.trim();
-  if(!name||!client){toast('साइट नाम र ग्राहक अनिवार्य','err');return}
-  const t=document.getElementById('sct').value;
-  const data={name,client_name:client,client_phone:document.getElementById('sph').value.trim(),location:document.getElementById('sloc').value.trim(),contract_type:t,brought_by:document.getElementById('sby').value,status:document.getElementById('sst').value,start_date:document.getElementById('ssd').value,end_date:document.getElementById('sed').value,notes:document.getElementById('snote').value.trim(),bs_start:fBS(document.getElementById('ssd').value)};
-  if(t==='full'||t==='labour')data.contract_amount=Number(document.getElementById('sa').value||0);
-  else if(t==='sqft'){data.sqft=Number(document.getElementById('ssq').value||0);data.sqft_rate=Number(document.getElementById('srt').value||0);data.contract_amount=data.sqft*data.sqft_rate}
-  await dAdd('sites',data);closeM('m-site');toast('साइट सेभ भयो ✓');loadSites();if(curPage==='dash')loadDash();
+  const nm=document.getElementById('sn').value.trim(),cl=document.getElementById('scl').value.trim();
+  if(!nm||!cl){toast('साइट नाम र ग्राहक आवश्यक',false);return}
+  const t=document.getElementById('sct').value,ssd=document.getElementById('ssd').value;
+  const d={name:nm,client_name:cl,client_phone:document.getElementById('sph').value.trim(),location:document.getElementById('sloc').value.trim(),contract_type:t,brought_by:document.getElementById('sby').value,status:document.getElementById('sst').value,start_date:ssd,bs_start:fBS(ssd),end_date:document.getElementById('sed').value,notes:document.getElementById('snote').value.trim()};
+  if(t==='full'||t==='labour')d.contract_amount=+document.getElementById('sa').value||0;
+  else if(t==='sqft'){d.sqft=+document.getElementById('ssq').value||0;d.sqft_rate=+document.getElementById('srt').value||0;d.contract_amount=d.sqft*d.sqft_rate}
+  await dA('sites',d);closeM('mS');toast('✅ साइट सेभ भयो');loadSites();
 }
 
-// ===== SITE DETAIL =====
+// ── SITE DETAIL ──
 function openDet(id){
-  curSite=id;const s=allSites.find(x=>x.id===id);
-  if(s){document.getElementById('d-name').textContent=s.name;document.getElementById('d-meta').textContent=s.client_name+(s.location?' · '+s.location:'')+(s.bs_start?' · '+s.bs_start:'')}
-  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.dtab')[0].classList.add('active');
-  curDT='ov';document.getElementById('det').classList.add('open');
-  document.getElementById('main-nav').style.display='none';loadDT('ov');
+  CS=id;const s=SITES.find(x=>x.id===id);
+  if(s){document.getElementById('det-nm').textContent=s.name;document.getElementById('det-mt').textContent=`👤 ${s.client_name}${s.location?' · 📍'+s.location:''}${s.bs_start?' · '+s.bs_start:''}`}
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.dtab')[0].classList.add('on');
+  CDT='ov';document.getElementById('det').classList.add('open');document.getElementById('nav').style.display='none';loadDT('ov');
 }
-function closeDet(){document.getElementById('det').classList.remove('open');document.getElementById('main-nav').style.display='flex';curSite=null}
-function showDT(t,btn){document.querySelectorAll('.dtab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');curDT=t;loadDT(t)}
-function loadDT(t){if(t==='ov')loadOv();else if(t==='pay')loadPay();else if(t==='wk')loadWage();else if(t==='ex')loadSiteExp();else if(t==='wr')loadSiteWkrs()}
+function closeDet(){document.getElementById('det').classList.remove('open');document.getElementById('nav').style.display='flex'}
+function dTab(t,btn){document.querySelectorAll('.dtab').forEach(x=>x.classList.remove('on'));btn.classList.add('on');CDT=t;loadDT(t)}
+function loadDT(t){if(t==='ov')loadOv();else if(t==='pay')loadPays();else if(t==='wg')loadWages();else if(t==='ex')loadSEx();else if(t==='at')loadSAtt()}
 
 async function loadOv(){
-  const el=document.getElementById('dc');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const s=allSites.find(x=>x.id===curSite);if(!s)return;
-  const [pays,work,exps]=await Promise.all([dGet('payments',['site_id','==',curSite]),dGet('work_entries',['site_id','==',curSite]),dGet('expenses',['site_id','==',curSite])]);
+  const el=document.getElementById('dcont');el.innerHTML='<div class="ld">लोड...</div>';
+  const s=SITES.find(x=>x.id===CS);if(!s)return;
+  const [pays,work,exps]=await Promise.all([dG('payments',['site_id','==',CS]),dG('work_entries',['site_id','==',CS]),dG('expenses',['site_id','==',CS])]);
   const totR=pays.reduce((a,p)=>a+Number(p.amount||0),0);
   const totL=work.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
   const totA=work.reduce((a,w)=>a+Number(w.advance_given||0),0);
   const totE=exps.reduce((a,e)=>a+Number(e.amount||0),0);
-  const sv=siteCV(s);const profit=totR-totL-totE;const share=profit/3;
+  const sv=sCV(s);const profit=totR-totL-totE;
   el.innerHTML=`<div style="padding:14px">
-    <div class="card cp" style="margin-bottom:12px">
-      ${sv!=null?`<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="color:var(--tm);font-size:13px">ठेक्का मूल्य</span><span style="font-weight:800;font-size:18px;color:var(--p)">${Rs(sv)}</span></div>`:''}
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:var(--tm);font-size:13px">ठेक्का प्रकार</span><span style="font-weight:700">${{full:'पूर्ण ठेक्का',labour:'श्रम मात्र',sqft:'वर्गफिट',daily:'दैनिक ज्याला'}[s.contract_type]}</span></div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:${s.client_phone?'8':'0'}px"><span style="color:var(--tm);font-size:13px">ल्याउने</span><span style="font-weight:700;color:var(--p)">${s.brought_by}</span></div>
-      ${s.client_phone?`<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:var(--tm);font-size:13px">ग्राहक फोन</span><span style="font-weight:700">📞 ${s.client_phone}</span></div>`:''}
-      ${s.bs_start?`<div style="display:flex;justify-content:space-between;margin-bottom:0"><span style="color:var(--tm);font-size:13px">सुरु मिति</span><span style="font-weight:700;color:var(--p)">${s.bs_start}</span></div>`:''}
-      ${s.days_taken?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--br);display:flex;justify-content:space-between"><span style="color:var(--tm);font-size:13px">काम गरेको दिन</span><span style="font-weight:800;color:var(--g)">⏱️ ${s.days_taken} दिन</span></div>`:''}
+    <div class="ic">
+      ${sv!=null?`<div class="ic-row"><span class="ic-l">💰 ठेक्का मूल्य</span><span class="ic-v" style="color:var(--p);font-size:17px">${Rs(sv)}</span></div>`:''}
+      <div class="ic-row"><span class="ic-l">📁 प्रकार</span><span class="ic-v">${SN[s.contract_type]}</span></div>
+      <div class="ic-row"><span class="ic-l">🤝 ल्याउने</span><span class="ic-v" style="color:var(--p)">${s.brought_by}</span></div>
+      ${s.client_phone?`<div class="ic-row"><span class="ic-l">📞 ग्राहक</span><span class="ic-v">${s.client_phone}</span></div>`:''}
+      ${s.bs_start?`<div class="ic-row"><span class="ic-l">📅 सुरु</span><span class="ic-v" style="color:var(--p)">${s.bs_start}</span></div>`:''}
+      ${s.days_taken?`<div class="ic-row"><span class="ic-l">⏱️ काम गरेको</span><span class="ic-v" style="color:var(--g)">${s.days_taken} दिन</span></div>`:''}
     </div>
     <div class="pbox">
-      <div class="pr"><span style="color:var(--tm)">💰 ग्राहकबाट</span><span style="color:var(--g);font-weight:700">${Rs(totR)}</span></div>
-      <div class="pr"><span style="color:var(--tm)">👷 ज्याला</span><span style="color:var(--r);font-weight:700">-${Rs(totL)}</span></div>
-      <div class="pr"><span style="color:var(--tm)">💸 खर्च</span><span style="color:var(--r);font-weight:700">-${Rs(totE)}</span></div>
-      ${sv!=null?`<div class="pr"><span style="color:var(--tm)">⏳ बाँकी</span><span style="color:var(--o);font-weight:700">${Rs(sv-totR)}</span></div>`:''}
-      ${totA>0?`<div class="pr"><span style="color:var(--tm)">⚡ कामदार अग्रिम</span><span style="color:var(--o);font-weight:700">${Rs(totA)}</span></div>`:''}
-      <div class="pd"></div>
-      <div class="pr"><span style="font-weight:700;font-size:15px">कुल नाफा</span><span style="font-size:22px;font-weight:800;color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
-      <div class="pr" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--br2)"><span style="font-size:12px;color:var(--tm)">हरेकको हिस्सा (÷३)</span><span style="font-weight:800;color:var(--p);font-size:15px">${Rs(Math.abs(share))}</span></div>
+      <div class="prow"><span class="pl2">💰 ग्राहकबाट</span><span style="color:var(--g);font-weight:800">${Rs(totR)}</span></div>
+      <div class="prow"><span class="pl2">👷 ज्याला</span><span style="color:var(--r);font-weight:800">– ${Rs(totL)}</span></div>
+      <div class="prow"><span class="pl2">💸 खर्च</span><span style="color:var(--r);font-weight:800">– ${Rs(totE)}</span></div>
+      ${sv!=null?`<div class="prow"><span class="pl2">⏳ बाँकी</span><span style="color:var(--o);font-weight:800">${Rs(sv-totR)}</span></div>`:''}
+      ${totA>0?`<div class="prow"><span class="pl2">💵 कामदार अग्रिम</span><span style="color:var(--o);font-weight:800">${Rs(totA)}</span></div>`:''}
+      <div class="pdiv"></div>
+      <div class="prow"><span style="font-size:15px;font-weight:800">📈 कुल नाफा</span><span style="font-size:26px;font-weight:800;color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
+      <div class="prow" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--plb)"><span style="font-size:12px;color:var(--tm)">👥 हरेकको हिस्सा (÷३)</span><span style="font-size:18px;font-weight:800;color:var(--p)">${Rs(Math.abs(profit/3))}</span></div>
     </div>
-    <button class="btn bo" onclick="document.getElementById('st-id').value='${curSite}';openM('m-st')">🔄 स्थिति बदल्नुस्</button>
-    ${s.notes?`<div style="margin-top:10px;background:var(--bl);padding:12px;border-radius:var(--rx);font-size:12px;color:var(--b2)">📝 ${s.notes}</div>`:''}
+    <button class="btn" style="background:var(--pl);color:var(--p);border:1.5px solid var(--plb)" onclick="document.getElementById('stid').value='${CS}';openM('mSt')">🔄 स्थिति बदल्नुस्</button>
+    ${s.notes?`<div style="background:var(--bl);padding:12px;border-radius:12px;font-size:13px;color:var(--teal)">📝 ${s.notes}</div>`:''}
   </div>`;
 }
 
-async function loadPay(){
-  const el=document.getElementById('dc');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const pays=await dGet('payments',['site_id','==',curSite]);
-  pays.sort((a,b)=>(b.created_at?.seconds||0)-(a.created_at?.seconds||0));
+async function loadPays(){
+  const el=document.getElementById('dcont');el.innerHTML='<div class="ld">लोड...</div>';
+  const pays=await dG('payments',['site_id','==',CS]);
+  pays.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
   const tot=pays.reduce((a,p)=>a+Number(p.amount||0),0);
   el.innerHTML=`<div style="padding:14px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div><div style="font-size:11px;color:var(--tm)">जम्मा प्राप्त</div><div style="font-size:26px;font-weight:800;color:var(--g)">${Rs(tot)}</div></div>
-      <button class="btn bp bs" onclick="openPayM()">+ थप्नुस्</button>
+      <div><div style="font-size:12px;color:var(--tm)">जम्मा प्राप्त</div><div style="font-size:30px;font-weight:800;color:var(--g)">${Rs(tot)}</div></div>
+      <button class="btn bp bsm" onclick="openPayM()">+ थप्नुस्</button>
     </div>
-    <div class="card" style="padding:0">
-      ${!pays.length?'<div class="empty"><div class="ei">💰</div><div class="et">भुक्तानी रेकर्ड छैन</div></div>':pays.map(p=>`
-        <div class="li"><div class="lic">${p.type==='advance'?'⚡':p.type==='final'?'✅':'📥'}</div>
-        <div style="flex:1"><div class="lt2">${{advance:'⚡ अग्रिम',installment:'📥 किस्ता',final:'✅ अन्तिम'}[p.type]||p.type}</div><div class="ls2">${fBS(p.date)||fd(p.date)}${p.note?' · '+p.note:''}</div></div>
-        <div class="lr"><div class="apos">${Rs(p.amount)}</div></div></div>`).join('')}
+    <div class="ic" style="padding:0">
+      ${!pays.length?'<div class="empty"><div class="ei">💰</div><div class="et">कुनै भुक्तानी छैन</div></div>':pays.map(p=>`
+        <div class="li"><div class="li-i">${p.type==='advance'?'⚡':p.type==='final'?'✅':'📥'}</div>
+        <div style="flex:1"><div class="li-t">${{advance:'अग्रिम',installment:'किस्ता',final:'अन्तिम'}[p.type]}</div><div class="li-s">${fBS(p.date)||fD(p.date)}${p.note?' · '+p.note:''}</div></div>
+        <div class="li-r pos">${Rs(p.amount)}</div></div>`).join('')}
     </div>
   </div>`;
 }
-
 function openPayM(){
-  const s=allSites.find(x=>x.id===curSite);
-  document.getElementById('pm-lbl').textContent=s?'📍 '+s.name:'';
-  document.getElementById('pm-a').value='';document.getElementById('pm-t').value='advance';
-  document.getElementById('pm-d').value=tod();document.getElementById('pm-d-bs').textContent=fBS(tod());
-  document.getElementById('pm-n').value='';openM('m-pay');
+  const s=SITES.find(x=>x.id===CS);document.getElementById('pay-lbl').textContent=s?'📍 '+s.name:'';
+  document.getElementById('pa').value='';document.getElementById('pt').value='advance';
+  document.getElementById('pd').value=todStr();document.getElementById('pdb').textContent=bsToday();
+  document.getElementById('pn').value='';openM('mPay');
 }
-document.getElementById('pm-d').addEventListener('input',e=>document.getElementById('pm-d-bs').textContent=fBS(e.target.value));
 async function savePay(){
-  const amt=Number(document.getElementById('pm-a').value);if(!amt){toast('रकम राख्नुस्','err');return}
-  await dAdd('payments',{site_id:curSite,amount:amt,type:document.getElementById('pm-t').value,date:document.getElementById('pm-d').value,bs_date:fBS(document.getElementById('pm-d').value),note:document.getElementById('pm-n').value});
-  closeM('m-pay');toast('भुक्तानी सेभ भयो ✓');loadPay();
+  const amt=+document.getElementById('pa').value;if(!amt){toast('रकम राख्नुस्',false);return}
+  const d=document.getElementById('pd').value;
+  await dA('payments',{site_id:CS,amount:amt,type:document.getElementById('pt').value,date:d,bs_date:fBS(d),note:document.getElementById('pn').value});
+  closeM('mPay');toast('✅ भुक्तानी सेभ');loadPays();
 }
 
-async function loadWage(){
-  const el=document.getElementById('dc');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const entries=await dGet('work_entries',['site_id','==',curSite]);
-  entries.sort((a,b)=>(b.created_at?.seconds||0)-(a.created_at?.seconds||0));
-  const totD=entries.reduce((a,e)=>a+Number(e.days||0),0);
-  const totL=entries.reduce((a,e)=>a+Number(e.days||0)*Number(e.daily_rate||0),0);
-  const totA=entries.reduce((a,e)=>a+Number(e.advance_given||0),0);
+async function loadWages(){
+  const el=document.getElementById('dcont');el.innerHTML='<div class="ld">लोड...</div>';
+  const e=await dG('work_entries',['site_id','==',CS]);
+  e.sort((a,b)=>((b.date_from||'')>(a.date_from||'')?1:-1));
+  const totD=e.reduce((a,x)=>a+Number(x.days||0),0);
+  const totL=e.reduce((a,x)=>a+Number(x.days||0)*Number(x.daily_rate||0),0);
+  const totA=e.reduce((a,x)=>a+Number(x.advance_given||0),0);
   el.innerHTML=`<div style="padding:14px">
-    <div class="dsr">
-      <div class="ds"><div class="ds-v" style="color:var(--p)">${totD}</div><div class="ds-l">जम्मा दिन</div></div>
-      <div class="ds"><div class="ds-v" style="color:var(--r)">${Rs(totL)}</div><div class="ds-l">ज्याला</div></div>
-      <div class="ds"><div class="ds-v" style="color:var(--o)">${Rs(totA)}</div><div class="ds-l">अग्रिम</div></div>
-      <div class="ds"><div class="ds-v" style="color:var(--b)">${Rs(totL-totA)}</div><div class="ds-l">बाँकी</div></div>
+    <div class="dsrow">
+      <div class="dsc"><div class="dsc-v" style="color:var(--p)">${totD}</div><div class="dsc-l">दिन</div></div>
+      <div class="dsc"><div class="dsc-v" style="color:var(--r)">${Rs(totL)}</div><div class="dsc-l">ज्याला</div></div>
+      <div class="dsc"><div class="dsc-v" style="color:var(--o)">${Rs(totA)}</div><div class="dsc-l">अग्रिम</div></div>
+      <div class="dsc"><div class="dsc-v" style="color:var(--b)">${Rs(totL-totA)}</div><div class="dsc-l">बाँकी</div></div>
     </div>
-    <div style="text-align:right;margin-bottom:12px"><button class="btn bp bs" onclick="openWageM()">+ ज्याला थप्नुस्</button></div>
-    <div class="card" style="padding:0">
-      ${!entries.length?'<div class="empty"><div class="ei">👷</div><div class="et">ज्याला रेकर्ड छैन</div></div>':entries.map(e=>{
-        const earn=Number(e.days||0)*Number(e.daily_rate||0);const bal=earn-Number(e.advance_given||0);
-        return `<div class="li"><div class="lic">👷</div><div style="flex:1"><div class="lt2">${e.worker_name}</div><div class="ls2">${e.days} दिन × Rs.${e.daily_rate}${e.bs_from?' · '+e.bs_from:''}</div>${e.advance_given>0?`<div style="font-size:10px;color:var(--o)">अग्रिम: ${Rs(e.advance_given)}</div>`:''}</div><div class="lr"><div style="font-weight:700;font-size:13px">${Rs(earn)}</div><div style="font-size:11px;color:var(--b)">बाँकी: ${Rs(bal)}</div></div></div>`;
+    <div style="text-align:right;margin-bottom:12px"><button class="btn bp bsm" onclick="openWgM()">+ ज्याला थप्नुस्</button></div>
+    <div class="ic" style="padding:0">
+      ${!e.length?'<div class="empty"><div class="ei">👷</div><div class="et">ज्याला रेकर्ड छैन</div></div>':e.map(x=>{
+        const earn=Number(x.days||0)*Number(x.daily_rate||0);
+        return`<div class="li"><div class="li-i">👷</div><div style="flex:1"><div class="li-t">${x.worker_name}</div><div class="li-s">${x.days}दिन × Rs.${x.daily_rate}${x.bs_from?' · '+x.bs_from:''}</div>${x.advance_given>0?`<div style="font-size:11px;color:var(--o)">अग्रिम: ${Rs(x.advance_given)} · बाँकी: ${Rs(earn-x.advance_given)}</div>`:''}</div><div class="li-r"><div style="font-weight:800;font-size:14px">${Rs(earn)}</div></div></div>`;
       }).join('')}
     </div>
   </div>`;
 }
-
-async function openWageM(){
-  const s=allSites.find(x=>x.id===curSite);
-  document.getElementById('wg-lbl').textContent=s?'📍 '+s.name:'';
-  allWorkers=await dGet('workers');
-  const sel=document.getElementById('wg-wk');
-  sel.innerHTML=`<option value="">छान्नुस्...</option>${allWorkers.map(w=>`<option value="${w.id}">${w.name}${w.phone?' · '+w.phone:''}</option>`).join('')}<option value="__new__">+ नयाँ कामदार</option>`;
-  ['wg-d','wg-r','wg-adv'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('wg-fd').value=tod();document.getElementById('wg-fd-bs').textContent=fBS(tod());
-  document.getElementById('wg-td').value='';document.getElementById('wg-note').value='';
-  document.getElementById('wg-new').style.display='none';
-  document.getElementById('wg-earn').textContent='कुल कमाइ: Rs. 0';
-  document.getElementById('wg-bal').textContent='बाँकी: Rs. 0';
-  openM('m-wage');
+async function openWgM(){
+  const s=SITES.find(x=>x.id===CS);document.getElementById('wg-lbl').textContent=s?'📍 '+s.name:'';
+  WKRS=await dG('workers');
+  const sel=document.getElementById('wgw');
+  sel.innerHTML=`<option value="">छान्नुस्...</option>${WKRS.map(w=>`<option value="${w.id}">${w.name}${w.phone?' · '+w.phone:''}</option>`).join('')}<option value="__new__">+ नयाँ कामदार</option>`;
+  ['wgd','wgr','wga'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('wgfd').value=todStr();document.getElementById('wgfdb').textContent=bsToday();
+  document.getElementById('wgtd').value='';document.getElementById('wg-new').style.display='none';
+  document.getElementById('wg-earn').textContent='कुल: Rs. 0';document.getElementById('wg-bal').textContent='बाँकी: Rs. 0';
+  openM('mWg');
 }
-document.getElementById('wg-fd').addEventListener('input',e=>document.getElementById('wg-fd-bs').textContent=fBS(e.target.value));
-function onWkSel(){document.getElementById('wg-new').style.display=document.getElementById('wg-wk').value==='__new__'?'block':'none'}
-function calcW(){const d=Number(document.getElementById('wg-d').value||0),r=Number(document.getElementById('wg-r').value||0),a=Number(document.getElementById('wg-adv').value||0);document.getElementById('wg-earn').textContent='कुल कमाइ: '+Rs(d*r);document.getElementById('wg-bal').textContent='बाँकी: '+Rs(d*r-a)}
+function onWS(){document.getElementById('wg-new').style.display=document.getElementById('wgw').value==='__new__'?'block':'none'}
+function cWG(){const d=+document.getElementById('wgd').value||0,r=+document.getElementById('wgr').value||0,a=+document.getElementById('wga').value||0;document.getElementById('wg-earn').textContent='कुल: '+Rs(d*r);document.getElementById('wg-bal').textContent='बाँकी: '+Rs(d*r-a)}
 async function saveWage(){
-  const days=Number(document.getElementById('wg-d').value),rate=Number(document.getElementById('wg-r').value);
-  if(!days||!rate){toast('दिन र ज्याला राख्नुस्','err');return}
-  let wId=document.getElementById('wg-wk').value,wName='';
-  if(wId==='__new__'){const nm=document.getElementById('wg-nm').value.trim();if(!nm){toast('कामदारको नाम राख्नुस्','err');return}wId=await dAdd('workers',{name:nm,phone:document.getElementById('wg-ph').value.trim()});wName=nm;}
-  else if(wId){const w=allWorkers.find(x=>x.id===wId);wName=w?w.name:'';}
-  else{toast('कामदार छान्नुस्','err');return}
-  const fd_v=document.getElementById('wg-fd').value;
-  await dAdd('work_entries',{site_id:curSite,worker_id:wId,worker_name:wName,days,daily_rate:rate,advance_given:Number(document.getElementById('wg-adv').value||0),date_from:fd_v,bs_from:fBS(fd_v),date_to:document.getElementById('wg-td').value,note:document.getElementById('wg-note').value});
-  closeM('m-wage');toast('ज्याला सेभ भयो ✓');loadWage();
+  const days=+document.getElementById('wgd').value,rate=+document.getElementById('wgr').value;
+  if(!days||!rate){toast('दिन र ज्याला राख्नुस्',false);return}
+  let wId=document.getElementById('wgw').value,wName='';
+  if(wId==='__new__'){const nm=document.getElementById('wgnm').value.trim();if(!nm){toast('नाम',false);return}wId=await dA('workers',{name:nm,phone:document.getElementById('wgph').value.trim()});wName=nm;}
+  else if(wId){wName=WKRS.find(x=>x.id===wId)?.name||'';}
+  else{toast('कामदार छान्नुस्',false);return}
+  const fd=document.getElementById('wgfd').value;
+  await dA('work_entries',{site_id:CS,worker_id:wId,worker_name:wName,days,daily_rate:rate,advance_given:+document.getElementById('wga').value||0,date_from:fd,bs_from:fBS(fd),date_to:document.getElementById('wgtd').value});
+  closeM('mWg');toast('✅ ज्याला सेभ');loadWages();
 }
 
-async function loadSiteExp(){
-  const el=document.getElementById('dc');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const exps=await dGet('expenses',['site_id','==',curSite]);
-  exps.sort((a,b)=>(b.created_at?.seconds||0)-(a.created_at?.seconds||0));
+async function loadSEx(){
+  const el=document.getElementById('dcont');el.innerHTML='<div class="ld">लोड...</div>';
+  const exps=await dG('expenses',['site_id','==',CS]);
+  exps.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
   const tot=exps.reduce((a,e)=>a+Number(e.amount||0),0);
-  const ECATS={paint:'🎨 रंग',material:'🧱 सामग्री',tools:'🔧 औजार',transport:'🚐 यातायात',petrol:'⛽ पेट्रोल',khaja:'🥤 खाजा',food:'🍱 खाना',other:'📦 अन्य'};
   el.innerHTML=`<div style="padding:14px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div><div style="font-size:11px;color:var(--tm)">जम्मा खर्च</div><div style="font-size:26px;font-weight:800;color:var(--r)">${Rs(tot)}</div></div>
-      <button class="btn bp bs" onclick="openSiteExpM()">+ थप्नुस्</button>
+      <div><div style="font-size:12px;color:var(--tm)">जम्मा खर्च</div><div style="font-size:30px;font-weight:800;color:var(--r)">${Rs(tot)}</div></div>
+      <button class="btn bp bsm" onclick="openSEMx()">+ खर्च थप्नुस्</button>
     </div>
-    <div class="card" style="padding:0">
-      ${!exps.length?'<div class="empty"><div class="ei">💸</div><div class="et">खर्च रेकर्ड छैन</div></div>':exps.map(e=>`
-        <div class="li"><div class="lic">${(ECATS[e.category]||'📦').split(' ')[0]}</div>
-        <div style="flex:1"><div class="lt2">${e.note||(ECATS[e.category]||e.category)}</div><div class="ls2">${fBS(e.date)||fd(e.date)} · ${e.paid_by}ले तिर्यो</div></div>
-        <div class="lr"><div class="aneg">${Rs(e.amount)}</div></div></div>`).join('')}
-    </div>
-  </div>`;
-}
-
-function openSiteExpM(){
-  const s=allSites.find(x=>x.id===curSite);
-  document.getElementById('ex-lbl').textContent=s?'📍 '+s.name:'';
-  populateSiteSel('ex-site',curSite);
-  document.getElementById('ex-a').value='';document.getElementById('ex-d').value=tod();
-  document.getElementById('ex-d-bs').textContent=fBS(tod());document.getElementById('ex-note').value='';
-  document.getElementById('ex-cat').value='paint';document.getElementById('ex-by').value='AMRIT';
-  openM('m-exp');
-}
-
-async function loadSiteWkrs(){
-  const el=document.getElementById('dc');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  allWorkers=await dGet('workers');
-  const attRecs=await dGet('daily_attendance',['site_id','==',curSite]);
-  el.innerHTML=`<div style="padding:14px">
-    <div style="text-align:right;margin-bottom:12px"><button class="btn bp bs" onclick="openM('m-wkr')">+ कामदार थप्नुस्</button></div>
-    <div class="card" style="padding:0">
-      ${!allWorkers.length?'<div class="empty"><div class="ei">👷</div><div class="et">कोई कामदार छैन</div></div>':allWorkers.map(w=>{
-        const myRecs=attRecs.filter(r=>r.entries?.some(e=>e.wid===w.id));
-        const totD=myRecs.reduce((a,r)=>{const e=r.entries?.find(x=>x.wid===w.id);return a+(e&&e.status==='P'?1:e&&e.status==='H'?.5:0)},0);
-        return `<div class="li"><div class="lic">👷</div><div style="flex:1"><div class="lt2">${w.name}</div>${w.phone?`<div class="ls2">📞 ${w.phone}</div>`:''}</div><div class="lr"><div style="font-size:12px;color:var(--p);font-weight:700">${totD} दिन</div><div style="font-size:10px;color:var(--tm)">यो साइटमा</div></div></div>`;
-      }).join('')}
+    <div class="ic" style="padding:0">
+      ${!exps.length?'<div class="empty"><div class="ei">💸</div><div class="et">खर्च छैन</div></div>':exps.map(e=>`
+        <div class="li"><div class="li-i">${ET[e.category]?.split(' ')[0]||'📦'}</div>
+        <div style="flex:1"><div class="li-t">${e.note||ET[e.category]||e.category}</div><div class="li-s">${fBS(e.date)||fD(e.date)} · ${e.paid_by}</div></div>
+        <div class="li-r neg">${Rs(e.amount)}</div></div>`).join('')}
     </div>
   </div>`;
 }
+function openSEMx(){populateES(CS);document.getElementById('ea').value='';document.getElementById('ed').value=todStr();document.getElementById('edb').textContent=bsToday();document.getElementById('en').value='';openM('mExp')}
 
-// ===== STATUS =====
+async function loadSAtt(){
+  const el=document.getElementById('dcont');el.innerHTML='<div class="ld">लोड...</div>';
+  const recs=await dG('attendance',['site_id','==',CS]);
+  recs.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
+  if(!recs.length){el.innerHTML='<div class="empty"><div class="ei">✅</div><div class="et">यस साइटमा हाजिर रेकर्ड छैन</div></div>';return}
+  let html='<div style="padding:14px">';
+  recs.forEach(r=>{
+    html+=`<div class="ic" style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <div><div style="font-size:14px;font-weight:800;color:var(--p)">${fBS(r.date)||r.date}</div>
+        <div style="font-size:11px;color:var(--tm)">${{full:'🌞 पूरा दिन',morning:'🌅 बिहान',afternoon:'☀️ दिउँसो'}[r.slot]||r.slot}</div></div>
+        <div style="font-size:11px;color:var(--tm)">${r.saved_by||''}</div>
+      </div>`;
+    (r.entries||[]).forEach(e=>{
+      const sc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='H'?'var(--o)':'var(--p)';
+      const sn=e.status==='P'?'✅ उपस्थित':e.status==='A'?'❌ अनुपस्थित':e.status==='H'?'🔶 आधा':'🏖️ बिदा';
+      html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--br)"><span style="font-size:13px;font-weight:700">${e.name}</span><div style="display:flex;align-items:center;gap:8px">${e.tin?`<span style="font-size:11px;color:var(--tm)">${e.tin}${e.tout?' → '+e.tout:''}</span>`:''}<span style="font-weight:700;font-size:13px;color:${sc}">${sn}</span></div></div>`;
+    });
+    html+='</div>';
+  });
+  html+='</div>';el.innerHTML=html;
+}
+
+// ── STATUS ──
 async function doSt(st){
-  const id=document.getElementById('st-id').value;
-  const data={status:st};
-  if(st==='completed'){
-    const s=allSites.find(x=>x.id===id);
-    if(s&&s.start_date){
-      const start=new Date(s.start_date),end=new Date();
-      const days=Math.round((end-start)/86400000);
-      data.days_taken=days;data.completed_date=tod();data.bs_completed=fBSToday();
-    }
-  }
-  await dUp('sites',id,data);
-  const idx=allSites.findIndex(s=>s.id===id);if(idx>-1)Object.assign(allSites[idx],data);
-  closeM('m-st');toast('स्थिति अपडेट भयो ✓');loadOv();
-  const s=allSites.find(x=>x.id===id);
-  if(s)document.getElementById('d-meta').textContent=s.client_name+(s.location?' · '+s.location:'')+(s.bs_start?' · '+s.bs_start:'');
+  const id=document.getElementById('stid').value;const d={status:st};
+  if(st==='completed'){const s=SITES.find(x=>x.id===id);if(s?.start_date){d.days_taken=Math.round((new Date()-new Date(s.start_date))/86400000);d.bs_completed=bsToday()}}
+  await dUp('sites',id,d);const idx=SITES.findIndex(s=>s.id===id);if(idx>-1)Object.assign(SITES[idx],d);
+  closeM('mSt');toast('✅ स्थिति अपडेट');loadOv();
 }
 
-// ===== ATTENDANCE =====
-let curAttSub='workers';
-function attTab(t,btn){
-  curAttSub=t;
-  document.querySelectorAll('.ft').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('att-fab').style.display=t==='history'?'none':'flex';
+// ── WORKERS ──
+async function loadWorkers(){
+  document.getElementById('w-list').innerHTML='<div class="ld">लोड...</div>';
+  const [wkrs,entries]=await Promise.all([dG('workers'),dG('work_entries')]);WKRS=wkrs;
+  if(!wkrs.length){document.getElementById('w-list').innerHTML='<div class="empty"><div class="ei">👷</div><div class="et">कुनै कामदार छैन<br>+ थिचेर थप्नुस्</div></div>';return}
+  document.getElementById('w-list').innerHTML=wkrs.map(w=>{
+    const we=entries.filter(e=>e.worker_id===w.id);
+    const tD=we.reduce((a,e)=>a+Number(e.days||0),0);
+    const tE=we.reduce((a,e)=>a+Number(e.days||0)*Number(e.daily_rate||0),0);
+    const tA=we.reduce((a,e)=>a+Number(e.advance_given||0),0);
+    return`<div class="wc" onclick="openWAM('${w.id}','${w.name}')">
+      <div class="wc-head"><div class="wc-av">${w.name[0]||'?'}</div><div><div class="wc-nm">${w.name}</div>${w.phone?`<div class="wc-ph">📞 ${w.phone}</div>`:''}</div></div>
+      <div class="wc-stats">
+        <div class="ws"><div class="ws-v" style="color:var(--p)">${tD}</div><div class="ws-l">दिन</div></div>
+        <div class="ws"><div class="ws-v" style="color:var(--g)">${Rs(tE)}</div><div class="ws-l">कमाइ</div></div>
+        <div class="ws"><div class="ws-v" style="color:var(--o)">${Rs(tA)}</div><div class="ws-l">अग्रिम</div></div>
+        <div class="ws"><div class="ws-v" style="color:var(--b)">${Rs(tE-tA)}</div><div class="ws-l">बाँकी</div></div>
+      </div>
+      <div class="tap-hint">👆 ट्याप गरेर हाजिर दर्ता गर्नुस्</div>
+    </div>`;
+  }).join('');
+}
+function openNewWM(){document.getElementById('nwn').value='';document.getElementById('nwp').value='';openM('mNW')}
+async function saveNewW(){
+  const nm=document.getElementById('nwn').value.trim();if(!nm){toast('नाम राख्नुस्',false);return}
+  await dA('workers',{name:nm,phone:document.getElementById('nwp').value.trim()});
+  closeM('mNW');toast('✅ कामदार थपियो');loadWorkers();
+}
+async function openWAM(wid,wname){
+  SITES=await dG('sites');
+  document.getElementById('wa-title').textContent=`👷 ${wname} — हाजिर`;
+  document.getElementById('wa-wid').value=wid;document.getElementById('wa-wn').value=wname;
+  document.getElementById('wa-d').value=todStr();document.getElementById('wa-db').textContent=bsToday();
+  document.getElementById('wa-sl').value='full';document.getElementById('wa-st').value='P';
+  document.getElementById('wa-in').value='';document.getElementById('wa-out').value='';
+  document.getElementById('wa-s').innerHTML=`<option value="">साइट छान्नुस्...</option>${SITES.filter(s=>s.status==='active').map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
+  openM('mWA');
+}
+async function saveWA(){
+  const wid=document.getElementById('wa-wid').value,wname=document.getElementById('wa-wn').value;
+  const sid=document.getElementById('wa-s').value;if(!sid){toast('साइट छान्नुस्',false);return}
+  const sname=SITES.find(x=>x.id===sid)?.name||'';
+  const d=document.getElementById('wa-d').value,slot=document.getElementById('wa-sl').value;
+  const docId=`${d}_${sid}_${slot}`;
+  let existing=[];try{const snap=await db.collection('attendance').doc(docId).get();if(snap.exists)existing=snap.data().entries||[]}catch{}
+  const filtered=existing.filter(e=>e.wid!==wid);
+  filtered.push({wid,name:wname,status:document.getElementById('wa-st').value,tin:document.getElementById('wa-in').value,tout:document.getElementById('wa-out').value});
+  await dSet('attendance',docId,{date:d,bs_date:fBS(d),site_id:sid,site_name:sname,slot,entries:filtered,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
+  closeM('mWA');toast(`✅ ${wname} हाजिर सेभ`);
+}
+
+// ── ATTENDANCE PAGE ──
+async function loadAtt(){
+  document.getElementById('att-bs').textContent=fBS(AD);
+  document.getElementById('att-ad').textContent=AD;
+  const el=document.getElementById('att-body');el.innerHTML='<div class="ld">लोड...</div>';
+  SITES=await dG('sites');WKRS=await dG('workers');
+  const recs=await dG('attendance',['date','==',AD]);
+  ATT={};recs.forEach(r=>{if(!ATT[r.site_id])ATT[r.site_id]={};(r.entries||[]).forEach(e=>{ATT[r.site_id][e.wid]={status:e.status,tin:e.tin||'',tout:e.tout||''}})});
+  const actSites=SITES.filter(s=>s.status==='active');
+  if(!actSites.length){el.innerHTML='<div class="empty"><div class="ei">🏗️</div><div class="et">कुनै सक्रिय साइट छैन</div></div>';return}
+  if(!WKRS.length){el.innerHTML='<div class="empty"><div class="ei">👷</div><div class="et">कामदार छैनन्<br>पहिले थप्नुस्</div></div>';return}
+  let html='';
+  actSites.forEach(site=>{
+    const saved=recs.find(r=>r.site_id===site.id);
+    html+=`<div class="site-att-block">
+      <div class="sab-head">
+        <div><div class="sab-nm">📍 ${site.name}</div><div class="sab-sub">${site.client_name}${site.location?' · '+site.location:''}</div></div>
+        ${saved?'<span class="saved-pill">✅ सेभ</span>':''}
+      </div>
+      <div style="padding:8px 16px;border-bottom:1px solid var(--br)">
+        <select class="fi" id="sl-${site.id}" style="padding:8px 12px;font-size:13px">
+          <option value="full">🌞 पूरा दिन</option>
+          <option value="morning">🌅 बिहान मात्र</option>
+          <option value="afternoon">☀️ दिउँसो मात्र</option>
+        </select>
+      </div>`;
+    WKRS.forEach(w=>{
+      const sv=ATT[site.id]?.[w.id]||{};const st=sv.status||'';
+      html+=`<div class="wrow" id="wr-${site.id}-${w.id}">
+        <div class="wrow-nm">${w.name}</div>
+        <div class="att-opts">
+          <button class="ao ${st==='P'?'P':''}" onclick="sA('${site.id}','${w.id}','P',this)">P</button>
+          <button class="ao ${st==='A'?'A':''}" onclick="sA('${site.id}','${w.id}','A',this)">A</button>
+          <button class="ao ${st==='H'?'H':''}" onclick="sA('${site.id}','${w.id}','H',this)">H</button>
+          <button class="ao ${st==='V'?'V':''}" onclick="sA('${site.id}','${w.id}','V',this)">बि</button>
+        </div>
+        <div class="time-grp">
+          <input type="time" class="tm-in" id="ti-${site.id}-${w.id}" value="${sv.tin||''}" placeholder="आयो">
+          <input type="time" class="tm-in" id="to-${site.id}-${w.id}" value="${sv.tout||''}" placeholder="गयो">
+        </div>
+      </div>`;
+    });
+    html+=`<button class="sab-save" onclick="saveSiteAtt('${site.id}','${site.name}')">💾 ${site.name} को हाजिर सेभ गर्नुस्</button></div>`;
+  });
+  el.innerHTML=html;
+}
+function sA(sid,wid,st,btn){
+  if(!ATT[sid])ATT[sid]={};if(!ATT[sid][wid])ATT[sid][wid]={};ATT[sid][wid].status=st;
+  const row=document.getElementById(`wr-${sid}-${wid}`);
+  if(row){row.querySelectorAll('.ao').forEach(b=>{b.className='ao'});btn.className='ao '+st}
+}
+async function saveSiteAtt(sid,snm){
+  const slot=document.getElementById(`sl-${sid}`)?.value||'full';
+  const entries=WKRS.map(w=>{const d=ATT[sid]?.[w.id]||{};return{wid:w.id,name:w.name,status:d.status||'',tin:document.getElementById(`ti-${sid}-${w.id}`)?.value||'',tout:document.getElementById(`to-${sid}-${w.id}`)?.value||''}}).filter(e=>e.status);
+  if(!entries.length){toast('कम्तीमा एकजनाको स्थिति छान्नुस्',false);return}
+  const docId=`${AD}_${sid}_${slot}`;
+  await dSet('attendance',docId,{date:AD,bs_date:fBS(AD),site_id:sid,site_name:snm,slot,entries,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
+  toast(`✅ ${snm} हाजिर सेभ`);loadAtt();
+}
+function chgD(d){
+  if(d===0){AD=todStr();}
+  else{const dt=new Date(AD);dt.setDate(dt.getDate()+d);AD=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`}
   loadAtt();
 }
-function openAttModal(){
-  if(curAttSub==='workers')openWorkerAtt();
-  else openTeamAtt();
-}
 
-async function loadAtt(){
-  document.getElementById('a-bs-date').textContent=fBSToday();
-  const el=document.getElementById('att-content');
-  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  if(curAttSub==='workers')await loadWorkerAttList(el);
-  else if(curAttSub==='team')await loadTeamAttList(el);
-  else await loadAttHistory(el);
-}
-
-async function loadWorkerAttList(el){
-  const recs=await dGet('daily_attendance',['date','==',tod()]);
-  allSites=await dGet('sites');
-  if(!recs.length){
-    el.innerHTML=`<div class="empty"><div class="ei">✅</div><div class="et">आजको कामदार हाजिर भरिएको छैन<br><small>${fBSToday()}</small></div></div>`;return;
-  }
-  let html='';
-  recs.forEach(r=>{
-    const slot={morning:'🌅 बिहान',afternoon:'☀️ दिउँसो',full:'🌞 पूरा दिन'}[r.slot]||r.slot;
-    html+=`<div class="card cp" style="margin-bottom:10px">
-      <div style="font-size:13px;font-weight:800;color:var(--p);margin-bottom:4px">${r.site_name||'—'} · ${slot}</div>
-      <div style="font-size:11px;color:var(--tm);margin-bottom:10px">${r.bs_date||fBS(r.date)} · ${r.recorded_by||'—'}</div>
-      <div style="display:flex;flex-direction:column;gap:4px">`;
-    (r.entries||[]).forEach(e=>{
-      const stc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='H'?'var(--o)':'var(--p)';
-      const stn=e.status==='P'?'उपस्थित':e.status==='A'?'अनुपस्थित':e.status==='H'?'आधा दिन':'बिदा';
-      html+=`<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px"><span style="font-weight:600">${e.name}</span><div style="display:flex;align-items:center;gap:8px">${e.time_in?`<span style="font-size:11px;color:var(--tm)">${e.time_in}${e.time_out?'→'+e.time_out:''}</span>`:''}<span style="font-weight:700;color:${stc}">${stn}</span></div></div>`;
-    });
-    html+=`</div></div>`;
-  });
-  el.innerHTML=html;
-}
-
-async function loadTeamAttList(el){
-  const recs=await dGet('team_att',['date','==',tod()]);
-  let html=`<div class="my-att-card">
-    <div style="font-size:11px;opacity:.75;margin-bottom:4px">आजको मेरो हाजिर (${ME})</div>
-    <div style="font-size:13px;font-weight:700">${fBSToday()}</div>
-    <button onclick="openTeamAtt()" style="margin-top:10px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer">+ हाजिर दर्ता गर्नुस्</button>
-  </div>`;
-  html+=`<div class="card" style="padding:0">`;
-  if(!recs.length){html+=`<div class="empty"><div class="ei">👥</div><div class="et">आजको टोली हाजिर छैन</div></div>`;}
-  else recs.forEach(r=>{
-    const stc=r.status==='P'?'var(--g)':r.status==='A'?'var(--r)':'var(--o)';
-    const stn=r.status==='P'?'उपस्थित':r.status==='A'?'अनुपस्थित':'आधा दिन';
-    const slot={morning:'🌅 बिहान',afternoon:'☀️ दिउँसो',full:'🌞 पूरा दिन'}[r.slot]||r.slot;
-    html+=`<div class="li"><div class="lic">👤</div><div style="flex:1"><div class="lt2">${r.member}</div><div class="ls2">${r.site_name||'—'} · ${slot}${r.time_in?' · '+r.time_in+(r.time_out?'→'+r.time_out:''):''}</div></div><div class="lr"><span style="font-weight:700;color:${stc};font-size:13px">${stn}</span></div></div>`;
-  });
-  html+=`</div>`;
-  el.innerHTML=html;
-}
-
-async function loadAttHistory(el){
-  const recs=await dGet('daily_attendance');
-  const team=await dGet('team_att');
-  recs.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
-  if(!recs.length&&!team.length){el.innerHTML='<div class="empty"><div class="ei">📅</div><div class="et">कुनै हाजिर इतिहास छैन</div></div>';return}
-  const byDate={};
-  recs.forEach(r=>{if(!byDate[r.date])byDate[r.date]=[];byDate[r.date].push(r)});
-  team.forEach(r=>{if(!byDate[r.date])byDate[r.date]=[]});
-  let html='';
-  Object.keys(byDate).sort((a,b)=>b>a?1:-1).slice(0,30).forEach(d=>{
-    html+=`<div style="padding:6px 0 4px"><span style="font-size:11px;font-weight:700;color:var(--p)">${fBS(d)||d}</span></div>`;
-    byDate[d].forEach(r=>{
-      const slot={morning:'बिहान',afternoon:'दिउँसो',full:'पूरा दिन'}[r.slot]||r.slot;
-      const pCnt=(r.entries||[]).filter(e=>e.status==='P').length;
-      html+=`<div class="card cp" style="margin-bottom:8px;padding:10px 12px"><div style="font-size:13px;font-weight:700">${r.site_name||'—'} · ${slot}</div><div style="font-size:11px;color:var(--tm)">${pCnt} उपस्थित · ${(r.entries||[]).length} जना</div></div>`;
-    });
-  });
-  el.innerHTML=html;
-}
-
-async function openWorkerAtt(){
-  allSites=await dGet('sites');allWorkers=await dGet('workers');
-  if(!allSites.length){toast('पहिले साइट थप्नुस्','err');return}
-  if(!allWorkers.length){toast('पहिले कामदार थप्नुस्','err');return}
-  document.getElementById('at-date').value=tod();
-  document.getElementById('at-date-bs').textContent=fBS(tod());
-  document.getElementById('at-slot').value='morning';
-  populateSiteSel('at-site');
-  buildWorkerGrid();
-  openM('m-att');
-}
-
-function onAtDate(){document.getElementById('at-date-bs').textContent=fBS(document.getElementById('at-date').value)}
-document.getElementById('at-site').addEventListener('change',buildWorkerGrid);
-document.getElementById('at-slot').addEventListener('change',buildWorkerGrid);
-
-let attStatuses={};
-function buildWorkerGrid(){
-  attStatuses={};
-  const grid=document.getElementById('at-workers-grid');
-  if(!allWorkers.length){grid.innerHTML='<div style="color:var(--tm);font-size:13px">कामदार छैनन्</div>';return}
-  grid.innerHTML=allWorkers.map(w=>`
-    <div class="att-row" id="ar-${w.id}">
-      <div class="att-nm">${w.name}</div>
-      <div class="att-btns">
-        <button class="ab" onclick="setAtt('${w.id}','P',this)">P</button>
-        <button class="ab" onclick="setAtt('${w.id}','A',this)">A</button>
-        <button class="ab" onclick="setAtt('${w.id}','H',this)">H</button>
-        <button class="ab" onclick="setAtt('${w.id}','V',this)">बि</button>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <input type="time" class="tm-mini" placeholder="आयो" id="ti-${w.id}">
-        <input type="time" class="tm-mini" placeholder="गयो" id="to-${w.id}">
-      </div>
-    </div>`).join('');
-}
-
-function setAtt(wid,st,btn){
-  attStatuses[wid]=st;
-  const row=document.getElementById('ar-'+wid);
-  row.querySelectorAll('.ab').forEach(b=>{b.className='ab';b.classList.remove('sP','sA','sH','sV')});
-  btn.classList.add('s'+st);
-}
-
-async function saveAtt(){
-  const date=document.getElementById('at-date').value;
-  const slot=document.getElementById('at-slot').value;
-  const siteId=document.getElementById('at-site').value;
-  const siteName=allSites.find(x=>x.id===siteId)?.name||'';
-  if(!siteId){toast('साइट छान्नुस्','err');return}
-  if(!Object.keys(attStatuses).length){toast('कम्तीमा एक कामदार छान्नुस्','err');return}
-
-  // Check duplicate slot rule
-  const existing=await dGet('daily_attendance',['date','==',date],['slot','==',slot]);
-  for(const wid of Object.keys(attStatuses)){
-    const w=allWorkers.find(x=>x.id===wid);
-    const conflict=existing.find(r=>r.site_id!==siteId&&r.entries?.some(e=>e.wid===wid&&(e.status==='P'||e.status==='H')));
-    if(conflict){toast(`${w?.name||wid}: यस ${slot==='morning'?'बिहान':slot==='afternoon'?'दिउँसो':'दिन'} अर्को साइटमा हाजिर छ!`,'err');return}
-  }
-
-  const entries=allWorkers.filter(w=>attStatuses[w.id]).map(w=>({
-    wid:w.id,name:w.name,status:attStatuses[w.id],
-    time_in:document.getElementById('ti-'+w.id)?.value||'',
-    time_out:document.getElementById('to-'+w.id)?.value||''
-  }));
-
-  await dAdd('daily_attendance',{date,bs_date:fBS(date),site_id:siteId,site_name:siteName,slot,entries,recorded_by:ME});
-  closeM('m-att');toast('हाजिर सेभ भयो ✓');loadAtt();
-}
-
-async function openTeamAtt(){
-  allSites=await dGet('sites');
-  document.getElementById('tatt-member-info').textContent=`👤 ${ME} को हाजिर दर्ता`;
-  document.getElementById('ta-date').value=tod();document.getElementById('ta-date-bs').textContent=fBS(tod());
-  document.getElementById('ta-slot').value='full';document.getElementById('ta-status').value='P';
-  document.getElementById('ta-in').value='';document.getElementById('ta-out').value='';
-  populateSiteSel('ta-site');openM('m-tatt');
-}
-function onTaDate(){document.getElementById('ta-date-bs').textContent=fBS(document.getElementById('ta-date').value)}
-async function saveTeamAtt(){
-  const date=document.getElementById('ta-date').value;
-  const slot=document.getElementById('ta-slot').value;
-  const siteId=document.getElementById('ta-site').value;
-  const siteName=allSites.find(x=>x.id===siteId)?.name||'';
-  await dAdd('team_att',{date,bs_date:fBS(date),member:ME,site_id:siteId||'',site_name:siteName,slot,status:document.getElementById('ta-status').value,time_in:document.getElementById('ta-in').value,time_out:document.getElementById('ta-out').value});
-  closeM('m-tatt');toast('हाजिर सेभ भयो ✓');loadAtt();
-}
-
-// ===== EXPENSES PAGE =====
+// ── EXPENSES ──
 async function loadExp(){
-  document.getElementById('exp-list').innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  allSites=await dGet('sites');
-  let exps=await dGet('expenses');
+  document.getElementById('e-list').innerHTML='<div class="ld">लोड...</div>';
+  SITES=await dG('sites');
+  let exps=await dG('expenses');
   exps.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
-  if(expFilter!=='all')exps=exps.filter(e=>e.category===expFilter);
+  if(eFil!=='all')exps=exps.filter(e=>e.category===eFil);
   const tot=exps.reduce((a,e)=>a+Number(e.amount||0),0);
-  const ECATS={paint:'🎨 রং',material:'🧱 সামগ্রী',tools:'🔧 औजार',transport:'🚐 যাতায়াত',petrol:'⛽ পেट্রোল',khaja:'🥤 खाजा',food:'🍱 खाना',other:'📦 अन্য'};
-  const el=document.getElementById('exp-list');
-  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div><div style="font-size:11px;color:var(--tm)">जम्मा खर्च</div><div style="font-size:24px;font-weight:800;color:var(--r)">${Rs(tot)}</div></div></div>`+
-  (!exps.length?'<div class="empty"><div class="ei">💸</div><div class="et">कुनै खर्च रेकर्ड छैन</div></div>':
-  `<div class="card" style="padding:0">${exps.map(e=>`
-    <div class="li"><div class="lic">${(ECATS[e.category]||'📦').split(' ')[0]}</div>
-    <div style="flex:1"><div class="lt2">${e.note||(ECATS[e.category]||e.category)}</div><div class="ls2">${fBS(e.date)||fd(e.date)} · ${e.site_name||'—'} · ${e.paid_by}</div></div>
-    <div class="lr"><div class="aneg">${Rs(e.amount)}</div></div></div>`).join('')}</div>`);
+  document.getElementById('exp-lbl').textContent='जम्मा खर्च: '+Rs(tot);
+  const bySite={};
+  exps.forEach(e=>{const k=e.site_id||'other';if(!bySite[k])bySite[k]={name:e.site_name||'साइट',items:[]};bySite[k].items.push(e)});
+  const html=Object.values(bySite).map(sg=>{
+    const st=sg.items.reduce((a,e)=>a+Number(e.amount||0),0);
+    return`<div class="esb">
+      <div class="esb-h"><div class="esb-hn">📍 ${sg.name}</div><div class="esb-ht">${Rs(st)}</div></div>
+      ${sg.items.map(e=>`<div class="esb-row"><div class="esb-ic">${ET[e.category]?.split(' ')[0]||'📦'}</div><div class="esb-tx"><div class="esb-tn">${e.note||ET[e.category]||e.category}</div><div class="esb-ts">${fBS(e.date)||fD(e.date)} · ${e.paid_by}</div></div><div class="esb-ta">${Rs(e.amount)}</div></div>`).join('')}
+    </div>`;
+  }).join('');
+  document.getElementById('e-list').innerHTML=html||'<div class="empty"><div class="ei">💸</div><div class="et">कुनै खर्च छैन</div></div>';
 }
-function filterExp(f,btn){expFilter=f;document.querySelectorAll('.ft').forEach(t=>t.classList.remove('active'));btn.classList.add('active');loadExp()}
-function openGlobalExp(){
-  document.getElementById('ex-lbl').textContent='खर्च थप्नुस्';
-  populateSiteSel('ex-site');
-  document.getElementById('ex-a').value='';document.getElementById('ex-d').value=tod();
-  document.getElementById('ex-d-bs').textContent=fBS(tod());document.getElementById('ex-note').value='';
-  openM('m-exp');
-}
-document.getElementById('ex-d').addEventListener('input',e=>document.getElementById('ex-d-bs').textContent=fBS(e.target.value));
+function fExp(f,btn){eFil=f;document.querySelectorAll('#pg-exp .ft').forEach(t=>t.classList.remove('on'));btn.classList.add('on');loadExp()}
+function openExpM(){populateES();document.getElementById('ea').value='';document.getElementById('ed').value=todStr();document.getElementById('edb').textContent=bsToday();document.getElementById('en').value='';openM('mExp')}
+function populateES(def=null){document.getElementById('es').innerHTML=`<option value="">साइट छान्नुस्...</option>${SITES.filter(s=>s.status==='active').map(s=>`<option value="${s.id}"${s.id===def?' selected':''}>${s.name}</option>`).join('')}`}
 async function saveExp(){
-  const amt=Number(document.getElementById('ex-a').value);if(!amt){toast('रकम राख्नुस्','err');return}
-  const siteId=document.getElementById('ex-site').value;
-  const siteName=allSites.find(x=>x.id===siteId)?.name||'';
-  await dAdd('expenses',{site_id:siteId,site_name:siteName,category:document.getElementById('ex-cat').value,amount:amt,date:document.getElementById('ex-d').value,bs_date:fBS(document.getElementById('ex-d').value),paid_by:document.getElementById('ex-by').value,note:document.getElementById('ex-note').value});
-  closeM('m-exp');toast('खर्च सेभ भयो ✓');
-  if(curPage==='exp')loadExp();else if(curPage==='dash')loadDash();
-  if(curDT==='ex')loadSiteExp();
+  const amt=+document.getElementById('ea').value;if(!amt){toast('रकम राख्नुस्',false);return}
+  const sid=document.getElementById('es').value,sn=SITES.find(x=>x.id===sid)?.name||'';
+  const d=document.getElementById('ed').value;
+  await dA('expenses',{site_id:sid,site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value});
+  closeM('mExp');toast('✅ खर्च सेभ');if(CUR==='exp')loadExp();else if(CDT==='ex')loadSEx();
 }
 
-// ===== TEAM =====
+// ── TEAM ──
 async function loadTeam(){
-  document.getElementById('team-content').innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const [sites,pays,work,exps]=await Promise.all([dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses')]);
+  document.getElementById('t-list').innerHTML='<div class="ld">लोड...</div>';
+  const [sites,pays,work,exps]=await Promise.all([dG('sites'),dG('payments'),dG('work_entries'),dG('expenses')]);
   const sP={},sL={},sE={};
   pays.forEach(p=>sP[p.site_id]=(sP[p.site_id]||0)+Number(p.amount||0));
   work.forEach(w=>sL[w.site_id]=(sL[w.site_id]||0)+Number(w.days||0)*Number(w.daily_rate||0));
   exps.forEach(e=>sE[e.site_id]=(sE[e.site_id]||0)+Number(e.amount||0));
   const ms={};['AMRIT','NIRAN','SUBEIN'].forEach(m=>ms[m]={cnt:0,val:0,share:0,sites:[]});
   let totP=0;
-  sites.forEach(s=>{
-    const r=sP[s.id]||0,l=sL[s.id]||0,e=sE[s.id]||0,p=r-l-e;totP+=p;
-    ['AMRIT','NIRAN','SUBEIN'].forEach(m=>ms[m].share+=p/3);
-    if(s.brought_by&&ms[s.brought_by]){ms[s.brought_by].cnt++;const v=siteCV(s);if(v)ms[s.brought_by].val+=v;ms[s.brought_by].sites.push(s.name)}
-  });
+  sites.forEach(s=>{const r=sP[s.id]||0,l=sL[s.id]||0,e=sE[s.id]||0,p=r-l-e;totP+=p;['AMRIT','NIRAN','SUBEIN'].forEach(m=>ms[m].share+=p/3);if(ms[s.brought_by]){ms[s.brought_by].cnt++;const v=sCV(s);if(v)ms[s.brought_by].val+=v;ms[s.brought_by].sites.push(s.name)}});
   const maxS=Math.max(...['AMRIT','NIRAN','SUBEIN'].map(m=>Math.abs(ms[m].share)),1);
-  document.getElementById('team-content').innerHTML=`
-    <div class="card cp" style="background:linear-gradient(135deg,var(--p),var(--b));color:#fff;margin-bottom:14px">
-      <div style="font-size:10px;opacity:.7;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase">कुल नाफा</div>
-      <div style="font-family:'Yatra One',sans-serif;font-size:32px">${Rs(totP)}</div>
-      <div style="font-size:11px;opacity:.7;margin-top:4px">${sites.length} साइट · ${sites.filter(s=>s.status==='active').length} सक्रिय</div>
-    </div>
-    ${['AMRIT','NIRAN','SUBEIN'].map(m=>{
-      const st=ms[m];const pct=Math.max(5,(Math.abs(st.share)/maxS)*100);
-      return `<div class="tmc">
-        <div class="tmc-h">
-          <div class="tav">${m[0]}</div>
-          <div><div class="tmn">${m}</div><div style="font-size:11px;color:var(--tm)">सदस्य · A.N.S.</div></div>
-          <div style="margin-left:auto;text-align:right">
-            <div style="font-size:20px;font-weight:800;color:${st.share>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(st.share))}</div>
-            <div style="font-size:10px;color:var(--tm)">हिस्सा</div>
-          </div>
-        </div>
-        <div class="cp">
-          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="color:var(--tm)">ठेक्का ल्याएको</span><span style="font-weight:700;color:var(--p)">${st.cnt} वटा</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span style="color:var(--tm)">ठेक्का मूल्य</span><span style="font-weight:700">${Rs(st.val)}</span></div>
-          <div class="pb"><div class="pf" style="width:${pct}%"></div></div>
-          ${st.sites.length?`<div style="margin-top:8px;font-size:11px;color:var(--tm)">${st.sites.join(' · ')}</div>`:''}
-        </div>
-      </div>`;
-    }).join('')}
-    <div style="height:10px"></div>`;
+  document.getElementById('tp-val').textContent=Rs(totP);
+  document.getElementById('tp-sub').textContent=`${sites.length} साइट · ${sites.filter(s=>s.status==='active').length} सक्रिय`;
+  document.getElementById('t-list').innerHTML=['AMRIT','NIRAN','SUBEIN'].map(m=>{
+    const st=ms[m];const pct=Math.max(4,(Math.abs(st.share)/maxS)*100);
+    return`<div class="mem-card">
+      <div class="mc-head">
+        <div class="mc-av">${m[0]}</div>
+        <div><div class="mc-nm">${m}</div><div class="mc-role">A.N.S. · सदस्य</div></div>
+        <div class="mc-share"><div class="mc-sv" style="color:${st.share>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(st.share))}</div><div class="mc-sl">हिस्सा</div></div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-row"><span class="mc-l">ठेक्का ल्याएको</span><span class="mc-v" style="color:var(--p)">${st.cnt} वटा</span></div>
+        <div class="mc-row"><span class="mc-l">ठेक्का मूल्य</span><span class="mc-v">${Rs(st.val)}</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+        ${st.sites.length?`<div style="margin-top:7px;font-size:11px;color:var(--tm)">${st.sites.join(' · ')}</div>`:''}
+      </div>
+    </div>`;
+  }).join('')+'<div style="height:10px"></div>';
 }
 
-// ===== WORKER MODAL =====
-async function saveWkr(){
-  const name=document.getElementById('wo-n').value.trim();if(!name){toast('नाम राख्नुस्','err');return}
-  await dAdd('workers',{name,phone:document.getElementById('wo-p').value.trim()});
-  closeM('m-wkr');toast('कामदार थपियो ✓');allWorkers=await dGet('workers');
-}
-
-// ===== HELPERS =====
-function populateSiteSel(selId,defaultId=null){
-  const sel=document.getElementById(selId);
-  sel.innerHTML=`<option value="">साइट छान्नुस्...</option>${allSites.filter(s=>s.status==='active').map(s=>`<option value="${s.id}"${s.id===defaultId?' selected':''}>${s.name}</option>`).join('')}`;
-}
-
-// ===== INIT =====
-async function initApp(){
-  document.getElementById('main-nav').style.display='flex';
+// ── BOOT ──
+function boot(){
+  document.getElementById('nav').style.display='flex';
+  document.getElementById('pg-team').style.bottom=`var(--nh)`;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-dash').classList.add('active');
-  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.ni')[0].classList.add('active');
-  curPage='dash';
-  document.getElementById('sby').value=ME;
-  loadDash();
+  document.getElementById('pg-home').classList.add('active');
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.ni')[0].classList.add('on');
+  CUR='home';loadHome();
 }
+
+// Fix: team page setup
+document.querySelectorAll('.ni')[4].onclick=()=>go('team');
 
 window.addEventListener('load',async()=>{
-  document.getElementById('ssd').value=tod();
+  document.getElementById('ssd').value=todStr();
+  // Add team page to DOM properly
+  const tp=document.getElementById('pg-team');
+  tp.style.position='fixed';tp.style.top='0';tp.style.left='0';tp.style.right='0';tp.style.bottom='var(--nh)';tp.style.overflowY='auto';tp.style.webkitOverflowScrolling='touch';tp.style.display='none';tp.style.background='var(--bg)';
   await new Promise(r=>setTimeout(r,1500));
-  document.getElementById('splash').style.opacity='0';
-  document.getElementById('splash').style.transition='opacity .4s';
-  setTimeout(()=>document.getElementById('splash').style.display='none',400);
-  if(ME){initApp();}
-  else{document.getElementById('login-screen').style.display='flex';}
+  document.getElementById('splash').style.opacity='0';document.getElementById('splash').style.transition='opacity .35s';
+  setTimeout(()=>document.getElementById('splash').style.display='none',380);
+  if(ME)boot();else document.getElementById('login').style.display='flex';
 });
 </script>
 </body>
