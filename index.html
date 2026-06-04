@@ -618,8 +618,8 @@ select.fi option{background:#fff}
   </div>
   <div style="padding:14px 16px 20px">
     <div class="set-group">
-      <div class="set-item" onclick="go('team')"><div class="si-ico" style="background:var(--ind-l)">👥</div><div><div class="si-t" data-ne="टोली सारांश" data-en="Team Summary">टोली सारांश</div><div class="si-s">AMRIT, NIRAN, SUBEIN</div></div><div class="si-arr">›</div></div>
-      <div class="set-item" onclick="go('workers')"><div class="si-ico" style="background:var(--blue-l)">👷</div><div><div class="si-t" data-ne="कामदार सूची" data-en="Workers List">कामदार सूची</div><div class="si-s" data-ne="थप्नुस् / हाजिर दर्ता" data-en="Add / Attendance">थप्नुस् / हाजिर दर्ता</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="go('exp')"><div class="si-ico" style="background:var(--rl)"><svg viewBox="0 0 17 17" fill="var(--r)" width="17" height="17"><path d="M8.5 1.5C4.63 1.5 1.5 4.63 1.5 8.5s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm.75 10.25h-1.5v-5h1.5v5zm0-6.5h-1.5v-1.5h1.5v1.5z"/></svg></div><div><div class="si-t">💸 खर्च हेर्नुस्</div><div class="si-s">सम्पूर्ण खर्चको विवरण</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="go('team')"><div class="si-ico" style="background:var(--ind-l)"><svg viewBox="0 0 17 17" fill="var(--ind)" width="17" height="17"><path d="M15 15v-1.5a3 3 0 00-3-3H5a3 3 0 00-3 3V15M8.5 8a3 3 0 100-6 3 3 0 000 6z"/></svg></div><div><div class="si-t">👥 टोली सारांश</div><div class="si-s">AMRIT, NIRAN, SUBEIN को नाफा</div></div><div class="si-arr">›</div></div>
     </div>
     <div class="set-group">
       <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t" data-ne="Password बदल्नुस्" data-en="Change Password">Password बदल्नुस्</div><div class="si-s" data-ne="आफ्नै password राख्नुस्" data-en="Set your own password">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
@@ -846,7 +846,7 @@ select.fi option{background:#fff}
     <div class="fg"><label class="fl">आएको समय</label><input type="time" class="fi" id="wa-in"></div>
     <div class="fg"><label class="fl">गएको समय</label><input type="time" class="fi" id="wa-out"></div>
   </div>
-  <input type="hidden" id="wa-wid"><input type="hidden" id="wa-wn">
+  <input type="hidden" id="wa-wid"><input type="hidden" id="wa-wname">
   <button class="btn bp" onclick="saveWA()">💾 हाजिर सेभ</button>
   <button class="btn bs" onclick="closeM('mWA')">रद्द</button>
 </div></div>
@@ -1063,7 +1063,7 @@ function go(p){
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
   const pg=document.getElementById('pg-'+p);
   if(pg){pg.classList.add('on');pg.style.removeProperty('display');}
-  const nm={home:0,sites:1,att:2,exp:3,profile:4};
+  const nm={home:0,sites:1,att:2,workers:3,profile:4};
   if(nm[p]!==undefined)document.querySelectorAll('.ni')[nm[p]].classList.add('on');
   CUR=p;
   const mf=document.getElementById('mat-fab');
