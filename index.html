@@ -789,13 +789,39 @@ select.fi option{background:#fff}
   <button class="btn bs" onclick="closeM('mMat')">रद्द</button>
 </div></div>
 
-<!-- MODAL: NEW WORKER -->
+<!-- MODAL: ADD/EDIT WORKER -->
 <div class="mbo" id="mNW"><div class="msh">
-  <div class="mhd"></div><div class="mtit">👷 नयाँ कामदार</div>
-  <div class="fg"><label class="fl">नाम *</label><input class="fi" id="nwn" placeholder="पूरा नाम"></div>
-  <div class="fg"><label class="fl">फोन</label><input type="tel" class="fi" id="nwp" placeholder="98XXXXXXXX"></div>
-  <button class="btn bp" onclick="saveNewW()">थप्नुस्</button>
+  <div class="mhd"></div>
+  <div class="mtit" id="nw-title">👷 नयाँ कामदार</div>
+  <input type="hidden" id="nw-id">
+  <div class="fg"><label class="fl">पूरा नाम *</label><input class="fi" id="nwn" placeholder="पूरा नाम"></div>
+  <div class="fg"><label class="fl">फोन नम्बर</label><input type="tel" class="fi" id="nwp" placeholder="98XXXXXXXX"></div>
+  <div class="fr">
+    <div class="fg"><label class="fl">जोइनिङ मिति</label><input type="date" class="fi" id="nwjd" oninput="bsF('nwjd','nwjd-b')"><div class="fbs" id="nwjd-b"></div></div>
+    <div class="fg"><label class="fl">दैनिक ज्याला (Rs.)</label><input type="number" class="fi" id="nwdw" placeholder="0"></div>
+  </div>
+  <div class="fg"><label class="fl">नोट / विशेष जानकारी</label><input class="fi" id="nwnote" placeholder="ऐच्छिक"></div>
+  <button class="btn bp" onclick="saveWorker()">💾 सेभ गर्नुस्</button>
   <button class="btn bs" onclick="closeM('mNW')">रद्द</button>
+</div></div>
+
+<!-- MODAL: TEAM WITHDRAWAL -->
+<div class="mbo" id="mWdraw"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">💰 Share बाट रकम निकाल्नुस्</div>
+  <div style="background:var(--ind-l);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--ind);font-weight:700;margin-bottom:14px" id="wdraw-who"></div>
+  <div class="fg"><label class="fl">रकम (Rs.) *</label><input type="number" class="fi" id="wdraw-amt" placeholder="0"></div>
+  <div class="fg"><label class="fl">प्रकार</label>
+    <select class="fi" id="wdraw-type">
+      <option value="cash">💵 नगद निकाल्यो</option>
+      <option value="personal_exp">🧾 व्यक्तिगत खर्च (site को लागि)</option>
+      <option value="salary">💳 तलब</option>
+    </select>
+  </div>
+  <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="wdraw-d" oninput="bsF('wdraw-d','wdraw-db')"><div class="fbs" id="wdraw-db"></div></div>
+  <div class="fg"><label class="fl">नोट</label><input class="fi" id="wdraw-note" placeholder="जस्तै: घर खर्च, site सामान..."></div>
+  <button class="btn bp" onclick="saveWithdrawal()">💾 सेभ</button>
+  <button class="btn bs" onclick="closeM('mWdraw')">रद्द</button>
 </div></div>
 
 <!-- MODAL: STATUS -->
@@ -1582,14 +1608,19 @@ async function loadWorkers(){
         </div>`;
       }).join('');
       return`<div class="wc">
-        <div class="wc-hd" onclick="openWAM('${w.id}','${w.name.replace(/'/g,"\\'")}')">
+        <div class="wc-hd">
           <div class="wc-av">${w.name[0]||'?'}</div>
           <div style="flex:1">
             <div class="wc-nm">${w.name}</div>
             ${w.phone?`<div class="wc-ph">${w.phone}</div>`:''}
+            ${w.join_date?`<div style="font-size:11px;color:var(--gr400)">📅 जोइन: ${fBS(w.join_date)}</div>`:''}
+            ${w.daily_wage?`<div style="font-size:11px;color:var(--g);font-weight:700">💰 दैनिक: Rs.${w.daily_wage}</div>`:''}
             ${siteNames?`<div style="font-size:11px;color:var(--ind);margin-top:2px">📍 ${siteNames}</div>`:''}
           </div>
-          <div style="font-size:11px;color:var(--ind);font-weight:700;white-space:nowrap">ट्याप → हाजिर</div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <button onclick="event.stopPropagation();openEditWModal(${JSON.stringify({id:w.id,name:w.name,phone:w.phone||'',join_date:w.join_date||'',daily_wage:w.daily_wage||0,note:w.note||''}).replace(/"/g,'&quot;')})" style="background:var(--ind-l);border:none;color:var(--ind);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>
+            <div style="font-size:10px;color:var(--ind);font-weight:700;cursor:pointer" onclick="openWAM('${w.id}','${w.name.replace(/'/g,"\\'")}')">✅ हाजिर →</div>
+          </div>
         </div>
         <div class="wc-st">
           <div class="ws"><div class="ws-v n" style="color:var(--ind)">${tD}</div><div class="ws-l">ज्याला दिन</div></div>
@@ -1598,7 +1629,7 @@ async function loadWorkers(){
           <div class="ws"><div class="ws-v n" style="color:var(--blue)">${Rs(tE-tA)}</div><div class="ws-l">बाँकी</div></div>
         </div>
         ${we.length?`<div style="padding:8px 14px 6px;border-top:1px solid var(--gr100);margin-top:10px">
-          <div style="font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">काम इतिहास</div>
+          <div style="font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 काम इतिहास</div>
           ${hist}
           ${we.length>3?`<div style="font-size:11px;color:var(--ind);text-align:center;padding:6px 0;font-weight:700">+ ${we.length-3} थप रेकर्ड</div>`:''}
         </div>`:''}
@@ -1609,8 +1640,60 @@ async function loadWorkers(){
     el.innerHTML=emptyS('⚠️','लोड गर्न सकिएन','पुनः प्रयास गर्नुस्');
   }
 }
-function openNewWModal(){document.getElementById('nwn').value='';document.getElementById('nwp').value='';openM('mNW');}
-async function saveNewW(){const nm=document.getElementById('nwn').value.trim();if(!nm){toast('नाम',false);return;}await dAdd('workers',{name:nm,phone:document.getElementById('nwp').value.trim()});closeM('mNW');toast('कामदार थपियो ✓');loadWorkers();}
+function openNewWModal(){
+  document.getElementById('nw-id').value='';
+  document.getElementById('nw-title').textContent='👷 नयाँ कामदार';
+  ['nwn','nwp','nwnote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('nwjd').value=todStr();
+  document.getElementById('nwjd-b').textContent=bsToday();
+  document.getElementById('nwdw').value='';
+  openM('mNW');
+}
+function openEditWModal(w){
+  document.getElementById('nw-id').value=w.id;
+  document.getElementById('nw-title').textContent='✏️ कामदार सम्पादन';
+  document.getElementById('nwn').value=w.name||'';
+  document.getElementById('nwp').value=w.phone||'';
+  document.getElementById('nwjd').value=w.join_date||'';
+  document.getElementById('nwjd-b').textContent=w.join_date?fBS(w.join_date):'';
+  document.getElementById('nwdw').value=w.daily_wage||'';
+  document.getElementById('nwnote').value=w.note||'';
+  openM('mNW');
+}
+async function saveWorker(){
+  const nm=document.getElementById('nwn').value.trim();
+  if(!nm){toast('नाम राख्नुस्',false);return;}
+  const id=document.getElementById('nw-id').value;
+  const d={name:nm,phone:document.getElementById('nwp').value.trim(),join_date:document.getElementById('nwjd').value,daily_wage:+document.getElementById('nwdw').value||0,note:document.getElementById('nwnote').value.trim()};
+  if(id)await dUp('workers',id,d);
+  else await dAdd('workers',d);
+  closeM('mNW');toast(id?'कामदार अपडेट ✓':'कामदार थपियो ✓');loadWorkers();
+}
+// Keep old name working too
+async function saveNewW(){await saveWorker();}
+
+// ══ TEAM WITHDRAWAL ══
+function openWithdrawalModal(){
+  document.getElementById('wdraw-who').textContent=ME+' को Share बाट रकम';
+  document.getElementById('wdraw-amt').value='';
+  document.getElementById('wdraw-d').value=todStr();
+  document.getElementById('wdraw-db').textContent=bsToday();
+  document.getElementById('wdraw-note').value='';
+  document.getElementById('wdraw-type').value='cash';
+  openM('mWdraw');
+}
+async function saveWithdrawal(){
+  const amt=+document.getElementById('wdraw-amt').value;
+  if(!amt){toast('रकम राख्नुस्',false);return;}
+  const d=document.getElementById('wdraw-d').value;
+  await dAdd('withdrawals',{
+    member:ME,amount:amt,
+    type:document.getElementById('wdraw-type').value,
+    date:d,bs_date:fBS(d),
+    note:document.getElementById('wdraw-note').value
+  });
+  closeM('mWdraw');toast('रकम entry सेभ ✓');loadTeam();
+}
 async function openWAM(wid,wname){
   SITES=await dGet('sites');
   document.getElementById('wa-title').textContent=wname+' — हाजिर';
@@ -1716,12 +1799,14 @@ async function saveExp(){
 // ══ TEAM ══
 async function loadTeam(){
   document.getElementById('t-list').innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const[sites,pays,work,exps]=await Promise.all([dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses')]);
+  const[sites,pays,work,exps,withdrawals]=await Promise.all([
+    dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('withdrawals')
+  ]);
   const sP={},sL={},sE={};
   pays.forEach(p=>sP[p.site_id]=(sP[p.site_id]||0)+Number(p.amount||0));
   work.forEach(w=>sL[w.site_id]=(sL[w.site_id]||0)+Number(w.days||0)*Number(w.daily_rate||0));
   exps.forEach(e=>sE[e.site_id]=(sE[e.site_id]||0)+Number(e.amount||0));
-  const ms={};['AMRIT','NIRAN','SUBEIN'].forEach(m=>ms[m]={cnt:0,val:0,share:0,sites:[],scores:[]});
+  const ms={};['AMRIT','NIRAN','SUBEIN'].forEach(m=>ms[m]={cnt:0,val:0,share:0,sites:[],scores:[],withdrawn:0});
   let totP=0;
   sites.forEach(s=>{
     const r=sP[s.id]||0,l=sL[s.id]||0,e=sE[s.id]||0,p=r-l-e;totP+=p;
@@ -1734,6 +1819,7 @@ async function loadTeam(){
       ms[s.brought_by].scores.push(sc);
     }
   });
+  withdrawals.forEach(w=>{if(ms[w.member])ms[w.member].withdrawn+=Number(w.amount||0);});
   const maxS=Math.max(...['AMRIT','NIRAN','SUBEIN'].map(m=>Math.abs(ms[m].share)),1);
   document.getElementById('t-profit').textContent=Rs(totP);
   document.getElementById('t-sub').textContent=`${sites.length} साइट · ${sites.filter(s=>s.status==='active').length} सक्रिय`;
@@ -1741,18 +1827,36 @@ async function loadTeam(){
     const st=ms[m];const pct=Math.max(3,(Math.abs(st.share)/maxS)*100);
     const avgSc=st.scores.length?Math.round(st.scores.reduce((a,b)=>a+b,0)/st.scores.length):0;
     const sl=scoreLabel(avgSc);
+    const remaining=st.share-st.withdrawn;
+    const mWdraws=withdrawals.filter(w=>w.member===m).sort((a,b)=>((b.date||'')>(a.date||'')?1:-1)).slice(0,3);
     return`<div class="tcard">
       <div class="tc-h">
         ${getAvatarHTML(m,44,'margin-right:0')}
         <div style="margin-left:0"><div class="tc-nm">${m}</div><div style="font-size:11px;color:var(--gr500)">A.N.S. · सदस्य</div></div>
-        <div class="tc-share"><div class="tc-sv n" style="color:${st.share>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(st.share))}</div><div class="tc-sl">हिस्सा</div></div>
+        <div class="tc-share">
+          <div class="tc-sv n" style="color:${st.share>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(st.share))}</div>
+          <div class="tc-sl">कुल हिस्सा</div>
+        </div>
       </div>
       <div class="tc-body">
         <div class="tc-row"><span class="tcl">ठेक्का ल्याएको</span><span class="tcv" style="color:var(--ind)">${st.cnt} वटा</span></div>
-        <div class="tc-row"><span class="tcl">ठेक्का मूल्य</span><span class="tcv">${Rs(st.val)}</span></div>
-        <div class="tc-row"><span class="tcl">Credit Score</span><span class="${sl.cls} score-badge">${sl.txt} ${avgSc>0?avgSc+'pts':'—'}</span></div>
+        <div class="tc-row"><span class="tcl">💸 लिइसकेको रकम</span><span class="tcv n" style="color:var(--r)">${Rs(st.withdrawn)}</span></div>
+        <div class="tc-row" style="background:${remaining>=0?'var(--gl)':'var(--rl)'};padding:8px;border-radius:8px;margin-top:4px">
+          <span style="font-weight:700">💰 बाँकी हिस्सा</span>
+          <span class="n" style="font-size:17px;font-weight:800;color:${remaining>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(remaining))}</span>
+        </div>
+        <div class="tc-row" style="margin-top:8px"><span class="tcl">Credit Score</span><span class="${sl.cls} score-badge">${sl.txt} ${avgSc>0?avgSc+'pts':'—'}</span></div>
         <div class="tcbar"><div class="tcfill" style="width:${pct}%"></div></div>
-        ${st.sites.length?`<div style="margin-top:8px;font-size:11px;color:var(--gr400)">${st.sites.join('  ·  ')}</div>`:''}
+        ${mWdraws.length?`
+        <div style="margin-top:10px;border-top:1px solid var(--gr100);padding-top:8px">
+          <div style="font-size:10px;font-weight:800;color:var(--gr400);text-transform:uppercase;margin-bottom:5px">हालका निकासी</div>
+          ${mWdraws.map(w=>`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+            <span style="color:var(--gr500)">${w.bs_date||w.date} · ${w.note||({cash:'नगद',personal_exp:'व्यक्तिगत',salary:'तलब'}[w.type]||w.type)}</span>
+            <span class="n" style="color:var(--r);font-weight:700">-${Rs(w.amount)}</span>
+          </div>`).join('')}
+        </div>`:''}
+        ${m===ME?`<button onclick="openWithdrawalModal()" style="width:100%;margin-top:10px;padding:10px;border-radius:10px;background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:13px;font-weight:700;cursor:pointer">+ रकम निकाल्ने entry थप्नुस्</button>`:''}
+        ${st.sites.length?`<div style="margin-top:6px;font-size:11px;color:var(--gr400)">${st.sites.join('  ·  ')}</div>`:''}
       </div>
     </div>`;
   }).join('')+'<div style="height:8px"></div>';
