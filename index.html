@@ -453,52 +453,68 @@ select.fi option{background:#fff}
 <!-- HOME -->
 <div class="page on" id="pg-home">
   <div class="hero-bar">
+    <!-- Top row: Avatar + name only, no settings button -->
     <div class="hb-top">
-      <div class="hb-user">
+      <div class="hb-user" onclick="go('profile')" style="cursor:pointer">
         <div class="hb-avatar" id="hb-av">A</div>
-        <div><div class="hb-hey" id="hb-hey">नमस्ते 👋</div><div class="hb-name" id="hb-nm">AMRIT</div></div>
+        <div>
+          <div class="hb-hey" id="hb-hey">नमस्ते 👋</div>
+          <div class="hb-name" id="hb-nm">AMRIT</div>
+        </div>
       </div>
-      <div class="hb-right"><button class="hb-btn" onclick="go('profile')">⚙</button></div>
+      <div class="hb-right">
+        <div id="h-date" style="font-size:11px;color:rgba(255,255,255,.65);text-align:right;font-weight:600">📅 —</div>
+      </div>
     </div>
+
+    <!-- EARNING CARD: hierarchy design -->
     <div class="bal-card">
-      <div class="bc-lbl" data-ne="कुल प्राप्त रकम" data-en="Total Received">कुल प्राप्त रकम</div>
-      <div class="bc-val n" id="h-recv">Rs. —</div>
-      <div class="bc-date" id="h-date">📅 —</div>
-      <div class="qbtns">
+      <!-- 1. Personal Earning (ठूलो) -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:600;margin-bottom:3px">💼 <span id="hb-nm2">AMRIT</span> को कमाइ (ज्याला अनुसार)</div>
+        <div class="n" id="h-my-wage" style="font-size:34px;font-weight:800;color:#fff;line-height:1.1">Rs. —</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:2px" id="h-wage-detail">— दिन काम</div>
+      </div>
+
+      <!-- 2. Total Received (medium) -->
+      <div style="background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,.55)">कुल प्राप्त (सबै साइट)</div>
+          <div class="n" id="h-recv" style="font-size:22px;font-weight:800;color:#fff">Rs. —</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:rgba(255,255,255,.55)">कुल नाफा</div>
+          <div class="n" id="h-pr" style="font-size:16px;font-weight:800;color:rgba(255,255,255,.9)">—</div>
+        </div>
+      </div>
+
+      <!-- 3. Today's attendance (सानो) -->
+      <div style="font-size:11px;color:rgba(255,255,255,.6);margin-bottom:6px">📍 आजको हाजिर</div>
+      <div id="h-today-att" style="font-size:13px;font-weight:700;color:#fff">जाँच हुँदैछ...</div>
+
+      <!-- Quick buttons -->
+      <div class="qbtns" style="margin-top:14px">
         <div class="qb" onclick="openSiteModal()">
-          <div class="qb-i"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="qb-l" data-ne="नयाँ साइट" data-en="New Site">नयाँ साइट</div>
+          <div class="qb-i"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+          <div class="qb-l">नयाँ साइट</div>
         </div>
         <div class="qb" onclick="go('att')">
           <div class="qb-i"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-          <div class="qb-l" data-ne="हाजिर" data-en="Attend">हाजिर</div>
+          <div class="qb-l">हाजिर</div>
         </div>
         <div class="qb" onclick="openGlobalExp()">
           <div class="qb-i"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-          <div class="qb-l" data-ne="खर्च" data-en="Expense">खर्च</div>
+          <div class="qb-l">खर्च</div>
         </div>
         <div class="qb" onclick="go('team')">
           <div class="qb-i"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-          <div class="qb-l" data-ne="टोली" data-en="Team">टोली</div>
+          <div class="qb-l">टोली</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MY STATS -->
-  <div class="my-stats-card">
-    <div class="msc-header">
-      <div style="font-size:13px;font-weight:800;color:var(--gr700)"><span id="msc-name">AMRIT</span> <span data-ne="को आजको स्थिति" data-en="Today's Status">को आजको स्थिति</span></div>
-      <span class="today-status ts-unknown" id="today-st">जाँच हुँदैछ...</span>
-    </div>
-    <div class="msc-grid">
-      <div class="msc-item"><div class="msc-v n" id="my-earn" style="color:var(--g)">—</div><div class="msc-l" data-ne="मेरो हिस्सा" data-en="My Share">मेरो हिस्सा</div></div>
-      <div class="msc-item"><div class="msc-v n" id="my-contracts" style="color:var(--ind)">—</div><div class="msc-l" data-ne="ठेक्का" data-en="Contracts">ठेक्का</div></div>
-      <div class="msc-item" onclick="go('team')"><div class="msc-v" id="my-score" style="color:var(--a)">—</div><div class="msc-l" data-ne="स्कोर" data-en="Score">स्कोर</div></div>
-    </div>
-  </div>
-
-  <div class="stat-grid" style="padding-top:0">
+  <div class="stat-grid" style="padding-top:16px">
     <div class="stat-card">
       <div class="sc-ico" style="background:var(--ind-l)"><svg viewBox="0 0 24 24" fill="var(--ind)" width="20" height="20"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3l5 4h-3v5h-4v-5H7l5-4z"/></svg></div>
       <div class="sc-v n" style="color:var(--ind)" id="h-act">—</div><div class="sc-l">सक्रिय साइट</div>
@@ -1107,16 +1123,16 @@ async function loadHome(){
   const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   document.getElementById('hb-hey').textContent=greet+' 👋';
   document.getElementById('hb-nm').textContent=ME||'';
-  document.getElementById('msc-name').textContent=ME||'';
+  document.getElementById('hb-nm2').textContent=ME||'';
 
-  // Update avatar
+  // Avatar
   const avEl=document.getElementById('hb-av');
   const p=PROFILES[ME]||{};
   if(p.photo){avEl.innerHTML=`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover">`;avEl.style.background='transparent';}
   else{avEl.textContent=ME?ME[0]:'A';avEl.style.background=AV_GRADS[p.color||'blue'];}
 
   const td=todStr();
-  document.getElementById('h-date').textContent='📅 आजको मिति: '+bsToday();
+  document.getElementById('h-date').textContent='📅 '+bsToday();
   document.getElementById('s-sub').textContent=bsToday();
 
   try{
@@ -1127,46 +1143,45 @@ async function loadHome(){
     SITES=sites;WKRS=wkrs;
     const active=sites.filter(s=>s.status==='active');
     document.getElementById('h-act').textContent=active.length;
+
     let totR=0;pays.forEach(p=>totR+=Number(p.amount||0));
     document.getElementById('h-recv').textContent=Rs(totR);
+
     let totE=0;exps.forEach(e=>totE+=Number(e.amount||0));
     document.getElementById('h-exp').textContent=Rs(totE);
+
     let totL=0;work.forEach(w=>totL+=Number(w.days||0)*Number(w.daily_rate||0));
     const profit=totR-totL-totE;
     document.getElementById('h-pr').textContent=Rs(Math.abs(profit));
-    document.getElementById('h-pr').style.color=profit>=0?'var(--g)':'var(--r)';
-    document.getElementById('h-prl').textContent=profit>=0?'कुल नाफा':'कुल घाटा';
+    document.getElementById('h-pr').style.color=profit>=0?'rgba(255,255,255,.95)':'#FCA5A5';
+    document.getElementById('h-prl').textContent=profit>=0?'नाफा':'घाटा';
+
     let totCV=0;sites.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
     document.getElementById('h-pd').textContent=Rs(totCV-totR);
 
-    // My stats
-    const myPays=pays;const mySites=sites.filter(s=>s.brought_by===ME);
-    const sP={},sL={},sE={};
-    pays.forEach(p=>sP[p.site_id]=(sP[p.site_id]||0)+Number(p.amount||0));
-    work.forEach(w=>sL[w.site_id]=(sL[w.site_id]||0)+Number(w.days||0)*Number(w.daily_rate||0));
-    exps.forEach(e=>sE[e.site_id]=(sE[e.site_id]||0)+Number(e.amount||0));
-    let totProfit=0;sites.forEach(s=>{const r=sP[s.id]||0,l=sL[s.id]||0,e=sE[s.id]||0;totProfit+=r-l-e;});
-    document.getElementById('my-earn').textContent=Rs(Math.abs(totProfit/3));
-    document.getElementById('my-contracts').textContent=mySites.length;
+    // ── PERSONAL WAGE EARNING (actual work done, not profit share) ──
+    const myWork=work.filter(w=>w.worker_name===ME||w.worker_id===ME);
+    const myTotalDays=myWork.reduce((a,w)=>a+Number(w.days||0),0);
+    const myTotalWage=myWork.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
+    document.getElementById('h-my-wage').textContent=Rs(myTotalWage)||'Rs. 0';
+    document.getElementById('h-wage-detail').textContent=`${myTotalDays} दिन काम गरेको`;
 
-    // My score (avg across my sites)
-    let totalScore=0,scoredSites=0;
-    mySites.forEach(s=>{
-      const r=sP[s.id]||0,l=sL[s.id]||0,e=sE[s.id]||0;
-      const cv=sCV(s)||0;const tp=getTimeProgress(s);
-      const sc=calcScore(s,r,cv,r-l-e,tp?.elapsed||0,tp?.estimated||0);
-      totalScore+=sc;scoredSites++;
+    // ── TODAY'S ATTENDANCE for ME ──
+    let myTodaySite='';let myTodayStatus='';
+    attToday.forEach(r=>{
+      (r.entries||[]).forEach(e=>{
+        if(e.name===ME||e.wid===ME){
+          myTodayStatus=e.status;
+          myTodaySite=r.site_name||sites.find(s=>s.id===r.site_id)?.name||'';
+        }
+      });
     });
-    const avgScore=scoredSites>0?Math.round(totalScore/scoredSites):0;
-    const sl=scoreLabel(avgScore);
-    document.getElementById('my-score').textContent=mySites.length?avgScore+'pts':'—';
-
-    // Today's attendance
-    let todayPresent=false;
-    attToday.forEach(r=>{(r.entries||[]).forEach(e=>{if(e.status==='P')todayPresent=true;});});
-    const stEl=document.getElementById('today-st');
-    stEl.textContent=todayPresent?'✅ उपस्थित':'⚠️ हाजिर छैन';
-    stEl.className='today-status '+(todayPresent?'ts-present':'ts-absent');
+    const attEl=document.getElementById('h-today-att');
+    if(myTodayStatus==='P')attEl.innerHTML=`<span style="color:#6EE7B7">✅ उपस्थित</span> — ${myTodaySite}`;
+    else if(myTodayStatus==='H')attEl.innerHTML=`<span style="color:#FCD34D">🔶 आधा दिन</span> — ${myTodaySite}`;
+    else if(myTodayStatus==='A')attEl.innerHTML=`<span style="color:#FCA5A5">❌ अनुपस्थित</span>`;
+    else if(myTodayStatus==='V')attEl.innerHTML=`<span style="color:#A5B4FC">🏖️ बिदा</span>`;
+    else attEl.innerHTML=`<span style="color:rgba(255,255,255,.5)">— हाजिर भरिएको छैन</span>`;
 
     // My sites
     const myActive=active.filter(s=>s.brought_by===ME);
@@ -1791,7 +1806,70 @@ async function loadAtt(){
   const active=SITES.filter(s=>s.status==='active');
   if(!active.length){el.innerHTML=emptyS('🏗️','कुनै सक्रिय साइट छैन');return;}
   if(!WKRS.length){el.innerHTML=emptyS('👷','कामदार छैनन्');return;}
-  let html='';
+
+  // ── TODAY'S SUMMARY ──
+  // Build worker → site mapping from saved records
+  const workerSummary = {};
+  WKRS.forEach(w => workerSummary[w.id] = {name:w.name, status:'', site:''});
+  recs.forEach(r => {
+    (r.entries||[]).forEach(e => {
+      if(workerSummary[e.wid]) {
+        workerSummary[e.wid].status = e.status;
+        workerSummary[e.wid].site = r.site_name||SITES.find(s=>s.id===r.site_id)?.name||'';
+      }
+    });
+  });
+  const present = Object.values(workerSummary).filter(w=>w.status==='P');
+  const half    = Object.values(workerSummary).filter(w=>w.status==='H');
+  const absent  = Object.values(workerSummary).filter(w=>w.status==='A');
+  const leave   = Object.values(workerSummary).filter(w=>w.status==='V');
+  const unsaved = Object.values(workerSummary).filter(w=>!w.status);
+
+  const summaryHtml = `
+  <div style="background:var(--w);border-radius:16px;border:1px solid var(--gr100);box-shadow:var(--sh);margin-bottom:16px;overflow:hidden">
+    <div style="background:linear-gradient(135deg,var(--ind-l),var(--blue-l));padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:15px;font-weight:800;color:var(--ind-d)">📊 ${fBS(AD)} — सारांश</div>
+      <div style="display:flex;gap:6px">
+        <span style="background:var(--gl);color:#065F46;font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px">${present.length+half.length} उपस्थित</span>
+        <span style="background:var(--rl);color:var(--r);font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px">${absent.length} अनुपस्थित</span>
+      </div>
+    </div>
+    ${present.length?`
+    <div style="padding:8px 16px 4px;border-bottom:1px solid var(--gr100)">
+      <div style="font-size:10px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">✅ उपस्थित (${present.length})</div>
+      ${present.map(w=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--gr100)">
+          <span style="font-size:13px;font-weight:700">${w.name}</span>
+          <span style="font-size:11px;color:var(--ind);font-weight:600;background:var(--ind-l);padding:2px 8px;border-radius:10px">📍 ${w.site||'—'}</span>
+        </div>`).join('')}
+    </div>`:''}
+    ${half.length?`
+    <div style="padding:8px 16px 4px;border-bottom:1px solid var(--gr100)">
+      <div style="font-size:10px;font-weight:800;color:var(--a);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🔶 आधा दिन (${half.length})</div>
+      ${half.map(w=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--gr100)">
+          <span style="font-size:13px;font-weight:700">${w.name}</span>
+          <span style="font-size:11px;color:var(--a);font-weight:600;background:var(--al);padding:2px 8px;border-radius:10px">📍 ${w.site||'—'}</span>
+        </div>`).join('')}
+    </div>`:''}
+    ${absent.length?`
+    <div style="padding:8px 16px 4px;border-bottom:1px solid var(--gr100)">
+      <div style="font-size:10px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">❌ अनुपस्थित (${absent.length})</div>
+      ${absent.map(w=>`<div style="font-size:13px;font-weight:700;padding:4px 0;color:var(--gr600)">${w.name}</div>`).join('')}
+    </div>`:''}
+    ${leave.length?`
+    <div style="padding:8px 16px 4px;border-bottom:1px solid var(--gr100)">
+      <div style="font-size:10px;font-weight:800;color:var(--ind);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🏖️ बिदा (${leave.length})</div>
+      ${leave.map(w=>`<div style="font-size:13px;font-weight:700;padding:4px 0;color:var(--gr600)">${w.name}</div>`).join('')}
+    </div>`:''}
+    ${unsaved.length?`
+    <div style="padding:8px 16px">
+      <div style="font-size:10px;font-weight:800;color:var(--gr400);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">⏳ हाजिर नभरेको (${unsaved.length})</div>
+      <div style="font-size:12px;color:var(--gr400)">${unsaved.map(w=>w.name).join(', ')}</div>
+    </div>`:''}
+  </div>`;
+
+  let html = summaryHtml;
   active.forEach(site=>{
     const saved=recs.find(r=>r.site_id===site.id);
     html+=`<div class="sac">
@@ -1813,7 +1891,9 @@ async function loadAtt(){
         </div>
       </div>`;
     });
-    html+=`<button class="sac-save" onclick="saveAttS('${site.id}','${site.name.replace(/'/g,"\\'")}')">💾 सेभ — ${site.name}</button></div>`;
+    html+=`<button class="sac-save" ${AD!==todStr()?'disabled style="opacity:.4;cursor:not-allowed;background:var(--gr300)"':''}  onclick="${AD===todStr()?`saveAttS('${site.id}','${site.name.replace(/'/g,"\\'")}')`:''}">
+      ${AD===todStr()?`💾 सेभ — ${site.name}`:`🔒 ${fBS(AD)} — lock (आज मात्र edit हुन्छ)`}
+    </button></div>`;
   });
   el.innerHTML=html;
 }
