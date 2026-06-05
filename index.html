@@ -1355,7 +1355,10 @@ async function loadPays(){
     <div class="ic" style="padding:0">${!pays.length?emptyS('💰','कुनै भुक्तानी छैन'):pays.map(p=>`
       <div class="li"><div class="li-i" style="background:var(--gl);font-size:18px">${p.type==='advance'?'⚡':p.type==='final'?'✅':'📥'}</div>
       <div style="flex:1"><div class="li-t">${{advance:'अग्रिम',installment:'किस्ता',final:'अन्तिम'}[p.type]}</div><div class="li-s">${fBS(p.date)||fD(p.date)}${p.note?' · '+p.note:''}</div></div>
-      <div class="li-r pos">${Rs(p.amount)}</div></div>`).join('')}</div>
+      <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div class="pos">${Rs(p.amount)}</div>
+        <button onclick="delEntry('payments','${p.id}','loadPays')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑</button>
+      </div></div>`).join('')}</div>
   </div>`;
 }
 function openPayModal(){const s=SITES.find(x=>x.id===CS);document.getElementById('pay-lbl').textContent=s?s.name:'';document.getElementById('pa').value='';document.getElementById('pt').value='advance';document.getElementById('pd').value=todStr();document.getElementById('pd-b').textContent=bsToday();document.getElementById('pn').value='';openM('mPay');}
@@ -1363,11 +1366,17 @@ async function savePay(){const amt=+document.getElementById('pa').value;if(!amt)
 
 async function loadWages(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const entries=await dGet('work_entries',['site_id','==',CS]);
+  const [entries, advances] = await Promise.all([
+    dGet('work_entries',['site_id','==',CS]),
+    dGet('worker_advances',['site_id','==',CS])
+  ]);
   entries.sort((a,b)=>((b.date_from||'')>(a.date_from||'')?1:-1));
+  advances.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
   const totD=entries.reduce((a,e)=>a+Number(e.days||0),0);
   const totL=entries.reduce((a,e)=>a+Number(e.days||0)*Number(e.daily_rate||0),0);
-  const totA=entries.reduce((a,e)=>a+Number(e.advance_given||0),0);
+  const totA1=entries.reduce((a,e)=>a+Number(e.advance_given||0),0);
+  const totA2=advances.reduce((a,e)=>a+Number(e.amount||0),0);
+  const totA=totA1+totA2;
   el.innerHTML=`<div class="pc">
     <div class="ms-row">
       <div class="ms-c"><div class="ms-v" style="color:var(--ind)">${totD}</div><div class="ms-l">दिन</div></div>
@@ -1379,10 +1388,48 @@ async function loadWages(){
       <button class="btn bp bsm" onclick="openWageModal()">+ ज्याला</button>
       <button class="btn bsm" style="background:var(--al);color:#92400E;border:1px solid #FCD34D" onclick="openAdvModal('${CS}')">💵 अग्रिम</button>
     </div>
-    <div class="ic" style="padding:0">${!entries.length?emptyS('👷','ज्याला रेकर्ड छैन'):entries.map(e=>{
-      const earn=Number(e.days||0)*Number(e.daily_rate||0);
-      return`<div class="li"><div class="li-i" style="font-size:18px">👷</div><div style="flex:1"><div class="li-t">${e.worker_name}</div><div class="li-s">${e.days}दिन × Rs.${e.daily_rate}${e.bs_from?' · '+e.bs_from:''}</div>${e.advance_given>0?`<div style="font-size:11px;color:var(--a)">अग्रिम: ${Rs(e.advance_given)} · बाँकी: ${Rs(earn-e.advance_given)}</div>`:''}</div><div class="li-r"><div class="n" style="font-weight:800;font-size:14px">${Rs(earn)}</div></div></div>`;
-    }).join('')}</div>
+
+    ${!entries.length&&!advances.length?emptyS('👷','कुनै रेकर्ड छैन'):`
+    <div class="ic" style="padding:0;margin-bottom:10px">
+      <div style="padding:10px 16px;font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;border-bottom:1px solid var(--gr100)">ज्याला रेकर्ड</div>
+      ${!entries.length?`<div style="padding:12px 16px;font-size:13px;color:var(--gr400)">कुनै ज्याला रेकर्ड छैन</div>`:entries.map(e=>{
+        const earn=Number(e.days||0)*Number(e.daily_rate||0);
+        return`<div class="li">
+          <div class="li-i" style="font-size:18px;background:var(--ind-l)">👷</div>
+          <div style="flex:1">
+            <div class="li-t">${e.worker_name}</div>
+            <div class="li-s">${e.days}दिन × Rs.${e.daily_rate}${e.bs_from?' · '+e.bs_from:''}</div>
+            ${e.advance_given>0?`<div style="font-size:11px;color:var(--a)">अग्रिम: ${Rs(e.advance_given)} · बाँकी: ${Rs(earn-e.advance_given)}</div>`:''}
+          </div>
+          <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div class="n" style="font-weight:800;font-size:14px">${Rs(earn)}</div>
+            <button onclick="delEntry('work_entries','${e.id}','loadWages')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑 हटाउनुस्</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    ${advances.length?`
+    <div class="ic" style="padding:0;margin-bottom:10px">
+      <div style="padding:10px 16px;font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;border-bottom:1px solid var(--gr100)">💵 अग्रिम नगद दिएको</div>
+      ${advances.map(a=>{
+        const src=a.source==='site'?'साइट बजेट':a.source+' (व्यक्तिगत)';
+        return`<div class="li">
+          <div class="li-i" style="font-size:18px;background:var(--al)">💵</div>
+          <div style="flex:1">
+            <div class="li-t">${a.worker_name}</div>
+            <div class="li-s">${a.bs_date||a.date} · स्रोत: ${src}</div>
+            ${a.note?`<div style="font-size:11px;color:var(--gr400)">${a.note}</div>`:''}
+            ${a.is_personal?`<div style="font-size:11px;color:var(--r);font-weight:700">⚠️ व्यक्तिगत — return गर्नुपर्ने</div>`:''}
+          </div>
+          <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div class="neg">${Rs(a.amount)}</div>
+            <button onclick="delEntry('worker_advances','${a.id}','loadWages')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑 हटाउनुस्</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`:''}
+    `}
   </div>`;
 }
 async function openWageModal(){
@@ -1423,7 +1470,10 @@ async function loadSEx(){
     <div class="ic" style="padding:0">${!exps.length?emptyS('💸','खर्च छैन'):exps.map(e=>`
       <div class="li"><div class="li-i" style="font-size:18px">${ET_ICO[e.category]||'📦'}</div>
       <div style="flex:1"><div class="li-t">${e.note||ET[e.category]||e.category}</div><div class="li-s">${fBS(e.date)||fD(e.date)} · ${e.paid_by}</div></div>
-      <div class="li-r neg">${Rs(e.amount)}</div></div>`).join('')}</div>
+      <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div class="neg">${Rs(e.amount)}</div>
+        <button onclick="delEntry('expenses','${e.id}','loadSEx')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑</button>
+      </div></div>`).join('')}</div>
   </div>`;
 }
 function openSiteExpM(){populateES(CS);document.getElementById('ea').value='';document.getElementById('ed').value=todStr();document.getElementById('ed-b').textContent=bsToday();document.getElementById('en').value='';openM('mExp');}
@@ -1671,7 +1721,21 @@ async function saveWorker(){
 // Keep old name working too
 async function saveNewW(){await saveWorker();}
 
-// ══ TEAM WITHDRAWAL ══
+// ══ DELETE ENTRY ══
+async function delEntry(collection, id, reloadFn){
+  if(!confirm('यो entry हटाउने? यो पूर्ववत हुँदैन।'))return;
+  try{
+    await db.collection(collection).doc(id).delete();
+    toast('हटाइयो ✓');
+    if(reloadFn==='loadPays')loadPays();
+    else if(reloadFn==='loadWages')loadWages();
+    else if(reloadFn==='loadSEx')loadSEx();
+    else if(reloadFn==='loadExp')loadExp();
+    else if(reloadFn==='loadOv')loadOv();
+  }catch(e){
+    toast('हटाउन सकिएन',false);console.error(e);
+  }
+}
 function openWithdrawalModal(){
   document.getElementById('wdraw-who').textContent=ME+' को Share बाट रकम';
   document.getElementById('wdraw-amt').value='';
