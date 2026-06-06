@@ -638,7 +638,8 @@ select.fi option{background:#fff}
       <div class="set-item" onclick="go('team')"><div class="si-ico" style="background:var(--ind-l)"><svg viewBox="0 0 17 17" fill="var(--ind)" width="17" height="17"><path d="M15 15v-1.5a3 3 0 00-3-3H5a3 3 0 00-3 3V15M8.5 8a3 3 0 100-6 3 3 0 000 6z"/></svg></div><div><div class="si-t">👥 टोली सारांश</div><div class="si-s">AMRIT, NIRAN, SUBEIN को नाफा</div></div><div class="si-arr">›</div></div>
     </div>
     <div class="set-group">
-      <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="showMonthly()"><div class="si-ico" style="background:var(--blue-l)"><svg viewBox="0 0 17 17" fill="var(--blue)" width="17" height="17"><path d="M14 2H3a1 1 0 00-1 1v11a1 1 0 001 1h11a1 1 0 001-1V3a1 1 0 00-1-1zM3 14V3h11v11H3z"/><path d="M5 7h7v1H5zm0 3h7v1H5zm0-6h4v1H5z"/></svg></div><div><div class="si-t">📊 Monthly Report</div><div class="si-s">महिनाको आय/खर्च/नाफा print</div></div><div class="si-arr">›</div></div>
+    </div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="openRateModal()"><div class="si-ico" style="background:var(--gl)">💰</div><div><div class="si-t">दैनिक ज्याला सेट गर्नुस्</div><div class="si-s" id="my-rate-lbl">अहिलेसम्म सेट छैन</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="toggleLang()"><div class="si-ico" style="background:var(--purl)">🌐</div><div><div class="si-t" id="lang-item-t">भाषा: नेपाली</div><div class="si-s" id="lang-item-s">English मा बदल्नुस्</div></div><div class="si-arr">›</div></div>
     </div>
@@ -1238,7 +1239,7 @@ function mkSC(s){
   let timeHtml='';
   if(tp&&s.start_date){
     const color=tp.overdue?'var(--r)':tp.pct>80?'var(--a)':'var(--g)';
-    const label=s.status==='completed'?`सम्पन्न: ${tp.elapsed} दिन`:tp.overdue?`अनुमानभन्दा ${tp.elapsed-tp.estimated} दिन बढी!`:`${tp.elapsed} / ${tp.estimated||'?'} दिन`;
+    const label=s.status==='completed'?`सम्पन्न: ${tp.elapsed} दिन`:tp.overdue?`⚠️ अनुमानभन्दा ${tp.elapsed-tp.estimated} दिन बढी!`:`${tp.elapsed} / ${tp.estimated||'?'} दिन`;
     timeHtml=`<div class="time-progress">
       <div class="tp-row"><span class="tp-lbl">⏱ समय</span><span class="tp-val" style="color:${color}">${label}</span></div>
       <div class="tp-bar"><div class="tp-fill" style="width:${tp.pct}%;background:${color}"></div></div>
@@ -1248,7 +1249,10 @@ function mkSC(s){
     <div class="sc-stripe ${stripe}"></div>
     <div class="sc-body">
       <div class="sc-r1"><div class="sc-nm">${s.name}</div>${badge}</div>
-      <div class="sc-cli">👤 ${s.client_name}${s.location?'  ·  📍'+s.location:''}</div>
+      <div class="sc-cli" style="display:flex;justify-content:space-between;align-items:center">
+        <span>👤 ${s.client_name}${s.location?'  ·  📍'+s.location:''}</span>
+        ${s.client_phone?`<a href="tel:${s.client_phone}" onclick="event.stopPropagation()" style="background:var(--gl);color:#065F46;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-decoration:none;flex-shrink:0">📞 Call</a>`:''}
+      </div>
       <div style="font-size:11px;color:var(--gr500);margin-bottom:8px">ल्याउने: <b style="color:var(--ind)">${s.brought_by}</b>${s.start_date?'  ·  '+fBSS(s.start_date):''}${s.days_taken?'  ·  ⏱'+s.days_taken+'दिन':''}</div>
       ${timeHtml}
       <div class="sc-foot"><span class="sc-tag">${SN[s.contract_type]||s.contract_type}</span>${v!=null?`<span class="sc-amt">${Rs(v)}</span>`:'<span style="font-size:12px;color:var(--gr400)">दैनिक</span>'}</div>
@@ -1719,10 +1723,14 @@ async function loadWorkers(){
           <div class="ws"><div class="ws-v n" style="color:var(--a)">${Rs(tA)}</div><div class="ws-l">अग्रिम</div></div>
           <div class="ws"><div class="ws-v n" style="color:var(--blue)">${Rs(tE-tA)}</div><div class="ws-l">बाँकी</div></div>
         </div>
-        ${we.length?`<div style="padding:8px 14px 6px;border-top:1px solid var(--gr100);margin-top:10px">
+        ${we.length?`<div style="padding:8px 14px 10px;border-top:1px solid var(--gr100);margin-top:10px">
           <div style="font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 काम इतिहास</div>
           ${hist}
           ${we.length>3?`<div style="font-size:11px;color:var(--ind);text-align:center;padding:6px 0;font-weight:700">+ ${we.length-3} थप रेकर्ड</div>`:''}
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button onclick="event.stopPropagation();printSalarySlip('${w.id}','${w.name.replace(/'/g,"\\'")}');" style="flex:1;padding:8px;background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">🖨️ तलब पर्ची</button>
+            <button onclick="event.stopPropagation();showWorkerLedger('${w.id}','${w.name.replace(/'/g,"\\'")}');" style="flex:1;padding:8px;background:var(--gl);color:#065F46;border:1px solid #6EE7B7;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">📋 पूर्ण हिसाब</button>
+          </div>
         </div>`:''}
       </div>`;
     }).join('');
@@ -1763,7 +1771,119 @@ async function saveWorker(){
 // Keep old name working too
 async function saveNewW(){await saveWorker();}
 
-// ══ DELETE ENTRY ══
+// ══ MONTHLY SUMMARY ══
+async function showMonthly(){
+  const [sites,pays,work,exps,attRecs]=await Promise.all([
+    dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('attendance')
+  ]);
+  // Group by month
+  const months={};
+  const addToMonth=(date,key,val)=>{
+    if(!date)return;
+    const m=date.slice(0,7); // YYYY-MM
+    if(!months[m])months[m]={recv:0,exp:0,wage:0,days:{}};
+    months[m][key]=(months[m][key]||0)+val;
+  };
+  pays.forEach(p=>addToMonth(p.date,'recv',Number(p.amount||0)));
+  exps.forEach(e=>addToMonth(e.date,'exp',Number(e.amount||0)));
+  work.forEach(w=>addToMonth(w.date_from,'wage',Number(w.days||0)*Number(w.daily_rate||0)));
+  // My attendance days per month
+  attRecs.forEach(r=>{
+    const m=r.date?.slice(0,7);if(!m)return;
+    if(!months[m])months[m]={recv:0,exp:0,wage:0,myDays:0};
+    (r.entries||[]).forEach(e=>{
+      if(e.name===ME){
+        months[m].myDays=(months[m].myDays||0)+(e.status==='P'?1:e.status==='H'?.5:0);
+      }
+    });
+  });
+  const myRate=getMyRate();
+  const sorted=Object.keys(months).sort((a,b)=>b>a?1:-1);
+  let html=`<html><head><meta charset="UTF-8"><title>Monthly Report</title>
+  <style>body{font-family:sans-serif;padding:20px;font-size:13px}h2{margin-bottom:4px}h3{color:#4F46E5;margin:16px 0 6px}table{width:100%;border-collapse:collapse;margin-bottom:20px}th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}th{background:#EEF2FF;font-weight:700}.pos{color:green;font-weight:800}.neg{color:red;font-weight:800}.total{background:#EEF2FF;font-weight:800}</style>
+  </head><body>
+  <h2>🎨 अनुग्रह House Painting — Monthly Report</h2>
+  <p>${ME} · ${bsToday()}</p><hr style="margin:10px 0">
+  <table>
+    <tr><th>महिना</th><th>प्राप्त</th><th>खर्च</th><th>ज्याला</th><th>नाफा</th><th>मेरो दिन</th><th>मेरो कमाइ</th></tr>`;
+  let totR=0,totE=0,totW=0,totD=0;
+  sorted.forEach(m=>{
+    const d=months[m];
+    const profit=d.recv-d.exp-d.wage;
+    totR+=d.recv;totE+=d.exp;totW+=d.wage;totD+=d.myDays||0;
+    const myEarn=(d.myDays||0)*myRate;
+    // Convert YYYY-MM to BS
+    const bsM=adToBS(m+'-15');
+    const label=bsM?`${NM[bsM.m-1]} ${bsM.y}`:m;
+    html+=`<tr><td>${label}</td><td class="pos">Rs.${d.recv.toLocaleString()}</td><td class="neg">Rs.${d.exp.toLocaleString()}</td><td class="neg">Rs.${d.wage.toLocaleString()}</td><td class="${profit>=0?'pos':'neg'}">Rs.${Math.abs(profit).toLocaleString()}</td><td>${d.myDays||0}</td><td class="pos">${myRate>0?'Rs.'+myEarn.toLocaleString():'—'}</td></tr>`;
+  });
+  html+=`<tr class="total"><td>जम्मा</td><td>Rs.${totR.toLocaleString()}</td><td>Rs.${totE.toLocaleString()}</td><td>Rs.${totW.toLocaleString()}</td><td>Rs.${(totR-totE-totW).toLocaleString()}</td><td>${totD}</td><td>${myRate>0?'Rs.'+(totD*myRate).toLocaleString():'—'}</td></tr>
+  </table>
+  <p style="font-size:11px;color:#999">Generated: ${new Date().toLocaleString()}</p>
+  </body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),500);
+}
+
+// ══ WORKER SALARY SLIP ══
+async function printSalarySlip(workerId, workerName){
+  const [entries,advances]=await Promise.all([
+    dGet('work_entries',['worker_id','==',workerId]),
+    dGet('worker_advances',['worker_id','==',workerId])
+  ]);
+  const totDays=entries.reduce((a,e)=>a+Number(e.days||0),0);
+  const totEarn=entries.reduce((a,e)=>a+Number(e.days||0)*Number(e.daily_rate||0),0);
+  const totAdv=entries.reduce((a,e)=>a+Number(e.advance_given||0),0)+advances.reduce((a,e)=>a+Number(e.amount||0),0);
+  const balance=totEarn-totAdv;
+  const html=`<html><head><meta charset="UTF-8"><title>Salary Slip</title>
+  <style>body{font-family:sans-serif;padding:24px;max-width:400px;margin:0 auto;font-size:13px}h2{text-align:center;color:#4F46E5}h3{color:#4F46E5;border-bottom:1px solid #ddd;padding-bottom:6px}.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee}.total{font-weight:800;font-size:16px;color:#4F46E5}.footer{margin-top:20px;text-align:center;font-size:11px;color:#999}table{width:100%;border-collapse:collapse;margin:10px 0}th,td{border:1px solid #ddd;padding:6px;font-size:12px}th{background:#EEF2FF}</style>
+  </head><body>
+  <h2>🎨 अनुग्रह House Painting</h2>
+  <p style="text-align:center;color:#666">A.N.S. · Since 2012</p>
+  <hr>
+  <h3>👷 ${workerName} — तलब पर्ची</h3>
+  <div class="row"><span>मिति:</span><span>${bsToday()}</span></div>
+  <h3>काम विवरण</h3>
+  <table><tr><th>साइट</th><th>मिति</th><th>दिन</th><th>दर</th><th>रकम</th></tr>
+  ${entries.map(e=>`<tr><td>${e.site_id?SITES.find(s=>s.id===e.site_id)?.name||'—':'—'}</td><td>${e.bs_from||e.date_from||'—'}</td><td>${e.days}</td><td>Rs.${e.daily_rate}</td><td>Rs.${(Number(e.days)*Number(e.daily_rate)).toLocaleString()}</td></tr>`).join('')}
+  </table>
+  <div class="row"><span>कुल कमाइ:</span><span style="color:green;font-weight:700">Rs.${totEarn.toLocaleString()}</span></div>
+  <div class="row"><span>अग्रिम दिइसकेको:</span><span style="color:red">- Rs.${totAdv.toLocaleString()}</span></div>
+  <div class="row total"><span>बाँकी रकम:</span><span>Rs.${balance.toLocaleString()}</span></div>
+  <div class="footer">
+    <p>हस्ताक्षर: ________________</p>
+    <p>अनुग्रह House Painting · AMRIT · NIRAN · SUBEIN</p>
+  </div></body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),500);
+}
+
+// ══ WORKER FULL LEDGER ══
+async function showWorkerLedger(workerId, workerName){
+  const [entries,advances]=await Promise.all([
+    dGet('work_entries',['worker_id','==',workerId]),
+    dGet('worker_advances',['worker_id','==',workerId])
+  ]);
+  const allTx=[
+    ...entries.map(e=>({date:e.date_from||'',bsDate:e.bs_from||'',type:'ज्याला',site:SITES.find(s=>s.id===e.site_id)?.name||'—',desc:`${e.days}दिन × Rs.${e.daily_rate}`,amount:Number(e.days)*Number(e.daily_rate),isCredit:true})),
+    ...entries.filter(e=>e.advance_given>0).map(e=>({date:e.date_from||'',bsDate:e.bs_from||'',type:'अग्रिम',site:SITES.find(s=>s.id===e.site_id)?.name||'—',desc:'ज्याला अग्रिम',amount:Number(e.advance_given),isCredit:false})),
+    ...advances.map(a=>({date:a.date||'',bsDate:a.bs_date||'',type:'अग्रिम',site:a.site_name||'—',desc:a.note||a.source,amount:Number(a.amount),isCredit:false}))
+  ].sort((a,b)=>a.date>b.date?1:-1);
+  let bal=0;
+  const html=`<html><head><meta charset="UTF-8"><title>Ledger</title>
+  <style>body{font-family:sans-serif;padding:20px;font-size:12px}h2{color:#4F46E5}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:7px 8px}th{background:#EEF2FF;font-weight:700}.cr{color:green}.db{color:red}.bal{font-weight:700}</style>
+  </head><body>
+  <h2>👷 ${workerName} — पूर्ण हिसाब</h2>
+  <p>मिति: ${bsToday()}</p>
+  <table>
+    <tr><th>मिति</th><th>प्रकार</th><th>साइट</th><th>विवरण</th><th>जम्मा (+)</th><th>खर्च (-)</th><th>ब्यालेन्स</th></tr>
+    ${allTx.map(t=>{
+      if(t.isCredit)bal+=t.amount; else bal-=t.amount;
+      return`<tr><td>${t.bsDate||t.date}</td><td>${t.type}</td><td>${t.site}</td><td>${t.desc}</td><td class="cr">${t.isCredit?'Rs.'+t.amount.toLocaleString():''}</td><td class="db">${!t.isCredit?'Rs.'+t.amount.toLocaleString():''}</td><td class="bal" style="color:${bal>=0?'green':'red'}">Rs.${bal.toLocaleString()}</td></tr>`;
+    }).join('')}
+  </table>
+  <p style="margin-top:12px;font-size:13px;font-weight:700">बाँकी: <span style="color:${bal>=0?'green':'red'}">Rs.${bal.toLocaleString()}</span></p>
+  </body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();
+}
 async function delEntry(collection, id, reloadFn){
   if(!confirm('यो entry हटाउने? यो पूर्ववत हुँदैन।'))return;
   try{
