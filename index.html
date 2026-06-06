@@ -638,7 +638,8 @@ select.fi option{background:#fff}
       <div class="set-item" onclick="go('team')"><div class="si-ico" style="background:var(--ind-l)"><svg viewBox="0 0 17 17" fill="var(--ind)" width="17" height="17"><path d="M15 15v-1.5a3 3 0 00-3-3H5a3 3 0 00-3 3V15M8.5 8a3 3 0 100-6 3 3 0 000 6z"/></svg></div><div><div class="si-t">👥 टोली सारांश</div><div class="si-s">AMRIT, NIRAN, SUBEIN को नाफा</div></div><div class="si-arr">›</div></div>
     </div>
     <div class="set-group">
-      <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t" data-ne="Password बदल्नुस्" data-en="Change Password">Password बदल्नुस्</div><div class="si-s" data-ne="आफ्नै password राख्नुस्" data-en="Set your own password">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="openRateModal()"><div class="si-ico" style="background:var(--gl)">💰</div><div><div class="si-t">दैनिक ज्याला सेट गर्नुस्</div><div class="si-s" id="my-rate-lbl">अहिलेसम्म सेट छैन</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="toggleLang()"><div class="si-ico" style="background:var(--purl)">🌐</div><div><div class="si-t" id="lang-item-t">भाषा: नेपाली</div><div class="si-s" id="lang-item-s">English मा बदल्नुस्</div></div><div class="si-arr">›</div></div>
     </div>
     <div class="set-group">
@@ -867,6 +868,16 @@ select.fi option{background:#fff}
   <button class="btn bs" onclick="closeM('mWA')">रद्द</button>
 </div></div>
 
+<!-- MODAL: DAILY RATE -->
+<div class="mbo" id="mRate"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">💰 दैनिक ज्याला</div>
+  <div style="background:var(--gl);padding:10px 14px;border-radius:10px;font-size:13px;color:#065F46;font-weight:600;margin-bottom:14px">यो rate attendance × दिन अनुसार तपाईंको earning calculate गर्न प्रयोग हुन्छ।</div>
+  <div class="fg"><label class="fl">तपाईंको दैनिक ज्याला (Rs.)</label><input type="number" class="fi" id="rate-val" placeholder="जस्तै: 1500"></div>
+  <button class="btn bp" onclick="saveMyRate()">💾 सेभ</button>
+  <button class="btn bs" onclick="closeM('mRate')">रद्द</button>
+</div></div>
+
 <!-- MODAL: CHANGE PW -->
 <div class="mbo" id="mPW"><div class="msh">
   <div class="mhd"></div><div class="mtit">🔒 Password बदल्नुस्</div>
@@ -927,6 +938,18 @@ function doLogout(){
   document.getElementById('login').style.display='flex';
   document.getElementById('lu').value='';document.getElementById('lp').value='';document.getElementById('lerr').textContent='';
 }
+function openRateModal(){
+  const rate=localStorage.getItem('rate_'+ME)||'';
+  document.getElementById('rate-val').value=rate;
+  openM('mRate');
+}
+function saveMyRate(){
+  const v=+document.getElementById('rate-val').value;
+  if(!v){toast('Rate राख्नुस्',false);return;}
+  localStorage.setItem('rate_'+ME,v);
+  closeM('mRate');toast('Rate सेभ ✓');loadProfile();loadHome();
+}
+function getMyRate(){return+localStorage.getItem('rate_'+ME)||0;}
 function openChangePW(){document.getElementById('pw-who').textContent=ME+' का Password';['pw-cur','pw-new','pw-cf'].forEach(id=>document.getElementById(id).value='');document.getElementById('pw-err').textContent='';openM('mPW');}
 async function savePW(){
   const cur=document.getElementById('pw-cur').value,nw=document.getElementById('pw-new').value,cf=document.getElementById('pw-cf').value;
@@ -1159,12 +1182,16 @@ async function loadHome(){
     let totCV=0;sites.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
     document.getElementById('h-pd').textContent=Rs(totCV-totR);
 
-    // ── PERSONAL WAGE EARNING (actual work done, not profit share) ──
-    const myWork=work.filter(w=>w.worker_name===ME||w.worker_id===ME);
-    const myTotalDays=myWork.reduce((a,w)=>a+Number(w.days||0),0);
-    const myTotalWage=myWork.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
-    document.getElementById('h-my-wage').textContent=Rs(myTotalWage)||'Rs. 0';
-    document.getElementById('h-wage-detail').textContent=`${myTotalDays} दिन काम गरेको`;
+    // ── PERSONAL WAGE EARNING = attendance days × my rate ──
+    const myRate=getMyRate();
+    let myAttDays=0;
+    const allAtt=await dGet('attendance');
+    allAtt.forEach(r=>(r.entries||[]).forEach(e=>{
+      if(e.name===ME)myAttDays+=(e.status==='P'?1:e.status==='H'?.5:0);
+    }));
+    const myTotalWage=myAttDays*myRate;
+    document.getElementById('h-my-wage').textContent=myRate>0?Rs(myTotalWage):'Rate सेट छैन';
+    document.getElementById('h-wage-detail').textContent=myRate>0?`${myAttDays} दिन × Rs.${myRate}`:'Profile → दैनिक ज्याला सेट गर्नुस्';
 
     // ── TODAY'S ATTENDANCE for ME ──
     let myTodaySite='';let myTodayStatus='';
@@ -1807,16 +1834,20 @@ async function loadAtt(){
   if(!active.length){el.innerHTML=emptyS('🏗️','कुनै सक्रिय साइट छैन');return;}
   if(!WKRS.length){el.innerHTML=emptyS('👷','कामदार छैनन्');return;}
 
-  // ── TODAY'S SUMMARY ──
-  // Build worker → site mapping from saved records
+  // ── TODAY'S SUMMARY ── build from actual attendance records
   const workerSummary = {};
-  WKRS.forEach(w => workerSummary[w.id] = {name:w.name, status:'', site:''});
+  // Add all workers from workers collection first (unrecorded = blank)
+  WKRS.forEach(w => {
+    workerSummary[w.id] = {name:w.name, status:'', site:''};
+  });
+  // Override with actual attendance data
   recs.forEach(r => {
+    const siteName = r.site_name||SITES.find(s=>s.id===r.site_id)?.name||'';
     (r.entries||[]).forEach(e => {
-      if(workerSummary[e.wid]) {
-        workerSummary[e.wid].status = e.status;
-        workerSummary[e.wid].site = r.site_name||SITES.find(s=>s.id===r.site_id)?.name||'';
-      }
+      const key = e.wid||e.name;
+      if(!workerSummary[key]) workerSummary[key] = {name:e.name, status:'', site:''};
+      workerSummary[key].status = e.status;
+      workerSummary[key].site = siteName;
     });
   });
   const present = Object.values(workerSummary).filter(w=>w.status==='P');
@@ -1891,8 +1922,8 @@ async function loadAtt(){
         </div>
       </div>`;
     });
-    html+=`<button class="sac-save" ${AD!==todStr()?'disabled style="opacity:.4;cursor:not-allowed;background:var(--gr300)"':''}  onclick="${AD===todStr()?`saveAttS('${site.id}','${site.name.replace(/'/g,"\\'")}')`:''}">
-      ${AD===todStr()?`💾 सेभ — ${site.name}`:`🔒 ${fBS(AD)} — lock (आज मात्र edit हुन्छ)`}
+    html+=`<button class="sac-save" onclick="saveAttS('${site.id}','${site.name.replace(/'/g,"\\'")}')">
+      💾 सेभ — ${site.name}
     </button></div>`;
   });
   el.innerHTML=html;
@@ -2012,8 +2043,9 @@ function loadProfile(){
   document.getElementById('prof-nm').textContent=ME||'';
   if(p.photo){avEl.innerHTML=`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover"><div class="prof-av-edit">✏️</div>`;avEl.style.background='transparent';}
   else{avEl.innerHTML=`<span id="prof-av-txt">${ME?ME[0]:'?'}</span><div class="prof-av-edit">✏️</div>`;avEl.style.background=AV_GRADS[p.color||'blue'];}
-  document.getElementById('lang-item-t').textContent=LANG==='ne'?'भाषा: नेपाली':'Language: English';
-  document.getElementById('lang-item-s').textContent=LANG==='ne'?'English मा बदल्नुस्':'नेपालीमा बदल्नुस्';
+  const rate=getMyRate();
+  const rateLbl=document.getElementById('my-rate-lbl');
+  if(rateLbl)rateLbl.textContent=rate?`हालको rate: Rs.${rate}/दिन`:'अहिलेसम्म सेट छैन';
 }
 
 // ══ PROFILE PICTURE ══
@@ -2047,8 +2079,20 @@ function boot(){
   document.getElementById('pg-home').classList.add('on');
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.ni')[0].classList.add('on');
-  CUR='home';loadHome();
-  applyLang();
+  CUR='home';
+  // Auto-add member to workers if not exists
+  autoAddMemberAsWorker();
+  loadHome();
+}
+
+async function autoAddMemberAsWorker(){
+  try{
+    const existing=await dGet('workers',['name','==',ME]);
+    if(!existing.length){
+      await dAdd('workers',{name:ME,phone:'',join_date:todStr(),is_member:true});
+      console.log(ME+' workers मा automatically थपियो');
+    }
+  }catch(e){console.error(e);}
 }
 
 window.addEventListener('load',async()=>{
