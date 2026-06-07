@@ -636,15 +636,15 @@ select.fi option{background:#fff}
     <div class="set-group">
       <div class="set-item" onclick="go('exp')"><div class="si-ico" style="background:var(--rl)"><svg viewBox="0 0 17 17" fill="var(--r)" width="17" height="17"><path d="M8.5 1.5C4.63 1.5 1.5 4.63 1.5 8.5s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm.75 10.25h-1.5v-5h1.5v5zm0-6.5h-1.5v-1.5h1.5v1.5z"/></svg></div><div><div class="si-t">💸 खर्च हेर्नुस्</div><div class="si-s">सम्पूर्ण खर्चको विवरण</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="go('team')"><div class="si-ico" style="background:var(--ind-l)"><svg viewBox="0 0 17 17" fill="var(--ind)" width="17" height="17"><path d="M15 15v-1.5a3 3 0 00-3-3H5a3 3 0 00-3 3V15M8.5 8a3 3 0 100-6 3 3 0 000 6z"/></svg></div><div><div class="si-t">👥 टोली सारांश</div><div class="si-s">AMRIT, NIRAN, SUBEIN को नाफा</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="showMonthly()"><div class="si-ico" style="background:var(--blue-l)"><svg viewBox="0 0 17 17" fill="var(--blue)" width="17" height="17"><path d="M14 2H3a1 1 0 00-1 1v11a1 1 0 001 1h11a1 1 0 001-1V3a1 1 0 00-1-1zM3 14V3h11v11H3z"/><path d="M5 7h7v1H5zm0 3h7v1H5zm0-6h4v1H5z"/></svg></div><div><div class="si-t">📊 Monthly Report</div><div class="si-s">महिनाको आय/खर्च/नाफा print</div></div><div class="si-arr">›</div></div>
     </div>
     <div class="set-group">
-      <div class="set-item" onclick="showMonthly()"><div class="si-ico" style="background:var(--blue-l)"><svg viewBox="0 0 17 17" fill="var(--blue)" width="17" height="17"><path d="M14 2H3a1 1 0 00-1 1v11a1 1 0 001 1h11a1 1 0 001-1V3a1 1 0 00-1-1zM3 14V3h11v11H3z"/><path d="M5 7h7v1H5zm0 3h7v1H5zm0-6h4v1H5z"/></svg></div><div><div class="si-t">📊 Monthly Report</div><div class="si-s">महिनाको आय/खर्च/नाफा print</div></div><div class="si-arr">›</div></div>
-    </div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="openRateModal()"><div class="si-ico" style="background:var(--gl)">💰</div><div><div class="si-t">दैनिक ज्याला सेट गर्नुस्</div><div class="si-s" id="my-rate-lbl">अहिलेसम्म सेट छैन</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="toggleLang()"><div class="si-ico" style="background:var(--purl)">🌐</div><div><div class="si-t" id="lang-item-t">भाषा: नेपाली</div><div class="si-s" id="lang-item-s">English मा बदल्नुस्</div></div><div class="si-arr">›</div></div>
     </div>
     <div class="set-group">
-      <div class="set-item" onclick="doLogout()"><div class="si-ico" style="background:var(--rl)">🚪</div><div><div class="si-t" style="color:var(--r)" data-ne="लगआउट" data-en="Logout">लगआउट</div></div></div>
+      <div class="set-item" onclick="doLogout()"><div class="si-ico" style="background:var(--rl)">🚪</div><div><div class="si-t" style="color:var(--r)">लगआउट</div><div class="si-s">App बाट बाहिर निस्कनुस्</div></div></div>
     </div>
   </div>
 </div>
@@ -877,6 +877,28 @@ select.fi option{background:#fff}
   <div class="fg"><label class="fl">तपाईंको दैनिक ज्याला (Rs.)</label><input type="number" class="fi" id="rate-val" placeholder="जस्तै: 1500"></div>
   <button class="btn bp" onclick="saveMyRate()">💾 सेभ</button>
   <button class="btn bs" onclick="closeM('mRate')">रद्द</button>
+</div></div>
+
+<!-- MODAL: SITE PHOTOS -->
+<div class="mbo" id="mSitePhoto"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">📸 Before / After Photos</div>
+  <div style="background:var(--ind-l);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--ind);font-weight:700;margin-bottom:14px" id="sphoto-lbl">—</div>
+  <div class="fr">
+    <div class="fg">
+      <label class="fl">Before Photo</label>
+      <input type="file" class="fi" id="photo-before" accept="image/*" onchange="previewPhoto('photo-before','prev-before')">
+      <div id="prev-before" style="margin-top:8px"></div>
+    </div>
+    <div class="fg">
+      <label class="fl">After Photo</label>
+      <input type="file" class="fi" id="photo-after" accept="image/*" onchange="previewPhoto('photo-after','prev-after')">
+      <div id="prev-after" style="margin-top:8px"></div>
+    </div>
+  </div>
+  <input type="hidden" id="sphoto-site-id">
+  <button class="btn bp" onclick="saveSitePhotos()">💾 Photos सेभ गर्नुस्</button>
+  <button class="btn bs" onclick="closeM('mSitePhoto')">रद्द</button>
 </div></div>
 
 <!-- MODAL: CHANGE PW -->
@@ -1297,12 +1319,15 @@ function loadDT(t){if(t==='ov')loadOv();else if(t==='pay')loadPays();else if(t==
 async function loadOv(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
   const s=SITES.find(x=>x.id===CS);if(!s)return;
-  const[pays,work,exps,advances,matDoc]=await Promise.all([
+  // Load site photos + att summary in parallel with other data
+  const[pays,work,exps,advances,matDoc,photoDoc,attSummaryHtml]=await Promise.all([
     dGet('payments',['site_id','==',CS]),
     dGet('work_entries',['site_id','==',CS]),
     dGet('expenses',['site_id','==',CS]),
     dGet('worker_advances',['site_id','==',CS]),
-    db.collection('materials').doc(CS).get().then(d=>d.exists?d.data():null).catch(()=>null)
+    db.collection('materials').doc(CS).get().then(d=>d.exists?d.data():null).catch(()=>null),
+    db.collection('site_photos').doc(CS).get().then(d=>d.exists?d.data():null).catch(()=>null),
+    loadSiteAttSummary()
   ]);
   const totR=pays.reduce((a,p)=>a+Number(p.amount||0),0);
   const totL=work.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
@@ -1381,9 +1406,21 @@ async function loadOv(){
       ${personalAdv.map(a=>`<div style="display:flex;justify-content:space-between;margin-top:6px"><span>${a.source} → ${a.worker_name}</span><span class="n" style="font-weight:800">${Rs(a.amount)}</span></div>`).join('')}
     </div>`:''}
 
+    ${attSummaryHtml}
+
+    ${photoDoc&&(photoDoc.before||photoDoc.after)?`
+    <div class="ic" style="margin-bottom:12px">
+      <div style="padding:10px 16px;font-size:13px;font-weight:800;border-bottom:1px solid var(--gr100);color:var(--pur)">📸 Before / After</div>
+      <div class="fr" style="padding:12px 16px;gap:10px">
+        ${photoDoc.before?`<div style="flex:1"><div style="font-size:10px;font-weight:700;color:var(--gr500);margin-bottom:5px">BEFORE</div><img src="${photoDoc.before}" style="width:100%;border-radius:10px;max-height:140px;object-fit:cover"></div>`:''}
+        ${photoDoc.after?`<div style="flex:1"><div style="font-size:10px;font-weight:700;color:var(--gr500);margin-bottom:5px">AFTER</div><img src="${photoDoc.after}" style="width:100%;border-radius:10px;max-height:140px;object-fit:cover"></div>`:''}
+      </div>
+    </div>`:''}
+
     <button class="btn" style="background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b)" onclick="document.getElementById('st-id').value='${CS}';openM('mSt')">🔄 स्थिति बदल्नुस्</button>
     ${s.status!=='completed'?`<button class="btn" style="background:var(--gl);color:#065F46;border:1px solid #6EE7B7" onclick="if(confirm('सम्पन्न गर्ने?')){document.getElementById('st-id').value='${CS}';doSt('completed')}">✅ सम्पन्न चिन्ह लगाउनुस्</button>`:''}
     <button class="btn" style="background:var(--gr100);color:var(--gr600);border:1px solid var(--gr200)" onclick="openMatModal()">📦 सामग्री अनुमान</button>
+    <button class="btn" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSitePhotoModal('${CS}')">📸 Before/After Photos</button>
     ${s.notes?`<div style="background:var(--blue-l);padding:12px;border-radius:12px;font-size:13px;color:#0369A1;border:1px solid #BAE6FD">📝 ${s.notes}</div>`:''}
   </div>`;
 }
@@ -1884,6 +1921,68 @@ async function showWorkerLedger(workerId, workerName){
   </body></html>`;
   const w=window.open('','_blank');w.document.write(html);w.document.close();
 }
+// ══ SITE PHOTOS ══
+async function openSitePhotoModal(siteId){
+  const s=SITES.find(x=>x.id===siteId);
+  document.getElementById('sphoto-lbl').textContent=s?s.name:'साइट';
+  document.getElementById('sphoto-site-id').value=siteId;
+  ['photo-before','photo-after'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('prev-before').innerHTML='';
+  document.getElementById('prev-after').innerHTML='';
+  try{
+    const doc=await db.collection('site_photos').doc(siteId).get();
+    if(doc.exists){
+      const d=doc.data();
+      if(d.before)document.getElementById('prev-before').innerHTML=`<img src="${d.before}" style="width:100%;border-radius:10px;max-height:120px;object-fit:cover">`;
+      if(d.after)document.getElementById('prev-after').innerHTML=`<img src="${d.after}" style="width:100%;border-radius:10px;max-height:120px;object-fit:cover">`;
+    }
+  }catch{}
+  openM('mSitePhoto');
+}
+function previewPhoto(inputId,previewId){
+  const file=document.getElementById(inputId).files[0];if(!file)return;
+  if(file.size>800000){toast('फोटो ठूलो छ (max 800KB)',false);return;}
+  const rd=new FileReader();rd.onload=e=>{document.getElementById(previewId).innerHTML=`<img src="${e.target.result}" style="width:100%;border-radius:10px;max-height:120px;object-fit:cover">`;};rd.readAsDataURL(file);
+}
+async function saveSitePhotos(){
+  const sid=document.getElementById('sphoto-site-id').value;
+  const bf=document.getElementById('photo-before').files[0];
+  const af=document.getElementById('photo-after').files[0];
+  if(!bf&&!af){toast('कम्तीमा एक फोटो छान्नुस्',false);return;}
+  const toB64=f=>new Promise(r=>{const rd=new FileReader();rd.onload=e=>r(e.target.result);rd.readAsDataURL(f);});
+  const data={updated:todStr()};
+  if(bf)data.before=await toB64(bf);
+  if(af)data.after=await toB64(af);
+  await db.collection('site_photos').doc(sid).set(data,{merge:true});
+  closeM('mSitePhoto');toast('Photos सेभ ✓');loadOv();
+}
+
+// ══ SITE-WISE ATTENDANCE + EARNING SUMMARY ══
+async function loadSiteAttSummary(){
+  const[attRecs,workEntries,advances]=await Promise.all([
+    dGet('attendance',['site_id','==',CS]),
+    dGet('work_entries',['site_id','==',CS]),
+    dGet('worker_advances',['site_id','==',CS])
+  ]);
+  const wSum={};
+  attRecs.forEach(r=>(r.entries||[]).forEach(e=>{
+    if(!wSum[e.name])wSum[e.name]={name:e.name,days:0,half:0,absent:0};
+    if(e.status==='P')wSum[e.name].days++;
+    else if(e.status==='H')wSum[e.name].half++;
+    else if(e.status==='A')wSum[e.name].absent++;
+  }));
+  const wages={},advMap={};
+  workEntries.forEach(w=>{wages[w.worker_name]=(wages[w.worker_name]||0)+Number(w.days||0)*Number(w.daily_rate||0);if(w.advance_given>0)advMap[w.worker_name]=(advMap[w.worker_name]||0)+Number(w.advance_given||0);});
+  advances.forEach(a=>{advMap[a.worker_name]=(advMap[a.worker_name]||0)+Number(a.amount||0);});
+  return Object.values(wSum).length?`
+  <div class="ic" style="margin-bottom:12px">
+    <div style="padding:10px 16px;font-size:13px;font-weight:800;border-bottom:1px solid var(--gr100);color:var(--ind)">📊 कामदार हाजिर + कमाइ</div>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+      <tr style="background:var(--ind-l)"><th style="padding:8px 10px;text-align:left">नाम</th><th style="padding:8px 6px;text-align:center">✅</th><th style="padding:8px 6px;text-align:center">🔶</th><th style="padding:8px 6px;text-align:right">कमाइ</th><th style="padding:8px 6px;text-align:right">अग्रिम</th><th style="padding:8px 6px;text-align:right;color:var(--ind)">बाँकी</th></tr>
+      ${Object.values(wSum).map(w=>{const earn=wages[w.name]||0;const adv=advMap[w.name]||0;return`<tr style="border-bottom:1px solid var(--gr100)"><td style="padding:8px 10px;font-weight:700">${w.name}</td><td style="padding:8px 6px;text-align:center;color:var(--g)">${w.days}</td><td style="padding:8px 6px;text-align:center;color:var(--a)">${w.half}</td><td style="padding:8px 6px;text-align:right;color:var(--g);font-weight:700">${Rs(earn)}</td><td style="padding:8px 6px;text-align:right;color:var(--r)">${adv?Rs(adv):'—'}</td><td style="padding:8px 6px;text-align:right;font-weight:800;color:${(earn-adv)>=0?'var(--ind)':'var(--r)'}">${Rs(earn-adv)}</td></tr>`;}).join('')}
+    </table></div>
+  </div>`:'';}
+
 async function delEntry(collection, id, reloadFn){
   if(!confirm('यो entry हटाउने? यो पूर्ववत हुँदैन।'))return;
   try{
@@ -2024,21 +2123,16 @@ async function loadAtt(){
   active.forEach(site=>{
     const saved=recs.find(r=>r.site_id===site.id);
     html+=`<div class="sac">
-      <div class="sac-h"><div><div class="sac-nm">${site.name}</div><div class="sac-s">${site.client_name}${site.location?' · '+site.location:''}</div></div>${saved?'<span class="saved-t">✓ सेभ</span>':''}</div>
-      <div style="padding:8px 16px;border-bottom:1px solid var(--gr100)"><select class="fi" id="slot-${site.id}" style="padding:7px 12px;font-size:12px"><option value="full">पूरा दिन</option><option value="morning">बिहान</option><option value="afternoon">दिउँसो</option></select></div>`;
+      <div class="sac-h"><div><div class="sac-nm">${site.name}</div><div class="sac-s">${site.client_name}${site.location?' · '+site.location:''}</div></div>${saved?'<span class="saved-t">✓ सेभ</span>':''}</div>`;
     WKRS.forEach(w=>{
       const sv=ATT_DATA[site.id]?.[w.id]||{};const st=sv.status||'';
       html+=`<div class="awr" id="awr-${site.id}-${w.id}">
         <div class="awr-nm">${w.name}</div>
         <div class="ao-btns">
-          <button class="ao ${st==='P'?'P':''}" onclick="setA('${site.id}','${w.id}','P',this)">P</button>
-          <button class="ao ${st==='A'?'A':''}" onclick="setA('${site.id}','${w.id}','A',this)">A</button>
-          <button class="ao ${st==='H'?'H':''}" onclick="setA('${site.id}','${w.id}','H',this)">H</button>
-          <button class="ao ${st==='V'?'V':''}" onclick="setA('${site.id}','${w.id}','V',this)">बि</button>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:3px">
-          <input type="time" class="atm" id="tin-${site.id}-${w.id}" value="${sv.tin||''}" placeholder="आयो">
-          <input type="time" class="atm" id="tout-${site.id}-${w.id}" value="${sv.tout||''}" placeholder="गयो">
+          <button class="ao ${st==='P'?'P':''}" onclick="setA('${site.id}','${w.id}','P',this)" title="उपस्थित">✅ आयो</button>
+          <button class="ao ${st==='H'?'H':''}" onclick="setA('${site.id}','${w.id}','H',this)" title="आधा दिन">🔶 आधा</button>
+          <button class="ao ${st==='A'?'A':''}" onclick="setA('${site.id}','${w.id}','A',this)" title="अनुपस्थित">❌ आएन</button>
+          <button class="ao ${st==='V'?'V':''}" onclick="setA('${site.id}','${w.id}','V',this)" title="बिदा">🏖 बिदा</button>
         </div>
       </div>`;
     });
@@ -2054,11 +2148,10 @@ function setA(sid,wid,st,btn){
   if(row){row.querySelectorAll('.ao').forEach(b=>{b.className='ao';});btn.className='ao '+st;}
 }
 async function saveAttS(sid,sname){
-  const slot=document.getElementById(`slot-${sid}`)?.value||'full';
-  const entries=WKRS.map(w=>{const d=ATT_DATA[sid]?.[w.id]||{};return{wid:w.id,name:w.name,status:d.status||'',tin:document.getElementById(`tin-${sid}-${w.id}`)?.value||'',tout:document.getElementById(`tout-${sid}-${w.id}`)?.value||''};}).filter(e=>e.status);
+  const entries=WKRS.map(w=>{const d=ATT_DATA[sid]?.[w.id]||{};return{wid:w.id,name:w.name,status:d.status||''};}).filter(e=>e.status);
   if(!entries.length){toast('कम्तीमा एकजना',false);return;}
-  const docId=`${AD}_${sid}_${slot}`;
-  await dSet('attendance',docId,{date:AD,bs_date:fBS(AD),site_id:sid,site_name:sname,slot,entries,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
+  const docId=`${AD}_${sid}`;
+  await dSet('attendance',docId,{date:AD,bs_date:fBS(AD),site_id:sid,site_name:sname,slot:'full',entries,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
   toast(sname+' हाजिर सेभ ✓');loadAtt();
 }
 function chgD(dir){if(dir===0){AD=todStr();}else{const dt=new Date(AD);dt.setDate(dt.getDate()+dir);AD=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}loadAtt();}
