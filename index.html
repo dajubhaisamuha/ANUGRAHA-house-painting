@@ -30,6 +30,50 @@
   --shm:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
   --shl:0 10px 15px rgba(0,0,0,.10),0 4px 6px rgba(0,0,0,.05);
 }
+/* ── THEME: RED/WHITE ── */
+body.theme-red{
+  --ind:#C41E3A;--ind-d:#9B0000;--ind-l:#FFF0F0;--ind-b:#FFC0CB;
+  --blue:#E53E3E;--blue-l:#FFF5F5;
+  --bg:#FFF8F8;
+}
+body.theme-red .hero-bar{background:linear-gradient(135deg,#C41E3A,#9B0000)!important}
+body.theme-red #splash{background:linear-gradient(150deg,#C41E3A,#9B0000)!important}
+body.theme-red .ni.on{color:#C41E3A}
+body.theme-red .ni.on::before{background:#C41E3A}
+body.theme-red .sc-stripe.ac{background:linear-gradient(90deg,#C41E3A,#E53E3E)}
+body.theme-red .btn.bp{background:linear-gradient(135deg,#C41E3A,#E53E3E)}
+body.theme-red .team-hero{background:linear-gradient(135deg,#C41E3A,#9B0000)!important}
+body.theme-red .att-date-bar{background:linear-gradient(135deg,#C41E3A,#9B0000)!important}
+
+/* ── THEME: BLUE/YELLOW ── */
+body.theme-blue{
+  --ind:#1A56DB;--ind-d:#1E3A8A;--ind-l:#EFF6FF;--ind-b:#BFDBFE;
+  --blue:#F59E0B;--blue-l:#FFFBEB;
+  --bg:#F0F7FF;
+}
+body.theme-blue .hero-bar{background:linear-gradient(135deg,#1A56DB,#1E3A8A)!important}
+body.theme-blue #splash{background:linear-gradient(150deg,#1A56DB,#1E3A8A)!important}
+body.theme-blue .ni.on{color:#1A56DB}
+body.theme-blue .ni.on::before{background:#F59E0B}
+body.theme-blue .bc-val,.theme-blue .txn-amt{color:#FDE68A!important}
+body.theme-blue .sc-stripe.ac{background:linear-gradient(90deg,#1A56DB,#F59E0B)}
+body.theme-blue .btn.bp{background:linear-gradient(135deg,#1A56DB,#F59E0B)}
+body.theme-blue .team-hero,.theme-blue .att-date-bar{background:linear-gradient(135deg,#1A56DB,#1E3A8A)!important}
+
+/* ── THEME: WHITE/PURPLE ── */
+body.theme-purple{
+  --ind:#7C3AED;--ind-d:#5B21B6;--ind-l:#F5F3FF;--ind-b:#DDD6FE;
+  --blue:#A78BFA;--blue-l:#F5F3FF;
+  --bg:#FAFAFA;--w:#FFFFFF;
+  --gr900:#2D1B69;
+}
+body.theme-purple .hero-bar{background:linear-gradient(135deg,#7C3AED,#5B21B6)!important}
+body.theme-purple #splash{background:linear-gradient(150deg,#7C3AED,#5B21B6)!important}
+body.theme-purple .ni.on{color:#7C3AED}
+body.theme-purple .ni.on::before{background:#7C3AED}
+body.theme-purple .sc-stripe.ac{background:linear-gradient(90deg,#7C3AED,#A78BFA)}
+body.theme-purple .btn.bp{background:linear-gradient(135deg,#7C3AED,#A78BFA)}
+body.theme-purple .team-hero,.theme-purple .att-date-bar{background:linear-gradient(135deg,#7C3AED,#5B21B6)!important}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{font-family:'Mukta','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased}
@@ -357,6 +401,32 @@ select.fi option{background:#fff}
 .color-picker{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .cp-opt{width:40px;height:40px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:800}
 .cp-opt.sel{border-color:var(--gr900);transform:scale(1.1)}
+
+/* ── ANIMATIONS ── */
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-15px) scale(1.04)}66%{transform:translate(-15px,25px) scale(.97)}}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shine{0%,100%{left:-100%}50%{left:150%}}
+@keyframes splashPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.2)}50%{box-shadow:0 0 0 20px rgba(255,255,255,0)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;animation:orbFloat 7s ease-in-out infinite}
+.orb-a{width:200px;height:200px;background:rgba(255,255,255,.07);top:-60px;right:-60px;animation-delay:0s}
+.orb-b{width:150px;height:150px;background:rgba(255,255,255,.05);bottom:-40px;left:20%;animation-delay:2.5s}
+.ripple-wave{position:absolute;border-radius:50%;background:rgba(255,255,255,.18);transform:scale(0);animation:rippleAnim .55s linear;pointer-events:none}
+.stat-card{transition:transform .18s,box-shadow .18s;cursor:pointer}
+.stat-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(79,70,229,.12)}
+.stat-card:active{transform:scale(.98)}
+.site-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(79,70,229,.1)}
+.bal-card::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:shine 4s ease-in-out infinite}
+.bal-card{position:relative;overflow:hidden}
+.hero-bar{position:relative;overflow:hidden}
+.txn-r{transition:background .15s}.txn-r:hover{background:var(--gr50)}
+.ni{transition:color .2s,transform .15s}.ni:active{transform:scale(.9)}
+.ni.on .ni-svg{filter:drop-shadow(0 0 6px rgba(79,70,229,.5))}
+.mbo.open .msh{animation:slideUp .26s cubic-bezier(.4,0,.2,1)}
+.btn.bp:hover{box-shadow:0 6px 20px rgba(79,70,229,.35)}
+.sp-box{animation:splashPulse 2s ease-in-out infinite}
+.wc{animation:cardIn .4s ease forwards}
 </style>
 </head>
 <body>
@@ -453,6 +523,8 @@ select.fi option{background:#fff}
 <!-- HOME -->
 <div class="page on" id="pg-home">
   <div class="hero-bar">
+    <div class="hero-orb orb-a"></div>
+    <div class="hero-orb orb-b"></div>
     <!-- Top row: Avatar + name only, no settings button -->
     <div class="hb-top">
       <div class="hb-user" onclick="go('profile')" style="cursor:pointer">
@@ -641,6 +713,7 @@ select.fi option{background:#fff}
     <div class="set-group">
       <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="openRateModal()"><div class="si-ico" style="background:var(--gl)">💰</div><div><div class="si-t">दैनिक ज्याला सेट गर्नुस्</div><div class="si-s" id="my-rate-lbl">अहिलेसम्म सेट छैन</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="openThemePicker()"><div class="si-ico" style="background:linear-gradient(135deg,#C41E3A,#1A56DB,#7C3AED)">🎨</div><div><div class="si-t">App Theme</div><div class="si-s" id="theme-lbl">Default Blue</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="toggleLang()"><div class="si-ico" style="background:var(--purl)">🌐</div><div><div class="si-t" id="lang-item-t">भाषा: नेपाली</div><div class="si-s" id="lang-item-s">English मा बदल्नुस्</div></div><div class="si-arr">›</div></div>
     </div>
     <div class="set-group">
@@ -879,6 +952,31 @@ select.fi option{background:#fff}
   <button class="btn bs" onclick="closeM('mRate')">रद्द</button>
 </div></div>
 
+<!-- MODAL: THEME -->
+<div class="mbo" id="mTheme"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">🎨 App Theme छान्नुस्</div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div onclick="setTheme('default')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:2px solid var(--ind-b);cursor:pointer;background:var(--ind-l)">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4F46E5,#0EA5E9)"></div>
+      <div><div style="font-size:15px;font-weight:800">Default Blue</div><div style="font-size:12px;color:var(--gr500)">Indigo + Blue (हालको)</div></div>
+    </div>
+    <div onclick="setTheme('red')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:2px solid #FFC0CB;cursor:pointer;background:#FFF0F0">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#C41E3A,#9B0000)"></div>
+      <div><div style="font-size:15px;font-weight:800;color:#C41E3A">Red / White</div><div style="font-size:12px;color:var(--gr500)">Bold Red theme</div></div>
+    </div>
+    <div onclick="setTheme('blue')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:2px solid #BFDBFE;cursor:pointer;background:#EFF6FF">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1A56DB,#F59E0B)"></div>
+      <div><div style="font-size:15px;font-weight:800;color:#1A56DB">Blue / Yellow</div><div style="font-size:12px;color:var(--gr500)">Navy Blue + Yellow</div></div>
+    </div>
+    <div onclick="setTheme('purple')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:2px solid #DDD6FE;cursor:pointer;background:#F5F3FF">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#7C3AED,#A78BFA)"></div>
+      <div><div style="font-size:15px;font-weight:800;color:#7C3AED">White / Purple</div><div style="font-size:12px;color:var(--gr500)">Clean White + Purple</div></div>
+    </div>
+  </div>
+  <button class="btn bs" style="margin-top:14px" onclick="closeM('mTheme')">बन्द गर्नुस्</button>
+</div></div>
+
 <!-- MODAL: SITE PHOTOS -->
 <div class="mbo" id="mSitePhoto"><div class="msh">
   <div class="mhd"></div>
@@ -960,6 +1058,19 @@ function doLogout(){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.getElementById('login').style.display='flex';
   document.getElementById('lu').value='';document.getElementById('lp').value='';document.getElementById('lerr').textContent='';
+}
+function openThemePicker(){openM('mTheme');}
+function setTheme(t){
+  document.body.className=document.body.className.replace(/theme-\w+/g,'').trim();
+  if(t!=='default')document.body.classList.add('theme-'+t);
+  localStorage.setItem('app-theme',t);
+  const labels={default:'Default Blue',red:'Red / White',blue:'Blue / Yellow',purple:'White / Purple'};
+  const lbl=document.getElementById('theme-lbl');if(lbl)lbl.textContent=labels[t]||t;
+  closeM('mTheme');toast('Theme बदलियो ✓');
+}
+function applyStoredTheme(){
+  const t=localStorage.getItem('app-theme')||'default';
+  setTheme(t);
 }
 function openRateModal(){
   const rate=localStorage.getItem('rate_'+ME)||'';
@@ -1189,12 +1300,13 @@ async function loadHome(){
     SITES=sites;WKRS=wkrs;
     const active=sites.filter(s=>s.status==='active');
     document.getElementById('h-act').textContent=active.length;
+    countUp('h-act',active.length);
 
     let totR=0;pays.forEach(p=>totR+=Number(p.amount||0));
-    document.getElementById('h-recv').textContent=Rs(totR);
+    countUp('h-recv',totR,'Rs. ');
 
     let totE=0;exps.forEach(e=>totE+=Number(e.amount||0));
-    document.getElementById('h-exp').textContent=Rs(totE);
+    countUp('h-exp',totE,'Rs. ');
 
     let totL=0;work.forEach(w=>totL+=Number(w.days||0)*Number(w.daily_rate||0));
     const profit=totR-totL-totE;
@@ -1236,6 +1348,7 @@ async function loadHome(){
     // My sites
     const myActive=active.filter(s=>s.brought_by===ME);
     document.getElementById('h-my').innerHTML=myActive.length?myActive.map(mkSC).join(''):`<p style="font-size:13px;color:var(--gr500);padding:6px 0">तपाईंले ल्याएको कुनै सक्रिय साइट छैन</p>`;
+    setTimeout(initRipples, 100);
 
     // Recent txns
     const sorted=[...pays].sort((a,b)=>((b.date||'')>(a.date||'')?1:-1)).slice(0,5);
@@ -2129,9 +2242,10 @@ async function loadAtt(){
       html+=`<div class="awr" id="awr-${site.id}-${w.id}">
         <div class="awr-nm">${w.name}</div>
         <div class="ao-btns">
-          <button class="ao ${st==='P'?'P':''}" onclick="setA('${site.id}','${w.id}','P',this)" title="उपस्थित">✅ आयो</button>
-          <button class="ao ${st==='H'?'H':''}" onclick="setA('${site.id}','${w.id}','H',this)" title="आधा दिन">🔶 आधा</button>
-          <button class="ao ${st==='A'?'A':''}" onclick="setA('${site.id}','${w.id}','A',this)" title="अनुपस्थित">❌ आएन</button>
+          <button class="ao ${st==='P'?'P':''}" onclick="setA('${site.id}','${w.id}','P',this)" title="पूरा दिन">🌞 पूरा</button>
+          <button class="ao ${st==='M'?'P':''}" onclick="setA('${site.id}','${w.id}','M',this)" title="बिहान मात्र">🌅 बिहान</button>
+          <button class="ao ${st==='E'?'H':''}" onclick="setA('${site.id}','${w.id}','E',this)" title="दिउँसो मात्र">☀️ दिउँसो</button>
+          <button class="ao ${st==='A'?'A':''}" onclick="setA('${site.id}','${w.id}','A',this)" title="आएन">❌ आएन</button>
           <button class="ao ${st==='V'?'V':''}" onclick="setA('${site.id}','${w.id}','V',this)" title="बिदा">🏖 बिदा</button>
         </div>
       </div>`;
@@ -2310,6 +2424,7 @@ async function autoAddMemberAsWorker(){
 
 window.addEventListener('load',async()=>{
   LANG=localStorage.getItem('lang')||'ne';
+  applyStoredTheme();
   document.getElementById('ssd').value=todStr();
   // Load profiles
   await loadProfiles();
@@ -2321,7 +2436,32 @@ window.addEventListener('load',async()=>{
   else{document.getElementById('login').style.display='flex';}
 });
 
-// ══ SERVICE WORKER ══
+// ══ ANIMATIONS ══
+function countUp(elId,target,prefix='',suffix=''){
+  const el=document.getElementById(elId);if(!el||!target)return;
+  const dur=1000,start=Date.now();
+  const timer=setInterval(()=>{
+    const p=Math.min((Date.now()-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    const cur=Math.floor(ease*target);
+    el.textContent=prefix+(cur>=1000?(cur/1000).toFixed(1)+'k':cur)+suffix;
+    if(p>=1){clearInterval(timer);el.textContent=Rs(target);}
+  },16);
+}
+function addRipple(el,e){
+  const r=document.createElement('span');r.className='ripple-wave';
+  const rect=el.getBoundingClientRect();
+  const size=Math.max(rect.width,rect.height);
+  r.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  el.style.position='relative';el.style.overflow='hidden';
+  el.appendChild(r);setTimeout(()=>r.remove(),600);
+}
+// Add ripple to all stat cards after DOM ready
+function initRipples(){
+  document.querySelectorAll('.stat-card,.site-card,.tcard,.wc').forEach(el=>{
+    el.addEventListener('click',e=>addRipple(el,e));
+  });
+}
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js')
