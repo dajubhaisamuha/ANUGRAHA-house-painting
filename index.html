@@ -1115,6 +1115,45 @@ select.fi option{background:#fff}
   <button class="btn bs" onclick="closeM('mSitePhoto')">रद्द</button>
 </div></div>
 
+<!-- MODAL: EDIT CONTRACT -->
+<div class="mbo" id="mEditContract"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">✏️ ठेक्का रकम सम्पादन</div>
+  <div style="background:var(--ind-l);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--ind);font-weight:700;margin-bottom:14px" id="ec-lbl">—</div>
+  <div id="ec-sqft-fields" style="display:none">
+    <div class="fr">
+      <div class="fg"><label class="fl">sqft</label><input type="number" class="fi" id="ec-sqft" placeholder="0" oninput="calcECSqft()"></div>
+      <div class="fg"><label class="fl">दर/sqft</label><input type="number" class="fi" id="ec-rate" placeholder="0" oninput="calcECSqft()"></div>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">नयाँ ठेक्का रकम (Rs.)</label><input type="number" class="fi" id="ec-amount" placeholder="0"></div>
+  <div class="fg"><label class="fl">कारण / नोट</label><input class="fi" id="ec-reason" placeholder="जस्तै: थप काम गरियो, client ले extra दियो..."></div>
+  <input type="hidden" id="ec-site-id">
+  <button class="btn bp" onclick="saveContractEdit()">💾 सेभ गर्नुस्</button>
+  <button class="btn bs" onclick="closeM('mEditContract')">रद्द</button>
+</div></div>
+
+<!-- MODAL: EXTRA INCOME -->
+<div class="mbo" id="mExtraIncome"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">✨ अतिरिक्त कमाइ थप्नुस्</div>
+  <div style="background:var(--gl);padding:10px 14px;border-radius:10px;font-size:13px;color:#065F46;font-weight:600;margin-bottom:14px">सामग्री बच्यो, paint coupon, scrap बेच्यो, वा अन्य extra profit यहाँ राख्नुस्।</div>
+  <div class="fg"><label class="fl">रकम (Rs.) *</label><input type="number" class="fi" id="ei-amount" placeholder="0"></div>
+  <div class="fg"><label class="fl">प्रकार</label>
+    <select class="fi" id="ei-category">
+      <option value="material_savings">🧱 सामग्री बचत</option>
+      <option value="paint_coupon">🎨 Paint Coupon/Discount</option>
+      <option value="scrap_sale">♻️ Scrap/पुरानो सामान बिक्री</option>
+      <option value="other">📦 अन्य</option>
+    </select>
+  </div>
+  <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="ei-date" oninput="bsF('ei-date','ei-date-b')"><div class="fbs" id="ei-date-b"></div></div>
+  <div class="fg"><label class="fl">विवरण</label><input class="fi" id="ei-note" placeholder="जस्तै: Asian Paint coupon Rs.2000"></div>
+  <input type="hidden" id="ei-site-id">
+  <button class="btn bp" onclick="saveExtraIncome()">💾 सेभ</button>
+  <button class="btn bs" onclick="closeM('mExtraIncome')">रद्द</button>
+</div></div>
+
 <!-- MODAL: CHANGE PW -->
 <div class="mbo" id="mPW"><div class="msh">
   <div class="mhd"></div><div class="mtit">🔒 Password बदल्नुस्</div>
@@ -1443,9 +1482,9 @@ async function loadHome(){
   document.getElementById('s-sub').textContent=bsToday();
 
   try{
-    const[sites,pays,work,exps,wkrs,attToday]=await Promise.all([
+    const[sites,pays,work,exps,wkrs,attToday,extraIncomes]=await Promise.all([
       dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('workers'),
-      dGet('attendance',['date','==',td])
+      dGet('attendance',['date','==',td]),dGet('extra_income')
     ]);
     SITES=sites;WKRS=wkrs;
     const active=sites.filter(s=>s.status==='active');
@@ -1458,8 +1497,10 @@ async function loadHome(){
     let totE=0;exps.forEach(e=>totE+=Number(e.amount||0));
     countUp('h-exp',totE,'Rs. ');
 
+    let totX=0;extraIncomes.forEach(x=>totX+=Number(x.amount||0));
+
     let totL=0;work.forEach(w=>totL+=Number(w.days||0)*Number(w.daily_rate||0));
-    const profit=totR-totL-totE;
+    const profit=totR-totL-totE+totX;
     document.getElementById('h-pr').textContent=Rs(Math.abs(profit));
     document.getElementById('h-pr').style.color=profit>=0?'rgba(255,255,255,.95)':'#FCA5A5';
     document.getElementById('h-prl').textContent=profit>=0?'नाफा':'घाटा';
@@ -1584,23 +1625,25 @@ async function loadOv(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
   const s=SITES.find(x=>x.id===CS);if(!s)return;
   // Load site photos + att summary in parallel with other data
-  const[pays,work,exps,advances,matDoc,photoDoc,attSummaryHtml]=await Promise.all([
+  const[pays,work,exps,advances,matDoc,photoDoc,attSummaryHtml,extraIncome]=await Promise.all([
     dGet('payments',['site_id','==',CS]),
     dGet('work_entries',['site_id','==',CS]),
     dGet('expenses',['site_id','==',CS]),
     dGet('worker_advances',['site_id','==',CS]),
     db.collection('materials').doc(CS).get().then(d=>d.exists?d.data():null).catch(()=>null),
     db.collection('site_photos').doc(CS).get().then(d=>d.exists?d.data():null).catch(()=>null),
-    loadSiteAttSummary()
+    loadSiteAttSummary(),
+    dGet('extra_income',['site_id','==',CS])
   ]);
   const totR=pays.reduce((a,p)=>a+Number(p.amount||0),0);
   const totL=work.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
   const totA=work.reduce((a,w)=>a+Number(w.advance_given||0),0);
   const totE=exps.reduce((a,e)=>a+Number(e.amount||0),0);
+  const totExtra=extraIncome.reduce((a,x)=>a+Number(x.amount||0),0);
   // Personal advances (not from site budget — to be returned)
   const personalAdv=advances.filter(a=>a.is_personal);
   const siteAdv=advances.filter(a=>!a.is_personal);
-  const sv=sCV(s);const profit=totR-totL-totE;
+  const sv=sCV(s);const profit=totR-totL-totE+totExtra;
   const tp=getTimeProgress(s);
   const score=calcScore(s,totR,sv||0,profit,tp?.elapsed||0,tp?.estimated||0);
   const sl=scoreLabel(score);
@@ -1629,16 +1672,38 @@ async function loadOv(){
 
     <!-- FINANCIAL OVERVIEW -->
     <div class="pbox">
-      <div style="font-size:11px;font-weight:700;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">📊 आर्थिक सारांश</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:11px;font-weight:700;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px">📊 आर्थिक सारांश</span>
+        ${sv!=null?`<button onclick="openEditContractModal('${CS}')" style="background:rgba(79,70,229,.1);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>`:''}
+      </div>
       ${sv!=null?`<div class="pr"><span class="pl">📋 ठेक्का मूल्य</span><span style="color:var(--ind);font-weight:800;font-family:'Inter',sans-serif;font-size:16px">${Rs(sv)}</span></div>`:''}
       <div class="pr"><span class="pl">💰 ग्राहकबाट प्राप्त</span><span style="color:var(--g);font-weight:800;font-family:'Inter',sans-serif">${Rs(totR)}</span></div>
-      ${sv!=null?`<div class="pr"><span class="pl">⏳ बाँकी (ग्राहकबाट)</span><span style="color:var(--a);font-weight:800;font-family:'Inter',sans-serif">${Rs(sv-totR)}</span></div>`:''}
+      ${sv!=null?`<div class="pr"><span class="pl">⏳ बाँकी (ग्राहकबाट)</span><span style="color:${(sv-totR)>=0?'var(--a)':'var(--g)'};font-weight:800;font-family:'Inter',sans-serif">${(sv-totR)>=0?Rs(sv-totR):'अतिरिक्त: '+Rs(Math.abs(sv-totR))}</span></div>`:''}
       <div class="pr"><span class="pl">👷 ज्याला खर्च</span><span style="color:var(--r);font-weight:800;font-family:'Inter',sans-serif">− ${Rs(totL)}</span></div>
       ${totA>0?`<div class="pr"><span class="pl">💵 कामदार अग्रिम</span><span style="color:var(--a);font-weight:800;font-family:'Inter',sans-serif">${Rs(totA)}</span></div>`:''}
       <div class="pr"><span class="pl">💸 साइट खर्च</span><span style="color:var(--r);font-weight:800;font-family:'Inter',sans-serif">− ${Rs(totE)}</span></div>
+      ${totExtra>0?`<div class="pr"><span class="pl">✨ अतिरिक्त कमाइ</span><span style="color:var(--g);font-weight:800;font-family:'Inter',sans-serif">+ ${Rs(totExtra)}</span></div>`:''}
       <div class="pdiv"></div>
       <div class="pr"><span style="font-size:15px;font-weight:800">📈 कुल नाफा</span><span style="font-size:26px;font-weight:800;font-family:'Inter',sans-serif;color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
       <div class="pr" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--ind-b)"><span style="font-size:12px;color:var(--gr500)">👥 हरेकको हिस्सा (÷ ३)</span><span style="font-size:17px;font-weight:800;font-family:'Inter',sans-serif;color:var(--ind)">${Rs(Math.abs(profit/3))}</span></div>
+    </div>
+
+    <!-- EXTRA INCOME / PROFIT SECTION -->
+    <div class="ic" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gr100)">
+        <span style="font-size:13px;font-weight:800;color:var(--g)">✨ अतिरिक्त कमाइ / Profit</span>
+        <button onclick="openExtraIncomeModal('${CS}')" style="background:var(--gl);border:1px solid #6EE7B7;color:#065F46;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer">+ थप्नुस्</button>
+      </div>
+      ${extraIncome.length?extraIncome.map(x=>`
+        <div class="li">
+          <div class="li-i" style="background:var(--gl);font-size:18px">✨</div>
+          <div style="flex:1"><div class="li-t">${x.note||x.category||'अतिरिक्त कमाइ'}</div><div class="li-s">${fBSD(x.date)||''}</div></div>
+          <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div class="pos">+${Rs(x.amount)}</div>
+            <button onclick="delEntry('extra_income','${x.id}','loadOv')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑</button>
+          </div>
+        </div>`).join(''):`<div style="padding:14px 16px;font-size:13px;color:var(--gr400)">सामग्री बच्यो, paint coupon, वा अन्य अतिरिक्त कमाइ यहाँ थप्नुस्</div>`}
+      ${extraIncome.length?`<div style="padding:10px 16px;border-top:1px solid var(--gr100);display:flex;justify-content:space-between;font-weight:800;font-size:13px"><span>जम्मा</span><span class="n" style="color:var(--g)">${Rs(totExtra)}</span></div>`:''}
     </div>
 
     <!-- EXPENSE BREAKDOWN -->
@@ -1848,7 +1913,80 @@ async function loadSAtt(){
   html+='</div>';el.innerHTML=html;
 }
 
-// ══ STATUS ══
+// ══ EDIT CONTRACT AMOUNT ══
+function openEditContractModal(siteId){
+  const s=SITES.find(x=>x.id===siteId);if(!s)return;
+  document.getElementById('ec-lbl').textContent=s.name+' — हालको ठेक्का: '+Rs(sCV(s));
+  document.getElementById('ec-site-id').value=siteId;
+  document.getElementById('ec-reason').value='';
+  if(s.contract_type==='sqft'){
+    document.getElementById('ec-sqft-fields').style.display='block';
+    document.getElementById('ec-sqft').value=s.sqft||0;
+    document.getElementById('ec-rate').value=s.sqft_rate||0;
+    document.getElementById('ec-amount').value=sCV(s)||0;
+    document.getElementById('ec-amount').readOnly=true;
+    document.getElementById('ec-amount').style.background='var(--gr100)';
+  } else {
+    document.getElementById('ec-sqft-fields').style.display='none';
+    document.getElementById('ec-amount').value=s.contract_amount||0;
+    document.getElementById('ec-amount').readOnly=false;
+    document.getElementById('ec-amount').style.background='';
+  }
+  openM('mEditContract');
+}
+function calcECSqft(){
+  const sq=+document.getElementById('ec-sqft').value||0;
+  const rate=+document.getElementById('ec-rate').value||0;
+  document.getElementById('ec-amount').value=sq*rate;
+}
+async function saveContractEdit(){
+  const siteId=document.getElementById('ec-site-id').value;
+  const newAmt=+document.getElementById('ec-amount').value;
+  const s=SITES.find(x=>x.id===siteId);if(!s)return;
+  const oldAmt=sCV(s)||0;
+  const reason=document.getElementById('ec-reason').value.trim();
+  const d={contract_amount:newAmt};
+  if(s.contract_type==='sqft'){
+    d.sqft=+document.getElementById('ec-sqft').value||0;
+    d.sqft_rate=+document.getElementById('ec-rate').value||0;
+    d.contract_amount=d.sqft*d.sqft_rate;
+  }
+  // Log the change
+  d.contract_history=firebase.firestore.FieldValue.arrayUnion({
+    old_amount:oldAmt,new_amount:d.contract_amount,reason:reason||'—',
+    date:todStr(),bs_date:bsToday(),by:ME
+  });
+  await dUp('sites',siteId,d);
+  const idx=SITES.findIndex(x=>x.id===siteId);if(idx>-1)Object.assign(SITES[idx],d);
+  closeM('mEditContract');toast('ठेक्का रकम अपडेट ✓');loadOv();
+}
+
+// ══ EXTRA INCOME (Profit) ══
+function openExtraIncomeModal(siteId){
+  document.getElementById('ei-site-id').value=siteId;
+  document.getElementById('ei-amount').value='';
+  document.getElementById('ei-category').value='material_savings';
+  document.getElementById('ei-date').value=todStr();
+  document.getElementById('ei-date-b').textContent='📅 '+bsToday();
+  document.getElementById('ei-date-b').classList.add('show');
+  document.getElementById('ei-note').value='';
+  openM('mExtraIncome');
+}
+async function saveExtraIncome(){
+  const amt=+document.getElementById('ei-amount').value;
+  if(!amt){toast('रकम राख्नुस्',false);return;}
+  const siteId=document.getElementById('ei-site-id').value;
+  const d=document.getElementById('ei-date').value;
+  await dAdd('extra_income',{
+    site_id:siteId,
+    amount:amt,
+    category:document.getElementById('ei-category').value,
+    date:d,bs_date:fBSD(d),
+    note:document.getElementById('ei-note').value,
+    added_by:ME
+  });
+  closeM('mExtraIncome');toast('अतिरिक्त कमाइ थपियो ✓');loadOv();
+}
 async function doSt(st){
   const id=document.getElementById('st-id').value;const d={status:st};
   if(st==='completed'){
@@ -2524,17 +2662,18 @@ async function saveExp(){
 // ══ TEAM ══
 async function loadTeam(){
   document.getElementById('t-list').innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const[sites,pays,work,exps,withdrawals]=await Promise.all([
-    dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('withdrawals')
+  const[sites,pays,work,exps,withdrawals,extraIncomes]=await Promise.all([
+    dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('withdrawals'),dGet('extra_income')
   ]);
-  const sP={},sL={},sE={};
+  const sP={},sL={},sE={},sX={};
   pays.forEach(p=>sP[p.site_id]=(sP[p.site_id]||0)+Number(p.amount||0));
   work.forEach(w=>sL[w.site_id]=(sL[w.site_id]||0)+Number(w.days||0)*Number(w.daily_rate||0));
   exps.forEach(e=>sE[e.site_id]=(sE[e.site_id]||0)+Number(e.amount||0));
+  extraIncomes.forEach(x=>sX[x.site_id]=(sX[x.site_id]||0)+Number(x.amount||0));
   const ms={};['AMRIT','NIRAN','SUBEIN'].forEach(m=>ms[m]={cnt:0,val:0,share:0,sites:[],scores:[],withdrawn:0});
   let totP=0;
   sites.forEach(s=>{
-    const r=sP[s.id]||0,l=sL[s.id]||0,e=sE[s.id]||0,p=r-l-e;totP+=p;
+    const r=sP[s.id]||0,l=sL[s.id]||0,e=sE[s.id]||0,x=sX[s.id]||0,p=r-l-e+x;totP+=p;
     ['AMRIT','NIRAN','SUBEIN'].forEach(m=>ms[m].share+=p/3);
     if(ms[s.brought_by]){
       ms[s.brought_by].cnt++;const v=sCV(s);if(v)ms[s.brought_by].val+=v;
