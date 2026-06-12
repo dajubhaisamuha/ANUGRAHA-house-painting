@@ -244,7 +244,12 @@ input,select,textarea,button{font-family:'Mukta','Inter',sans-serif}
 select.fi option{background:#fff}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fdiv{height:1px;background:var(--gr100);margin:14px 0}
-.fbs{font-size:12px;font-weight:700;color:var(--ind);margin-top:4px}
+.fbs{
+  font-size:13px;font-weight:800;color:var(--ind);margin-top:6px;
+  background:var(--ind-l);padding:7px 12px;border-radius:8px;
+  display:none;border:1px solid var(--ind-b);
+}
+.fbs.show{display:block;animation:fadeSlideUp .2s ease}
 .fn{font-size:13px;font-weight:700;color:var(--ind);margin-top:-8px;margin-bottom:10px}
 .btn{padding:13px;border-radius:12px;font-weight:800;font-size:15px;border:none;cursor:pointer;width:100%;display:block;text-align:center;margin-bottom:10px}
 .btn:active{opacity:.87}
@@ -324,6 +329,8 @@ select.fi option{background:#fff}
 .ao.A{background:var(--rl);color:var(--r);border-color:#FCA5A5}
 .ao.H{background:var(--al);color:#92400E;border-color:#FCD34D}
 .ao.V{background:var(--ind-l);color:var(--ind-d);border-color:var(--ind-b)}
+.ao.M{background:#FEF9C3;color:#854D0E;border-color:#FDE68A}
+.ao.E{background:#FFEDD5;color:#9A3412;border-color:#FED7AA}
 .atm{width:68px;padding:5px 6px;border-radius:7px;font-size:11px;border:1.5px solid var(--gr200);background:var(--gr50);color:var(--gr700)}
 .sac-save{display:block;width:calc(100% - 28px);margin:12px 14px;padding:11px;border-radius:12px;background:linear-gradient(135deg,var(--ind),var(--blue));color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer}
 
@@ -402,31 +409,140 @@ select.fi option{background:#fff}
 .cp-opt{width:40px;height:40px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:800}
 .cp-opt.sel{border-color:var(--gr900);transform:scale(1.1)}
 
-/* ── ANIMATIONS ── */
+/* ── FULL ANIMATION SYSTEM ── */
 @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(25px,-15px) scale(1.04)}66%{transform:translate(-15px,25px) scale(.97)}}
 @keyframes rippleAnim{to{transform:scale(4);opacity:0}}
-@keyframes cardIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shine{0%,100%{left:-100%}50%{left:150%}}
-@keyframes splashPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.2)}50%{box-shadow:0 0 0 20px rgba(255,255,255,0)}}
+@keyframes splashPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.25)}50%{box-shadow:0 0 0 24px rgba(255,255,255,0)}}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeSlideRight{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.85)}70%{transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes loginOrb{0%,100%{transform:translate(0,0) scale(1);opacity:.6}50%{transform:translate(40px,-30px) scale(1.15);opacity:.4}}
+@keyframes particle{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-120px) rotate(360deg);opacity:0}}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes numberPop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes tabSlide{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* HERO ORBS */
 .hero-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;animation:orbFloat 7s ease-in-out infinite}
-.orb-a{width:200px;height:200px;background:rgba(255,255,255,.07);top:-60px;right:-60px;animation-delay:0s}
-.orb-b{width:150px;height:150px;background:rgba(255,255,255,.05);bottom:-40px;left:20%;animation-delay:2.5s}
-.ripple-wave{position:absolute;border-radius:50%;background:rgba(255,255,255,.18);transform:scale(0);animation:rippleAnim .55s linear;pointer-events:none}
-.stat-card{transition:transform .18s,box-shadow .18s;cursor:pointer}
-.stat-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(79,70,229,.12)}
-.stat-card:active{transform:scale(.98)}
-.site-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(79,70,229,.1)}
-.bal-card::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:shine 4s ease-in-out infinite}
-.bal-card{position:relative;overflow:hidden}
-.hero-bar{position:relative;overflow:hidden}
-.txn-r{transition:background .15s}.txn-r:hover{background:var(--gr50)}
-.ni{transition:color .2s,transform .15s}.ni:active{transform:scale(.9)}
-.ni.on .ni-svg{filter:drop-shadow(0 0 6px rgba(79,70,229,.5))}
-.mbo.open .msh{animation:slideUp .26s cubic-bezier(.4,0,.2,1)}
-.btn.bp:hover{box-shadow:0 6px 20px rgba(79,70,229,.35)}
+.orb-a{width:220px;height:220px;background:rgba(255,255,255,.08);top:-70px;right:-70px}
+.orb-b{width:160px;height:160px;background:rgba(255,255,255,.05);bottom:-50px;left:20%;animation-delay:2.5s}
+.orb-c{width:100px;height:100px;background:rgba(255,255,255,.06);top:30%;left:-20px;animation-delay:4s}
+
+/* LOGIN ANIMATED BG */
+#login{background:linear-gradient(135deg,#4F46E5 0%,#3730A3 30%,#1E1B4B 60%,#312E81 100%);background-size:300% 300%;animation:gradientShift 8s ease infinite}
+.login-particle{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);animation:particle 3s ease-in-out infinite}
+.lb{animation:popIn .5s ease}
+.lc-input{transition:border-color .25s,background .25s,transform .15s,box-shadow .25s}
+.lc-input:focus{transform:scale(1.01);box-shadow:0 0 0 3px rgba(255,255,255,.1)}
+.lc-btn{transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden}
+.lc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.lc-btn:active{transform:scale(.97)}
+.lc-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transform:translateX(-100%);transition:transform .4s}
+.lc-btn:hover::after{transform:translateX(100%)}
+
+/* RIPPLE */
+.ripple-wave{position:absolute;border-radius:50%;background:rgba(255,255,255,.2);transform:scale(0);animation:rippleAnim .55s linear;pointer-events:none}
+
+/* STAT CARDS */
+.stat-card{transition:transform .2s,box-shadow .2s;cursor:pointer;animation:fadeSlideUp .5s ease forwards;opacity:0}
+.stat-card:nth-child(1){animation-delay:.05s}
+.stat-card:nth-child(2){animation-delay:.12s}
+.stat-card:nth-child(3){animation-delay:.19s}
+.stat-card:nth-child(4){animation-delay:.26s}
+.stat-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 10px 28px rgba(79,70,229,.15)}
+.stat-card:active{transform:scale(.97)}
+
+/* SITE CARDS STAGGER */
+.site-card{animation:fadeSlideUp .4s ease forwards;opacity:0;transition:transform .18s,box-shadow .18s}
+.site-card:nth-child(1){animation-delay:.04s}
+.site-card:nth-child(2){animation-delay:.1s}
+.site-card:nth-child(3){animation-delay:.16s}
+.site-card:nth-child(4){animation-delay:.22s}
+.site-card:nth-child(5){animation-delay:.28s}
+.site-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(79,70,229,.12)}
+
+/* BALANCE CARD */
+.bal-card::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);animation:shine 3.5s ease-in-out infinite;pointer-events:none}
+.bal-card{position:relative;overflow:hidden;transition:transform .2s}
+.bal-card:active{transform:scale(.99)}
+
+/* WORKER CARDS STAGGER */
+.wc{animation:fadeSlideUp .4s ease forwards;opacity:0;transition:transform .18s,box-shadow .18s}
+.wc:nth-child(1){animation-delay:.04s}
+.wc:nth-child(2){animation-delay:.1s}
+.wc:nth-child(3){animation-delay:.16s}
+.wc:nth-child(4){animation-delay:.22s}
+.wc:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(79,70,229,.1)}
+
+/* TRANSACTION ROWS STAGGER */
+.txn-r{animation:fadeSlideRight .35s ease forwards;opacity:0;transition:background .15s}
+.txn-r:nth-child(1){animation-delay:.05s}
+.txn-r:nth-child(2){animation-delay:.1s}
+.txn-r:nth-child(3){animation-delay:.15s}
+.txn-r:nth-child(4){animation-delay:.2s}
+.txn-r:hover{background:var(--gr50)}
+
+/* MODAL */
+.mbo.open .msh{animation:slideUp .26s cubic-bezier(.34,1.3,.64,1)}
+
+/* PAGE TRANSITION */
+.page.on{animation:fadeSlideUp .22s ease}
+
+/* NAV */
+.ni{transition:color .2s,transform .15s}
+.ni:active{transform:scale(.88)}
+.ni.on .ni-svg{filter:drop-shadow(0 0 6px rgba(79,70,229,.5));animation:float 2.5s ease-in-out infinite}
+
+/* BUTTONS */
+.btn{transition:transform .12s,opacity .12s,box-shadow .12s}
+.btn:active{transform:scale(.97)}
+.btn.bp{position:relative;overflow:hidden}
+.btn.bp::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);transform:translateX(-100%);transition:transform .4s}
+.btn.bp:hover::after{transform:translateX(100%)}
+.btn.bp:hover{box-shadow:0 6px 20px rgba(79,70,229,.35);transform:translateY(-1px)}
+
+/* QUICK BUTTONS */
+.qb{transition:transform .15s,background .15s}
+.qb:hover{transform:translateY(-3px) scale(1.05)}
+.qb:active{transform:scale(.93)}
+
+/* SPLASH */
 .sp-box{animation:splashPulse 2s ease-in-out infinite}
-.wc{animation:cardIn .4s ease forwards}
+
+/* LIST ITEMS */
+.li{animation:fadeSlideRight .3s ease forwards;opacity:0}
+.li:nth-child(1){animation-delay:.03s}
+.li:nth-child(2){animation-delay:.07s}
+.li:nth-child(3){animation-delay:.11s}
+.li:nth-child(4){animation-delay:.15s}
+.li:nth-child(5){animation-delay:.19s}
+
+/* SETTING ITEMS */
+.set-item{transition:background .15s,transform .12s}
+.set-item:hover{background:var(--gr50)}
+.set-item:active{transform:scale(.98)}
+
+/* TEAM CARDS */
+.tcard{animation:fadeSlideUp .45s ease forwards;opacity:0;transition:transform .18s,box-shadow .18s}
+.tcard:nth-child(1){animation-delay:.06s}
+.tcard:nth-child(2){animation-delay:.14s}
+.tcard:nth-child(3){animation-delay:.22s}
+.tcard:hover{transform:translateY(-2px)}
+
+/* DETAIL TABS */
+.det-tab{transition:color .18s,border-color .18s;position:relative}
+.det-tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2.5px;background:var(--ind);border-radius:2px;animation:tabSlide .25s ease}
+
+/* INPUT FOCUS */
+.fi{transition:border-color .2s,background .2s,box-shadow .2s}
+.fi:focus{box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+
+/* MEMBER CARD AVATAR FLOAT */
+.mc-avatar{animation:float 3s ease-in-out infinite}
+.tc-av{animation:float 3s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -1121,10 +1237,28 @@ function adToBS(s){
     return{y,m,d};
   }catch{return null;}
 }
-function fBS(s){const b=adToBS(s);return b?`${NM[b.m-1]} ${b.d}, ${b.y}`:''}
+function fBS(s){
+  const b=adToBS(s);
+  if(!b)return'';
+  return`${NM[b.m-1]} ${b.d}, ${b.y}`;
+}
+function fBSD(s){
+  // BS date WITH day name
+  const b=adToBS(s);
+  if(!b)return'';
+  const days=['आइत','सोम','मंगल','बुध','बिही','शुक्र','शनि'];
+  const parts=s.split('-').map(Number);
+  const dow=new Date(parts[0],parts[1]-1,parts[2]).getDay();
+  return`${days[dow]}बार, ${NM[b.m-1]} ${b.d}, ${b.y}`;
+}
 function fBSS(s){const b=adToBS(s);return b?`${NMS[b.m-1]} ${b.d}`:''}
 function bsToday(){return fBS(todStr());}
-function bsF(inId,outId){const v=document.getElementById(inId)?.value;document.getElementById(outId).textContent=v?fBS(v):'';}
+function bsF(inId,outId){
+  const v=document.getElementById(inId)?.value;
+  const el=document.getElementById(outId);if(!el)return;
+  if(v){el.textContent='📅 '+fBS(v);el.classList.add('show');}
+  else{el.textContent='';el.classList.remove('show');}
+}
 
 // ══ LANGUAGE ══
 let LANG='ne';
@@ -1150,7 +1284,10 @@ function applyLang(){
 
 // ══ HELPERS ══
 const Rs=n=>{if(n==null||isNaN(n))return'—';n=Number(n);if(Math.abs(n)>=100000)return'Rs.'+(n/100000).toFixed(1)+'L';if(Math.abs(n)>=1000)return'Rs.'+n.toLocaleString('en-IN');return'Rs.'+n;};
-const fD=s=>{try{return new Date(s).toLocaleDateString('en-IN',{day:'numeric',month:'short'});}catch{return s||'';}};
+const fD=s=>{
+  if(!s)return'';
+  return fBSD(s)||fBS(s)||s;
+};;
 const sCV=s=>s.contract_type==='sqft'?(s.sqft||0)*(s.sqft_rate||0):s.contract_type==='daily'?null:s.contract_amount||0;
 const ET={paint:'रंग',material:'सामग्री',tools:'औजार',transport:'यातायात',petrol:'पेट्रोल',khaja:'खाजा',food:'खाना',advance:'अग्रिम',other:'अन्य'};
 const ET_ICO={paint:'🎨',material:'🧱',tools:'🔧',transport:'🚐',petrol:'⛽',khaja:'☕',food:'🍱',advance:'💵',other:'📦'};
@@ -1251,7 +1388,20 @@ function go(p){
   const lb=document.getElementById('lang-btn');
   if(lb)lb.style.display=(p==='home'||p==='sites')?'none':'block';
 }
-const openM=id=>document.getElementById(id).classList.add('open');
+// Auto-show BS on all date inputs when modal opens
+const openM=id=>{
+  document.getElementById(id).classList.add('open');
+  // Trigger BS display for all date inputs in this modal
+  setTimeout(()=>{
+    document.getElementById(id).querySelectorAll('input[type="date"]').forEach(inp=>{
+      if(inp.value){
+        const outId=inp.id+'-b';
+        const outEl=document.getElementById(outId);
+        if(outEl){outEl.textContent='📅 '+fBS(inp.value);outEl.classList.add('show');}
+      }
+    });
+  },50);
+};
 const closeM=id=>document.getElementById(id).classList.remove('open');
 document.querySelectorAll('.mbo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
@@ -1322,7 +1472,7 @@ async function loadHome(){
     let myAttDays=0;
     const allAtt=await dGet('attendance');
     allAtt.forEach(r=>(r.entries||[]).forEach(e=>{
-      if(e.name===ME)myAttDays+=(e.status==='P'?1:e.status==='H'?.5:0);
+      if(e.name===ME)myAttDays+=(e.status==='P'?1:(e.status==='H'||e.status==='M'||e.status==='E')?.5:0);
     }));
     const myTotalWage=myAttDays*myRate;
     document.getElementById('h-my-wage').textContent=myRate>0?Rs(myTotalWage):'Rate सेट छैन';
@@ -1366,7 +1516,7 @@ async function loadHome(){
 }
 
 // ══ SITE CARD ══
-function mkSC(s){
+function mkSC(s,idx=0){
   const stripe=s.status==='hold'?'ho':s.status==='completed'?'co':'ac';
   const badge=s.status==='active'?'<span class="spill sp-a">सक्रिय</span>':s.status==='completed'?'<span class="spill sp-c">सम्पन्न</span>':'<span class="spill sp-h">रोकिएको</span>';
   const v=sCV(s);
@@ -1380,7 +1530,8 @@ function mkSC(s){
       <div class="tp-bar"><div class="tp-fill" style="width:${tp.pct}%;background:${color}"></div></div>
     </div>`;
   }
-  return`<div class="site-card" onclick="openDet('${s.id}')">
+  const delay=idx*80;
+  return`<div class="site-card" onclick="openDet('${s.id}')" style="opacity:0;transform:translateY(16px);transition:opacity .4s ease ${delay}ms,transform .4s ease ${delay}ms" data-anim="1">
     <div class="sc-stripe ${stripe}"></div>
     <div class="sc-body">
       <div class="sc-r1"><div class="sc-nm">${s.name}</div>${badge}</div>
@@ -1688,8 +1839,8 @@ async function loadSAtt(){
         <div style="font-size:11px;color:var(--gr400)">${r.saved_by||''}</div>
       </div>`;
     (r.entries||[]).forEach(e=>{
-      const sc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='H'?'var(--a)':'var(--ind)';
-      const sn=e.status==='P'?'उपस्थित':e.status==='A'?'अनुपस्थित':e.status==='H'?'आधा':'बिदा';
+      const sc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='M'?'#854D0E':e.status==='E'?'#9A3412':e.status==='H'?'var(--a)':'var(--ind)';
+      const sn=e.status==='P'?'पूरा दिन':e.status==='A'?'अनुपस्थित':e.status==='M'?'🌅 बिहान':e.status==='E'?'☀️ दिउँसो':e.status==='H'?'आधा':'बिदा';
       html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;font-weight:700">${e.name}</span><div style="display:flex;align-items:center;gap:10px">${e.tin?`<span style="font-size:11px;color:var(--gr400)">${e.tin}${e.tout?'→'+e.tout:''}</span>`:''}<span style="font-weight:700;font-size:12px;color:${sc}">${sn}</span></div></div>`;
     });
     html+='</div>';
@@ -1808,10 +1959,10 @@ async function printAttendance(type, id=''){
     recs.forEach(r=>{(r.entries||[]).forEach(e=>{if(!byW[e.name])byW[e.name]=[];byW[e.name].push({...e,date:r.bs_date||r.date,site:r.site_name,slot:{full:'पूरा',morning:'बिहान',afternoon:'दिउँसो'}[r.slot]||r.slot});});});
     Object.entries(byW).forEach(([nm,rows])=>{
       const p=rows.filter(r=>r.status==='P').length;
-      const h=rows.filter(r=>r.status==='H').length;
+      const h=rows.filter(r=>(r.status==='H'||r.status==='M'||r.status==='E')).length;
       html+=`<h3>👷 ${nm}</h3><table><tr><th>मिति</th><th>साइट</th><th>खण्ड</th><th>स्थिति</th><th>समय</th></tr>`;
       rows.forEach(r=>{
-        const st=r.status==='P'?'✅ उप.':r.status==='A'?'❌ अनु.':r.status==='H'?'🔶 आधा':'🏖️ बिदा';
+        const st=r.status==='P'?'✅ उप.':r.status==='A'?'❌ अनु.':(r.status==='H'||r.status==='M'||r.status==='E')?'🔶 आधा':'🏖️ बिदा';
         html+=`<tr><td>${r.date}</td><td>${r.site||'—'}</td><td>${r.slot}</td><td>${st}</td><td>${r.tin||'—'}${r.tout?' → '+r.tout:''}</td></tr>`;
       });
       html+=`<tr><td colspan="5" class="total">उपस्थित: ${p} दिन · आधा: ${h} दिन · जम्मा: ${p+h*0.5} दिन</td></tr></table>`;
@@ -1839,7 +1990,7 @@ async function loadWorkers(){
       // Attendance days from register
       let attDays=0;
       attRecs.forEach(r=>(r.entries||[]).forEach(e=>{
-        if(e.wid===w.id)attDays+=(e.status==='P'?1:e.status==='H'?.5:0);
+        if(e.wid===w.id)attDays+=(e.status==='P'?1:(e.status==='H'||e.status==='M'||e.status==='E')?.5:0);
       }));
       // Sites worked
       const siteNames=[...new Set(we.map(e=>SITES.find(s=>s.id===e.site_id)?.name||'').filter(Boolean))].join(' · ');
@@ -1852,19 +2003,20 @@ async function loadWorkers(){
           <div style="text-align:right"><div class="n" style="font-weight:800;color:var(--g)">${Rs(earn)}</div>${e.advance_given>0?`<div style="font-size:10px;color:var(--a)">अग्रिम: ${Rs(e.advance_given)}</div>`:''}</div>
         </div>`;
       }).join('');
-      return`<div class="wc">
+      return`<div class="wc" style="opacity:${w.active===false?.5:1}">
         <div class="wc-hd">
           <div class="wc-av">${w.name[0]||'?'}</div>
           <div style="flex:1">
-            <div class="wc-nm">${w.name}</div>
+            <div class="wc-nm">${w.name} ${w.active===false?'<span style="background:var(--al);color:#92400E;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">⏸ Pause</span>':''}</div>
             ${w.phone?`<div class="wc-ph">${w.phone}</div>`:''}
             ${w.join_date?`<div style="font-size:11px;color:var(--gr400)">📅 जोइन: ${fBS(w.join_date)}</div>`:''}
-            ${w.daily_wage?`<div style="font-size:11px;color:var(--g);font-weight:700">💰 दैनिक: Rs.${w.daily_wage}</div>`:''}
-            ${siteNames?`<div style="font-size:11px;color:var(--ind);margin-top:2px">📍 ${siteNames}</div>`:''}
+            ${w.daily_wage?`<div style="font-size:11px;color:var(--g);font-weight:700">💰 Rs.${w.daily_wage}/दिन</div>`:''}
+            ${siteNames?`<div style="font-size:11px;color:var(--ind)">📍 ${siteNames}</div>`:''}
           </div>
           <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
             <button onclick="event.stopPropagation();openEditWModal(${JSON.stringify({id:w.id,name:w.name,phone:w.phone||'',join_date:w.join_date||'',daily_wage:w.daily_wage||0,note:w.note||''}).replace(/"/g,'&quot;')})" style="background:var(--ind-l);border:none;color:var(--ind);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>
-            <div style="font-size:10px;color:var(--ind);font-weight:700;cursor:pointer" onclick="openWAM('${w.id}','${w.name.replace(/'/g,"\\'")}')">✅ हाजिर →</div>
+            <button onclick="event.stopPropagation();toggleWorkerActive('${w.id}',${w.active===false?'true':'false'})" style="background:${w.active===false?'var(--gl)':'var(--al)'};border:none;color:${w.active===false?'#065F46':'#92400E'};font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer">${w.active===false?'▶ सक्रिय':'⏸ Pause'}</button>
+            ${w.active!==false?`<div style="font-size:10px;color:var(--ind);font-weight:700;cursor:pointer" onclick="openWAM('${w.id}','${w.name.replace(/'/g,"\\'")}')">✅ हाजिर</div>`:''}
           </div>
         </div>
         <div class="wc-st">
@@ -1888,6 +2040,11 @@ async function loadWorkers(){
     console.error(e);
     el.innerHTML=emptyS('⚠️','लोड गर्न सकिएन','पुनः प्रयास गर्नुस्');
   }
+}
+async function toggleWorkerActive(wid, makeActive){
+  await dUp('workers', wid, {active: makeActive===true||makeActive==='true'});
+  toast(makeActive==='true'?'कामदार सक्रिय ✓':'कामदार pause गरियो ⏸');
+  loadWorkers();
 }
 function openNewWModal(){
   document.getElementById('nw-id').value='';
@@ -1943,7 +2100,7 @@ async function showMonthly(){
     if(!months[m])months[m]={recv:0,exp:0,wage:0,myDays:0};
     (r.entries||[]).forEach(e=>{
       if(e.name===ME){
-        months[m].myDays=(months[m].myDays||0)+(e.status==='P'?1:e.status==='H'?.5:0);
+        months[m].myDays=(months[m].myDays||0)+(e.status==='P'?1:(e.status==='H'||e.status==='M'||e.status==='E')?.5:0);
       }
     });
   });
@@ -2072,30 +2229,95 @@ async function saveSitePhotos(){
 
 // ══ SITE-WISE ATTENDANCE + EARNING SUMMARY ══
 async function loadSiteAttSummary(){
-  const[attRecs,workEntries,advances]=await Promise.all([
+  const[attRecs,workEntries,advances,pays]=await Promise.all([
     dGet('attendance',['site_id','==',CS]),
     dGet('work_entries',['site_id','==',CS]),
-    dGet('worker_advances',['site_id','==',CS])
+    dGet('worker_advances',['site_id','==',CS]),
+    dGet('payments',['site_id','==',CS])
   ]);
+
+  // Per-worker totals
   const wSum={};
+  attRecs.sort((a,b)=>a.date>b.date?1:-1);
   attRecs.forEach(r=>(r.entries||[]).forEach(e=>{
-    if(!wSum[e.name])wSum[e.name]={name:e.name,days:0,half:0,absent:0};
-    if(e.status==='P')wSum[e.name].days++;
-    else if(e.status==='H')wSum[e.name].half++;
+    if(!wSum[e.name])wSum[e.name]={name:e.name,days:0,half:0,absent:0,dates:[]};
+    if(e.status==='P'){wSum[e.name].days++;wSum[e.name].dates.push(fBSD(r.date));}
+    else if(e.status==='H'||e.status==='M'||e.status==='E'){wSum[e.name].half++;wSum[e.name].dates.push(fBSD(r.date)+'(आधा)');}
     else if(e.status==='A')wSum[e.name].absent++;
   }));
-  const wages={},advMap={};
-  workEntries.forEach(w=>{wages[w.worker_name]=(wages[w.worker_name]||0)+Number(w.days||0)*Number(w.daily_rate||0);if(w.advance_given>0)advMap[w.worker_name]=(advMap[w.worker_name]||0)+Number(w.advance_given||0);});
-  advances.forEach(a=>{advMap[a.worker_name]=(advMap[a.worker_name]||0)+Number(a.amount||0);});
-  return Object.values(wSum).length?`
-  <div class="ic" style="margin-bottom:12px">
-    <div style="padding:10px 16px;font-size:13px;font-weight:800;border-bottom:1px solid var(--gr100);color:var(--ind)">📊 कामदार हाजिर + कमाइ</div>
-    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
-      <tr style="background:var(--ind-l)"><th style="padding:8px 10px;text-align:left">नाम</th><th style="padding:8px 6px;text-align:center">✅</th><th style="padding:8px 6px;text-align:center">🔶</th><th style="padding:8px 6px;text-align:right">कमाइ</th><th style="padding:8px 6px;text-align:right">अग्रिम</th><th style="padding:8px 6px;text-align:right;color:var(--ind)">बाँकी</th></tr>
-      ${Object.values(wSum).map(w=>{const earn=wages[w.name]||0;const adv=advMap[w.name]||0;return`<tr style="border-bottom:1px solid var(--gr100)"><td style="padding:8px 10px;font-weight:700">${w.name}</td><td style="padding:8px 6px;text-align:center;color:var(--g)">${w.days}</td><td style="padding:8px 6px;text-align:center;color:var(--a)">${w.half}</td><td style="padding:8px 6px;text-align:right;color:var(--g);font-weight:700">${Rs(earn)}</td><td style="padding:8px 6px;text-align:right;color:var(--r)">${adv?Rs(adv):'—'}</td><td style="padding:8px 6px;text-align:right;font-weight:800;color:${(earn-adv)>=0?'var(--ind)':'var(--r)'}">${Rs(earn-adv)}</td></tr>`;}).join('')}
-    </table></div>
-  </div>`:'';}
 
+  const wages={},advMap={},wageRate={};
+  workEntries.forEach(w=>{
+    wages[w.worker_name]=(wages[w.worker_name]||0)+Number(w.days||0)*Number(w.daily_rate||0);
+    wageRate[w.worker_name]=Number(w.daily_rate||0);
+    if(w.advance_given>0)advMap[w.worker_name]=(advMap[w.worker_name]||0)+Number(w.advance_given||0);
+  });
+  advances.forEach(a=>{advMap[a.worker_name]=(advMap[a.worker_name]||0)+Number(a.amount||0);});
+
+  const workerRows=Object.values(wSum).map(w=>{
+    const earn=wages[w.name]||0;
+    const adv=advMap[w.name]||0;
+    const rate=wageRate[w.name]||0;
+    const totalDays=w.days+w.half*0.5;
+    return`<div style="border:1px solid var(--gr100);border-radius:12px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:14px;font-weight:800">${w.name}</div>
+        <div style="text-align:right">
+          <div class="n" style="font-size:16px;font-weight:800;color:${(earn-adv)>=0?'var(--g)':'var(--r)'}">बाँकी: ${Rs(earn-adv)}</div>
+          ${rate?`<div style="font-size:11px;color:var(--gr400)">Rs.${rate}/दिन</div>`:''}
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+        <div style="background:var(--gl);border-radius:8px;padding:7px;text-align:center">
+          <div class="n" style="font-size:16px;font-weight:800;color:var(--g)">${w.days}</div>
+          <div style="font-size:9px;color:var(--gr500);font-weight:700">पूरा दिन</div>
+        </div>
+        <div style="background:var(--al);border-radius:8px;padding:7px;text-align:center">
+          <div class="n" style="font-size:16px;font-weight:800;color:var(--a)">${w.half}</div>
+          <div style="font-size:9px;color:var(--gr500);font-weight:700">आधा दिन</div>
+        </div>
+        <div style="background:var(--ind-l);border-radius:8px;padding:7px;text-align:center">
+          <div class="n" style="font-size:16px;font-weight:800;color:var(--ind)">${totalDays}</div>
+          <div style="font-size:9px;color:var(--gr500);font-weight:700">जम्मा</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-top:1px solid var(--gr100)">
+        <span style="color:var(--gr500)">कुल कमाइ</span><span class="n" style="font-weight:700;color:var(--g)">${Rs(earn)}</span>
+      </div>
+      ${adv>0?`<div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-top:1px solid var(--gr100)">
+        <span style="color:var(--gr500)">अग्रिम दिइसकेको</span><span class="n" style="font-weight:700;color:var(--r)">- ${Rs(adv)}</span>
+      </div>`:''}
+      ${w.dates.length?`<div style="font-size:10px;color:var(--gr400);margin-top:6px;line-height:1.6">${w.dates.slice(0,5).join(' · ')}${w.dates.length>5?` · +${w.dates.length-5} थप`:''}</div>`:''}
+    </div>`;
+  }).join('');
+
+  // Payment history
+  const payRows=pays.sort((a,b)=>a.date>b.date?1:-1).map(p=>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--gr100);font-size:12px">
+      <div>
+        <div style="font-weight:700">${{advance:'अग्रिम',installment:'किस्ता',final:'अन्तिम'}[p.type]||p.type}</div>
+        <div style="color:var(--gr400)">${fBSD(p.date)}${p.note?' · '+p.note:''}</div>
+      </div>
+      <div class="n" style="font-weight:800;color:var(--g)">+${Rs(p.amount)}</div>
+    </div>`
+  ).join('');
+
+  return`
+  ${Object.values(wSum).length?`
+  <div class="ic" style="margin-bottom:12px">
+    <div style="padding:12px 16px;font-size:13px;font-weight:800;border-bottom:1px solid var(--gr100);color:var(--ind);display:flex;justify-content:space-between;align-items:center">
+      <span>👷 कामदार — हाजिर + ज्याला</span>
+      <span style="font-size:11px;color:var(--gr400)">${Object.values(wSum).length} जना</span>
+    </div>
+    <div style="padding:12px 14px">${workerRows}</div>
+  </div>`:''}
+  ${pays.length?`
+  <div class="ic" style="margin-bottom:12px">
+    <div style="padding:12px 16px;font-size:13px;font-weight:800;border-bottom:1px solid var(--gr100);color:var(--g)">💰 भुक्तानी इतिहास</div>
+    <div style="padding:4px 16px 8px">${payRows}</div>
+  </div>`:''}
+  `;
+}
 async function delEntry(collection, id, reloadFn){
   if(!confirm('यो entry हटाउने? यो पूर्ववत हुँदैन।'))return;
   try{
@@ -2160,6 +2382,8 @@ async function loadAtt(){
   document.getElementById('att-ad').textContent=AD;
   const el=document.getElementById('att-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
   SITES=await dGet('sites');WKRS=await dGet('workers');
+  // Only show active workers in attendance
+  WKRS=WKRS.filter(w=>w.active!==false);
   const recs=await dGet('attendance',['date','==',AD]);
   ATT_DATA={};recs.forEach(r=>{if(!ATT_DATA[r.site_id])ATT_DATA[r.site_id]={};(r.entries||[]).forEach(e=>{ATT_DATA[r.site_id][e.wid]={status:e.status,tin:e.tin||'',tout:e.tout||''};});});
   const active=SITES.filter(s=>s.status==='active');
@@ -2183,7 +2407,7 @@ async function loadAtt(){
     });
   });
   const present = Object.values(workerSummary).filter(w=>w.status==='P');
-  const half    = Object.values(workerSummary).filter(w=>w.status==='H');
+  const half    = Object.values(workerSummary).filter(w=>w.status==='H'||w.status==='M'||w.status==='E');
   const absent  = Object.values(workerSummary).filter(w=>w.status==='A');
   const leave   = Object.values(workerSummary).filter(w=>w.status==='V');
   const unsaved = Object.values(workerSummary).filter(w=>!w.status);
@@ -2243,8 +2467,8 @@ async function loadAtt(){
         <div class="awr-nm">${w.name}</div>
         <div class="ao-btns">
           <button class="ao ${st==='P'?'P':''}" onclick="setA('${site.id}','${w.id}','P',this)" title="पूरा दिन">🌞 पूरा</button>
-          <button class="ao ${st==='M'?'P':''}" onclick="setA('${site.id}','${w.id}','M',this)" title="बिहान मात्र">🌅 बिहान</button>
-          <button class="ao ${st==='E'?'H':''}" onclick="setA('${site.id}','${w.id}','E',this)" title="दिउँसो मात्र">☀️ दिउँसो</button>
+          <button class="ao ${st==='M'?'M':''}" onclick="setA('${site.id}','${w.id}','M',this)" title="बिहान मात्र">🌅 बिहान</button>
+          <button class="ao ${st==='E'?'E':''}" onclick="setA('${site.id}','${w.id}','E',this)" title="दिउँसो मात्र">☀️ दिउँसो</button>
           <button class="ao ${st==='A'?'A':''}" onclick="setA('${site.id}','${w.id}','A',this)" title="आएन">❌ आएन</button>
           <button class="ao ${st==='V'?'V':''}" onclick="setA('${site.id}','${w.id}','V',this)" title="बिदा">🏖 बिदा</button>
         </div>
