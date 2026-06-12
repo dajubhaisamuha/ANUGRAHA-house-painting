@@ -74,6 +74,42 @@ body.theme-purple .ni.on::before{background:#7C3AED}
 body.theme-purple .sc-stripe.ac{background:linear-gradient(90deg,#7C3AED,#A78BFA)}
 body.theme-purple .btn.bp{background:linear-gradient(135deg,#7C3AED,#A78BFA)}
 body.theme-purple .team-hero,.theme-purple .att-date-bar{background:linear-gradient(135deg,#7C3AED,#5B21B6)!important}
+
+/* ── DARK MODE ── */
+body.dark-mode{
+  --bg:#0F0E0D;--w:#1C1917;--gr50:#262220;--gr100:#332E2B;--gr200:#44403C;
+  --gr300:#57534E;--gr400:#78716C;--gr500:#A8A29E;--gr600:#D6D3D1;
+  --gr700:#E7E5E4;--gr800:#F5F5F4;--gr900:#FFFFFF;
+  --ind-l:#3D1F0F;--ind-b:#7C2D12;
+  --gl:#0F2A1A;--rl:#3D1414;--al:#3D2A0A;--purl:#2E1A4D;--blue-l:#1A2433;
+}
+body.dark-mode .stat-card,body.dark-mode .ic,body.dark-mode .site-card,
+body.dark-mode .wc,body.dark-mode .tcard,body.dark-mode .set-group,
+body.dark-mode .txn-card,body.dark-mode .esb,body.dark-mode .sac,
+body.dark-mode .my-stats-card,body.dark-mode .ms-c{
+  background:var(--w);border-color:var(--gr200)
+}
+body.dark-mode .fi{background:var(--gr50);border-color:var(--gr200);color:var(--gr900)}
+body.dark-mode .fi:focus{background:var(--w)}
+body.dark-mode .msh{background:var(--w)}
+body.dark-mode .mhd{background:var(--gr200)}
+body.dark-mode #nav{background:var(--w);border-color:var(--gr200)}
+body.dark-mode .ni.on .ni-svg{background:var(--ind-l)}
+body.dark-mode .plain-top{background:var(--w);border-color:var(--gr200)}
+body.dark-mode .sc-stripe.ac{opacity:.85}
+body.dark-mode .pbox{background:linear-gradient(135deg,var(--ind-l),var(--blue-l));border-color:var(--gr200)}
+body.dark-mode .bs{background:var(--gr100);color:var(--gr700);border-color:var(--gr200)}
+
+/* THEME TOGGLE BUTTON (dashboard) */
+.theme-toggle{position:absolute;top:16px;right:16px;z-index:5;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.theme-toggle:active{background:rgba(234,88,12,.2)}
+.theme-toggle svg{width:18px;height:18px}
+
+/* PULL TO REFRESH */
+#ptr{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;align-items:center;height:60px;margin-top:-60px;transition:margin-top .25s ease;z-index:80;pointer-events:none}
+#ptr.show{margin-top:0}
+#ptr-spin{width:28px;height:28px;border:3px solid var(--ind-l);border-top-color:var(--ind);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{font-family:'Mukta','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased}
@@ -571,6 +607,7 @@ select.fi option{background:#fff}
 </div>
 
 <div id="toast"></div>
+<div id="ptr"><div id="ptr-spin"></div></div>
 
 <!-- NAV -->
 <nav id="nav" style="display:none">
@@ -601,6 +638,10 @@ select.fi option{background:#fff}
   <div class="hero-bar">
     <div class="hero-orb orb-a"></div>
     <div class="hero-orb orb-b"></div>
+    <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn" title="Dark/Light Mode">
+      <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
     <!-- Top row: Avatar + name only, no settings button -->
     <div class="hb-top">
       <div class="hb-user" onclick="go('profile')" style="cursor:pointer">
@@ -618,8 +659,11 @@ select.fi option{background:#fff}
     <!-- EARNING CARD: hierarchy design -->
     <div class="bal-card" style="border:1px solid rgba(255,255,255,.12)">
       <!-- 1. Personal Earning (primary) -->
-      <div style="margin-bottom:16px">
-        <div style="font-size:11px;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px"><span id="hb-nm2">AMRIT</span> को कमाइ</div>
+      <div style="margin-bottom:16px;cursor:pointer" onclick="openMyActivity()">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="font-size:11px;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px"><span id="hb-nm2">AMRIT</span> को कमाइ</div>
+          <span style="font-size:11px;color:rgba(255,255,255,.4);font-weight:600">पूरा विवरण ›</span>
+        </div>
         <div class="n" id="h-my-wage" style="font-size:36px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:-.5px">Rs. —</div>
         <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:3px" id="h-wage-detail">— दिन काम</div>
       </div>
@@ -1059,6 +1103,14 @@ select.fi option{background:#fff}
   <button class="btn bs" style="margin-top:14px" onclick="closeM('mTheme')">बन्द गर्नुस्</button>
 </div></div>
 
+<!-- MODAL: MY ACTIVITY -->
+<div class="mbo" id="mMyActivity"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit" id="ma-title">📋 मेरो विवरण</div>
+  <div id="ma-body"><div class="ld">लोड हुँदैछ...</div></div>
+  <button class="btn bs" onclick="closeM('mMyActivity')">बन्द गर्नुस्</button>
+</div></div>
+
 <!-- MODAL: SITE PHOTOS -->
 <div class="mbo" id="mSitePhoto"><div class="msh">
   <div class="mhd"></div>
@@ -1181,17 +1233,58 @@ function doLogout(){
   document.getElementById('lu').value='';document.getElementById('lp').value='';document.getElementById('lerr').textContent='';
 }
 function openThemePicker(){openM('mTheme');}
-function setTheme(t){
+function setTheme(t,silent){
   document.body.className=document.body.className.replace(/theme-\w+/g,'').trim();
   if(t!=='default')document.body.classList.add('theme-'+t);
   localStorage.setItem('app-theme',t);
   const labels={default:'Default Blue',red:'Red / White',blue:'Blue / Yellow',purple:'White / Purple'};
   const lbl=document.getElementById('theme-lbl');if(lbl)lbl.textContent=labels[t]||t;
-  closeM('mTheme');toast('Theme बदलियो ✓');
+  if(!silent){closeM('mTheme');toast('Theme बदलियो ✓');}
 }
 function applyStoredTheme(){
   const t=localStorage.getItem('app-theme')||'default';
-  setTheme(t);
+  setTheme(t,true);
+}
+
+// ══ DARK MODE ══
+function toggleDarkMode(){
+  const isDark=document.body.classList.toggle('dark-mode');
+  localStorage.setItem('dark-mode',isDark?'1':'0');
+  updateThemeIcon(isDark);
+}
+function updateThemeIcon(isDark){
+  document.getElementById('theme-icon-sun').style.display=isDark?'block':'none';
+  document.getElementById('theme-icon-moon').style.display=isDark?'none':'block';
+}
+function applyStoredDarkMode(){
+  const isDark=localStorage.getItem('dark-mode')==='1';
+  if(isDark)document.body.classList.add('dark-mode');
+  updateThemeIcon(isDark);
+}
+
+// ══ PULL TO REFRESH ══
+function initPullToRefresh(){
+  let startY=0,pulling=false;
+  const ptr=document.getElementById('ptr');
+  document.addEventListener('touchstart',e=>{
+    const pg=document.querySelector('.page.on');
+    if(pg&&pg.scrollTop<=0){startY=e.touches[0].clientY;pulling=true;}
+  },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(!pulling)return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy>60)ptr.classList.add('show');
+    else ptr.classList.remove('show');
+  },{passive:true});
+  document.addEventListener('touchend',()=>{
+    if(pulling&&ptr.classList.contains('show')){
+      ptr.classList.remove('show');
+      toast('🔄 Refresh हुँदैछ...');
+      const fn={home:loadHome,sites:loadSites,att:loadAtt,workers:loadWorkers,exp:loadExp,team:loadTeam,profile:loadProfile}[CUR];
+      if(fn)fn();
+    }
+    pulling=false;
+  },{passive:true});
 }
 function openRateModal(){
   const rate=localStorage.getItem('rate_'+ME)||'';
@@ -2182,7 +2275,76 @@ async function saveWorker(){
 // Keep old name working too
 async function saveNewW(){await saveWorker();}
 
-// ══ MONTHLY SUMMARY ══
+// ══ MY ACTIVITY DETAIL ══
+async function openMyActivity(){
+  document.getElementById('ma-title').textContent='📋 '+ME+' — पूरा विवरण';
+  document.getElementById('ma-body').innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  openM('mMyActivity');
+
+  const[allAtt,allWdraw,allSites]=await Promise.all([
+    dGet('attendance'),dGet('withdrawals',['member','==',ME]),dGet('sites')
+  ]);
+  const myRate=getMyRate();
+
+  // Per-site attendance breakdown
+  const siteData={};
+  allAtt.forEach(r=>{
+    (r.entries||[]).forEach(e=>{
+      if(e.name!==ME)return;
+      const sid=r.site_id;
+      if(!siteData[sid])siteData[sid]={name:r.site_name||allSites.find(s=>s.id===sid)?.name||'—',full:0,half:0,absent:0,dates:[]};
+      if(e.status==='P'){siteData[sid].full++;siteData[sid].dates.push(fBSD(r.date));}
+      else if(e.status==='H'||e.status==='M'||e.status==='E'){siteData[sid].half++;siteData[sid].dates.push(fBSD(r.date)+' (आधा)');}
+      else if(e.status==='A')siteData[sid].absent++;
+    });
+  });
+
+  let totalFull=0,totalHalf=0;
+  Object.values(siteData).forEach(d=>{totalFull+=d.full;totalHalf+=d.half;});
+  const totalDays=totalFull+totalHalf*0.5;
+  const totalEarning=totalDays*myRate;
+  const totalWithdrawn=allWdraw.reduce((a,w)=>a+Number(w.amount||0),0);
+
+  const siteRows=Object.entries(siteData).map(([sid,d])=>{
+    const days=d.full+d.half*0.5;
+    const earn=days*myRate;
+    return`<div style="border:1px solid var(--gr100);border-radius:12px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:14px;font-weight:800">${d.name}</div>
+        <div class="n" style="font-size:15px;font-weight:800;color:var(--g)">${myRate>0?Rs(earn):'—'}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
+        <div style="background:var(--gl);border-radius:8px;padding:6px;text-align:center"><div class="n" style="font-weight:800;color:var(--g)">${d.full}</div><div style="font-size:9px;color:var(--gr500);font-weight:700">पूरा</div></div>
+        <div style="background:var(--al);border-radius:8px;padding:6px;text-align:center"><div class="n" style="font-weight:800;color:var(--a)">${d.half}</div><div style="font-size:9px;color:var(--gr500);font-weight:700">आधा</div></div>
+        <div style="background:var(--ind-l);border-radius:8px;padding:6px;text-align:center"><div class="n" style="font-weight:800;color:var(--ind)">${days}</div><div style="font-size:9px;color:var(--gr500);font-weight:700">जम्मा</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--gr400);line-height:1.6">${d.dates.slice(0,4).join(' · ')}${d.dates.length>4?` · +${d.dates.length-4} थप`:''}</div>
+    </div>`;
+  }).join('');
+
+  const wdrawRows=allWdraw.sort((a,b)=>a.date>b.date?1:-1).map(w=>
+    `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--gr100);font-size:12px">
+      <span style="color:var(--gr500)">${fBSD(w.date)} · ${({cash:'नगद',personal_exp:'व्यक्तिगत',salary:'तलब'}[w.type]||w.type)}${w.note?' · '+w.note:''}</span>
+      <span class="n" style="color:var(--r);font-weight:700">-${Rs(w.amount)}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('ma-body').innerHTML=`
+    <div class="ms-row" style="margin-bottom:14px">
+      <div class="ms-c"><div class="ms-v" style="color:var(--ind)">${totalDays}</div><div class="ms-l">कुल दिन</div></div>
+      <div class="ms-c"><div class="ms-v" style="color:var(--g)">${myRate>0?Rs(totalEarning):'—'}</div><div class="ms-l">कुल कमाइ</div></div>
+    </div>
+    ${Object.keys(siteData).length?`
+    <div style="font-size:12px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📍 साइट अनुसार हाजिर</div>
+    ${siteRows}`:`<div style="text-align:center;color:var(--gr400);padding:20px;font-size:13px">अहिलेसम्म हाजिर रेकर्ड छैन</div>`}
+
+    <div style="font-size:12px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px">💸 निकासी इतिहास</div>
+    ${allWdraw.length?`
+    <div class="ic" style="margin-bottom:8px"><div style="padding:8px 14px">${wdrawRows}</div></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;padding:0 4px"><span>जम्मा निकासी</span><span style="color:var(--r)">-${Rs(totalWithdrawn)}</span></div>
+    `:`<div style="text-align:center;color:var(--gr400);padding:14px;font-size:13px">कुनै निकासी छैन</div>`}
+  `;
+}
 async function showMonthly(){
   const [sites,pays,work,exps,attRecs]=await Promise.all([
     dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('attendance')
@@ -2754,6 +2916,8 @@ async function autoAddMemberAsWorker(){
 window.addEventListener('load',async()=>{
   LANG=localStorage.getItem('lang')||'ne';
   applyStoredTheme();
+  applyStoredDarkMode();
+  initPullToRefresh();
   document.getElementById('ssd').value=todStr();
   // Load profiles
   await loadProfiles();
