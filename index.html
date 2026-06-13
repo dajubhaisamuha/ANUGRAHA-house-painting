@@ -367,7 +367,7 @@ select.fi option{background:#fff}
 .ao.H{background:var(--al);color:#92400E;border-color:#FCD34D}
 .ao.V{background:var(--ind-l);color:var(--ind-d);border-color:var(--ind-b)}
 .ao.M{background:#FEF9C3;color:#854D0E;border-color:#FDE68A}
-.ao.E{background:#FFEDD5;color:#9A3412;border-color:#FED7AA}
+.ao.E{background:var(--gl);color:#065F46;border-color:#6EE7B7}
 .atm{width:68px;padding:5px 6px;border-radius:7px;font-size:11px;border:1.5px solid var(--gr200);background:var(--gr50);color:var(--gr700)}
 .sac-save{display:block;width:calc(100% - 28px);margin:12px 14px;padding:11px;border-radius:12px;background:linear-gradient(135deg,#EA580C,#C2410C);color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer}
 
@@ -1547,24 +1547,26 @@ async function loadHome(){
     ]);
     SITES=sites;WKRS=wkrs;
     const active=sites.filter(s=>s.status==='active');
+    const activeIds=new Set(active.map(s=>s.id));
     document.getElementById('h-act').textContent=active.length;
     countUp('h-act',active.length);
 
-    let totR=0;pays.forEach(p=>totR+=Number(p.amount||0));
+    // Only count active sites' financials on dashboard
+    let totR=0;pays.forEach(p=>{if(activeIds.has(p.site_id))totR+=Number(p.amount||0);});
     countUp('h-recv',totR,'Rs. ');
 
-    let totE=0;exps.forEach(e=>totE+=Number(e.amount||0));
+    let totE=0;exps.forEach(e=>{if(activeIds.has(e.site_id))totE+=Number(e.amount||0);});
     countUp('h-exp',totE,'Rs. ');
 
-    let totX=0;extraIncomes.forEach(x=>totX+=Number(x.amount||0));
+    let totX=0;extraIncomes.forEach(x=>{if(activeIds.has(x.site_id))totX+=Number(x.amount||0);});
 
-    let totL=0;work.forEach(w=>totL+=Number(w.days||0)*Number(w.daily_rate||0));
+    let totL=0;work.forEach(w=>{if(activeIds.has(w.site_id))totL+=Number(w.days||0)*Number(w.daily_rate||0);});
     const profit=totR-totL-totE+totX;
     document.getElementById('h-pr').textContent=Rs(Math.abs(profit));
     document.getElementById('h-pr').style.color=profit>=0?'rgba(255,255,255,.95)':'#FCA5A5';
     document.getElementById('h-prl').textContent=profit>=0?'नाफा':'घाटा';
 
-    let totCV=0;sites.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
+    let totCV=0;active.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
     document.getElementById('h-pd').textContent=Rs(totCV-totR);
 
     // ── PERSONAL WAGE EARNING = attendance days × my rate ──
@@ -1572,7 +1574,7 @@ async function loadHome(){
     let myAttDays=0;
     const allAtt=await dGet('attendance');
     allAtt.forEach(r=>(r.entries||[]).forEach(e=>{
-      if(e.name===ME)myAttDays+=(e.status==='P'?1:(e.status==='H'||e.status==='M'||e.status==='E')?.5:0);
+      if(e.name===ME)myAttDays+=(e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0);
     }));
     const myTotalWage=myAttDays*myRate;
     document.getElementById('h-my-wage').textContent=myRate>0?Rs(myTotalWage):'Rate सेट छैन';
@@ -1963,8 +1965,8 @@ async function loadSAtt(){
         <div style="font-size:11px;color:var(--gr400)">${r.saved_by||''}</div>
       </div>`;
     (r.entries||[]).forEach(e=>{
-      const sc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='M'?'#854D0E':e.status==='E'?'#9A3412':e.status==='H'?'var(--a)':'var(--ind)';
-      const sn=e.status==='P'?'पूरा दिन':e.status==='A'?'अनुपस्थित':e.status==='M'?'🌅 बिहान':e.status==='E'?'☀️ दिउँसो':e.status==='H'?'आधा':'बिदा';
+      const sc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='E'?'var(--g)':e.status==='M'?'#854D0E':e.status==='H'?'var(--a)':'var(--ind)';
+      const sn=e.status==='P'?'पूरा दिन':e.status==='A'?'अनुपस्थित':e.status==='E'?'☀️ दिउँसो(पूरा)':e.status==='M'?'🌅 बिहान(आधा)':e.status==='H'?'आधा':'बिदा';
       html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;font-weight:700">${e.name}</span><div style="display:flex;align-items:center;gap:10px">${e.tin?`<span style="font-size:11px;color:var(--gr400)">${e.tin}${e.tout?'→'+e.tout:''}</span>`:''}<span style="font-weight:700;font-size:12px;color:${sc}">${sn}</span></div></div>`;
     });
     html+='</div>';
@@ -2155,11 +2157,11 @@ async function printAttendance(type, id=''){
     const byW={};
     recs.forEach(r=>{(r.entries||[]).forEach(e=>{if(!byW[e.name])byW[e.name]=[];byW[e.name].push({...e,date:r.bs_date||r.date,site:r.site_name,slot:{full:'पूरा',morning:'बिहान',afternoon:'दिउँसो'}[r.slot]||r.slot});});});
     Object.entries(byW).forEach(([nm,rows])=>{
-      const p=rows.filter(r=>r.status==='P').length;
-      const h=rows.filter(r=>(r.status==='H'||r.status==='M'||r.status==='E')).length;
+      const p=rows.filter(r=>r.status==='P'||r.status==='E').length;
+      const h=rows.filter(r=>(r.status==='H'||r.status==='M')).length;
       html+=`<h3>👷 ${nm}</h3><table><tr><th>मिति</th><th>साइट</th><th>खण्ड</th><th>स्थिति</th><th>समय</th></tr>`;
       rows.forEach(r=>{
-        const st=r.status==='P'?'✅ उप.':r.status==='A'?'❌ अनु.':(r.status==='H'||r.status==='M'||r.status==='E')?'🔶 आधा':'🏖️ बिदा';
+        const st=r.status==='P'?'✅ पूरा':r.status==='E'?'☀️ दिउँसो(पूरा)':r.status==='M'?'🌅 बिहान(आधा)':r.status==='A'?'❌ अनु.':r.status==='H'?'🔶 आधा':'🏖️ बिदा';
         html+=`<tr><td>${r.date}</td><td>${r.site||'—'}</td><td>${r.slot}</td><td>${st}</td><td>${r.tin||'—'}${r.tout?' → '+r.tout:''}</td></tr>`;
       });
       html+=`<tr><td colspan="5" class="total">उपस्थित: ${p} दिन · आधा: ${h} दिन · जम्मा: ${p+h*0.5} दिन</td></tr></table>`;
@@ -2187,7 +2189,7 @@ async function loadWorkers(){
       // Attendance days from register
       let attDays=0;
       attRecs.forEach(r=>(r.entries||[]).forEach(e=>{
-        if(e.wid===w.id)attDays+=(e.status==='P'?1:(e.status==='H'||e.status==='M'||e.status==='E')?.5:0);
+        if(e.wid===w.id)attDays+=(e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0);
       }));
       // Sites worked
       const siteNames=[...new Set(we.map(e=>SITES.find(s=>s.id===e.site_id)?.name||'').filter(Boolean))].join(' · ');
@@ -2293,8 +2295,9 @@ async function openMyActivity(){
       if(e.name!==ME)return;
       const sid=r.site_id;
       if(!siteData[sid])siteData[sid]={name:r.site_name||allSites.find(s=>s.id===sid)?.name||'—',full:0,half:0,absent:0,dates:[]};
-      if(e.status==='P'){siteData[sid].full++;siteData[sid].dates.push(fBSD(r.date));}
-      else if(e.status==='H'||e.status==='M'||e.status==='E'){siteData[sid].half++;siteData[sid].dates.push(fBSD(r.date)+' (आधा)');}
+      if(e.status==='P'){siteData[sid].full+=1.5;siteData[sid].dates.push(fBSD(r.date)+' (पूरा १.५)');}
+      else if(e.status==='E'){siteData[sid].full+=1;siteData[sid].dates.push(fBSD(r.date)+' (दिउँसो)');}
+      else if(e.status==='H'||e.status==='M'){siteData[sid].half++;siteData[sid].dates.push(fBSD(r.date)+' (आधा)');}
       else if(e.status==='A')siteData[sid].absent++;
     });
   });
@@ -2366,7 +2369,7 @@ async function showMonthly(){
     if(!months[m])months[m]={recv:0,exp:0,wage:0,myDays:0};
     (r.entries||[]).forEach(e=>{
       if(e.name===ME){
-        months[m].myDays=(months[m].myDays||0)+(e.status==='P'?1:(e.status==='H'||e.status==='M'||e.status==='E')?.5:0);
+        months[m].myDays=(months[m].myDays||0)+(e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0);
       }
     });
   });
@@ -2507,8 +2510,9 @@ async function loadSiteAttSummary(){
   attRecs.sort((a,b)=>a.date>b.date?1:-1);
   attRecs.forEach(r=>(r.entries||[]).forEach(e=>{
     if(!wSum[e.name])wSum[e.name]={name:e.name,days:0,half:0,absent:0,dates:[]};
-    if(e.status==='P'){wSum[e.name].days++;wSum[e.name].dates.push(fBSD(r.date));}
-    else if(e.status==='H'||e.status==='M'||e.status==='E'){wSum[e.name].half++;wSum[e.name].dates.push(fBSD(r.date)+'(आधा)');}
+    if(e.status==='P'){wSum[e.name].days+=1.5;wSum[e.name].dates.push(fBSD(r.date)+'(पूरा १.५)');}
+    else if(e.status==='E'){wSum[e.name].days+=1;wSum[e.name].dates.push(fBSD(r.date)+' (दिउँसो)');}
+    else if(e.status==='H'||e.status==='M'){wSum[e.name].half++;wSum[e.name].dates.push(fBSD(r.date)+'(आधा)');}
     else if(e.status==='A')wSum[e.name].absent++;
   }));
 
@@ -2672,8 +2676,8 @@ async function loadAtt(){
       workerSummary[key].site = siteName;
     });
   });
-  const present = Object.values(workerSummary).filter(w=>w.status==='P');
-  const half    = Object.values(workerSummary).filter(w=>w.status==='H'||w.status==='M'||w.status==='E');
+  const present = Object.values(workerSummary).filter(w=>w.status==='P'||w.status==='E');
+  const half    = Object.values(workerSummary).filter(w=>w.status==='H'||w.status==='M');
   const absent  = Object.values(workerSummary).filter(w=>w.status==='A');
   const leave   = Object.values(workerSummary).filter(w=>w.status==='V');
   const unsaved = Object.values(workerSummary).filter(w=>!w.status);
