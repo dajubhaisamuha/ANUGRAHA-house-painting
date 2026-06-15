@@ -742,7 +742,7 @@ select.fi option{background:#fff}
   <div style="height:10px"></div>
 </div>
 <!-- Materials estimate FAB (home page only) -->
-<button id="mat-fab" class="fab" style="bottom:calc(var(--nh)+80px);background:linear-gradient(135deg,#059669,#10B981);display:none" onclick="openMatModal()" title="सामग्री अनुमान">
+<button id="mat-fab" class="fab" style="bottom:calc(var(--nh)+80px);background:linear-gradient(135deg,#059669,#10B981);display:none" onclick="openMatModal()" title="सामग्री Inventory">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 
@@ -988,19 +988,32 @@ select.fi option{background:#fff}
   <input type="hidden" id="adv-site-id">
 </div></div>
 
-<!-- MODAL: MATERIALS ESTIMATE -->
+<!-- MODAL: MATERIALS INVENTORY -->
 <div class="mbo" id="mMat"><div class="msh">
-  <div class="mhd"></div><div class="mtit">📦 सामग्री अनुमान</div>
+  <div class="mhd"></div><div class="mtit">📦 सामग्री Inventory</div>
   <div class="fg"><label class="fl">साइट</label><select class="fi" id="mat-site"><option value="">छान्नुस्...</option></select></div>
+  <div style="display:flex;gap:6px;padding:0 2px 6px;font-size:10px;font-weight:800;color:var(--gr400);text-transform:uppercase">
+    <div style="flex:2.2">सामग्री</div><div style="flex:1">परिमाण</div><div style="flex:1">दर</div><div style="flex:1">प्रयोग</div><div style="width:24px"></div>
+  </div>
   <div id="mat-items">
-    <div class="mat-row" style="display:flex;gap:8px;margin-bottom:8px">
-      <input class="fi" style="flex:2" placeholder="सामग्री (जस्तै: Asian Paint 20L)" oninput="calcMat()">
-      <input type="number" class="fi" style="flex:1" placeholder="रकम" oninput="calcMat()">
-      <button onclick="removeMat(this)" style="background:var(--rl);border:none;border-radius:8px;padding:0 10px;color:var(--r);cursor:pointer;font-size:16px;font-weight:800">×</button>
+    <div class="mat-row" style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+      <input class="fi" style="flex:2.2;padding:10px 8px;font-size:13px" placeholder="जस्तै: Asian Paint 20L" oninput="calcMat()">
+      <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="0" oninput="calcMat()">
+      <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="रु." oninput="calcMat()">
+      <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="0" oninput="calcMat()">
+      <button onclick="removeMat(this)" style="background:var(--rl);border:none;border-radius:8px;width:24px;height:36px;color:var(--r);cursor:pointer;font-size:16px;font-weight:800;flex-shrink:0">×</button>
     </div>
   </div>
   <button onclick="addMatRow()" style="background:var(--ind-l);color:var(--ind);border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:12px;width:100%">+ सामग्री थप्नुस्</button>
-  <div style="background:var(--gl);padding:12px 14px;border-radius:10px;font-size:14px;font-weight:800;color:#065F46;margin-bottom:14px">जम्मा अनुमान: <span id="mat-total" class="n">Rs. 0</span></div>
+  <div style="background:var(--gl);padding:12px 14px;border-radius:10px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#065F46;margin-bottom:4px"><span>जम्मा मूल्य</span><span id="mat-total" class="n">Rs. 0</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gr500);margin-bottom:4px"><span>बाँकी मूल्य (stock)</span><span id="mat-remaining" class="n" style="font-weight:700;color:var(--ind)">Rs. 0</span></div>
+    <div style="height:1px;background:rgba(0,0,0,.06);margin:6px 0"></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800">
+      <span style="color:#92400E">🎯 Yatra Points (अनुमानित)</span>
+      <span id="mat-points" class="n" style="color:var(--a)">—</span>
+    </div>
+  </div>
   <button class="btn bp" onclick="saveMat()">💾 सेभ</button>
   <button class="btn bs" onclick="closeM('mMat')">रद्द</button>
 </div></div>
@@ -1109,6 +1122,30 @@ select.fi option{background:#fff}
   <div class="mtit" id="ma-title">📋 मेरो विवरण</div>
   <div id="ma-body"><div class="ld">लोड हुँदैछ...</div></div>
   <button class="btn bs" onclick="closeM('mMyActivity')">बन्द गर्नुस्</button>
+</div></div>
+
+<!-- MODAL: BILL PHOTOS -->
+<div class="mbo" id="mBillPhoto"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">🧾 Bill / Invoice Photos</div>
+  <div style="background:var(--al);padding:10px 14px;border-radius:10px;font-size:13px;color:#92400E;font-weight:700;margin-bottom:14px" id="bill-lbl">—</div>
+  <div class="fg">
+    <label class="fl">Bill Photo छान्नुस्</label>
+    <input type="file" class="fi" id="bill-photo-input" accept="image/*" onchange="previewBillPhoto(this)">
+  </div>
+  <div id="bill-preview" style="margin-bottom:12px"></div>
+  <div class="fg">
+    <label class="fl">विवरण (optional)</label>
+    <input class="fi" id="bill-note" placeholder="जस्तै: Asian Paint Invoice #123">
+  </div>
+  <div class="fg">
+    <label class="fl">मिति</label>
+    <input type="date" class="fi" id="bill-date" oninput="bsF('bill-date','bill-date-b')">
+    <div class="fbs" id="bill-date-b"></div>
+  </div>
+  <input type="hidden" id="bill-site-id">
+  <button class="btn bp" onclick="saveBillPhoto()">💾 सेभ</button>
+  <button class="btn bs" onclick="closeM('mBillPhoto')">रद्द</button>
 </div></div>
 
 <!-- MODAL: SITE PHOTOS -->
@@ -1309,7 +1346,7 @@ async function savePW(){
 }
 
 // ══ BS DATE (Bulletproof local date fix) ══
-const BSY={2080:[31,32,31,32,31,30,30,30,29,29,30,31],2081:[31,31,32,32,31,30,30,29,30,29,30,30],2082:[31,31,32,32,31,30,30,30,29,30,30,30],2083:[31,32,31,32,31,30,30,30,29,30,30,30],2084:[31,31,32,32,31,30,30,29,30,30,29,31],2085:[30,32,31,32,31,30,30,30,29,30,30,30]};
+const BSY={2080:[31,32,31,32,31,30,30,30,29,29,30,31],2081:[31,31,32,32,31,30,30,29,30,29,30,30],2082:[31,31,32,32,31,30,30,30,29,30,30,30],2083:[31,31,32,31,32,30,30,30,29,30,30,30],2084:[31,31,32,32,31,30,30,29,30,30,29,31],2085:[30,32,31,32,31,30,30,30,29,30,30,30]};
 const NM=['बैशाख','जेठ','असार','साउन','भदौ','असोज','कार्तिक','मंसिर','पुष','माघ','फागुन','चैत'];
 const NMS=['बै','जे','अ','सा','भ','अ','का','मं','पु','मा','फा','चै'];
 // Reference: Baisakh 1, 2082 = April 13, 2025 LOCAL
@@ -1686,7 +1723,7 @@ async function loadOv(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
   const s=SITES.find(x=>x.id===CS);if(!s)return;
   // Load site photos + att summary in parallel with other data
-  const[pays,work,exps,advances,matDoc,photoDoc,attSummaryHtml,extraIncome]=await Promise.all([
+  const[pays,work,exps,advances,matDoc,photoDoc,attSummaryHtml,extraIncome,billPhotos]=await Promise.all([
     dGet('payments',['site_id','==',CS]),
     dGet('work_entries',['site_id','==',CS]),
     dGet('expenses',['site_id','==',CS]),
@@ -1694,7 +1731,8 @@ async function loadOv(){
     db.collection('materials').doc(CS).get().then(d=>d.exists?d.data():null).catch(()=>null),
     db.collection('site_photos').doc(CS).get().then(d=>d.exists?d.data():null).catch(()=>null),
     loadSiteAttSummary(),
-    dGet('extra_income',['site_id','==',CS])
+    dGet('extra_income',['site_id','==',CS]),
+    dGet('bill_photos',['site_id','==',CS])
   ]);
   const totR=pays.reduce((a,p)=>a+Number(p.amount||0),0);
   const totL=work.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
@@ -1783,10 +1821,41 @@ async function loadOv(){
     ${matDoc&&matDoc.items?.length?`
     <div class="ic" style="margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gr100)">
-        <span style="font-size:13px;font-weight:800">📦 सामग्री अनुमान</span>
-        <span class="n" style="font-weight:800;color:var(--g)">${Rs(matDoc.total)}</span>
+        <span style="font-size:13px;font-weight:800">📦 सामग्री Inventory</span>
+        <button onclick="openMatModal('${CS}')" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>
       </div>
-      ${matDoc.items.map(i=>`<div class="ir"><span class="il">${i.name}</span><span class="iv n" style="color:var(--ind-d)">${Rs(i.amount)}</span></div>`).join('')}
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:var(--ind-l)">
+          <th style="padding:8px 10px;text-align:left">सामग्री</th>
+          <th style="padding:8px 6px;text-align:center">परिमाण</th>
+          <th style="padding:8px 6px;text-align:right">दर</th>
+          <th style="padding:8px 6px;text-align:center">प्रयोग</th>
+          <th style="padding:8px 6px;text-align:center">बाँकी</th>
+          <th style="padding:8px 6px;text-align:right">मूल्य</th>
+          <th style="padding:8px 6px;text-align:right;color:var(--a)">🎯 Points</th>
+        </tr>
+        ${matDoc.items.map(i=>{
+          const qty=Number(i.qty||0),rate=Number(i.rate||0),used=Number(i.used||0);
+          const remaining=Math.max(0,qty-used);
+          const remVal=remaining*rate;
+          const lowStock=qty>0&&remaining/qty<=0.15;
+          const pts=getYatraPoints(i.name,qty);
+          return`<tr style="border-bottom:1px solid var(--gr100)">
+            <td style="padding:8px 10px;font-weight:700">${i.name}</td>
+            <td style="padding:8px 6px;text-align:center">${qty||'—'}</td>
+            <td style="padding:8px 6px;text-align:right">${rate?Rs(rate):'—'}</td>
+            <td style="padding:8px 6px;text-align:center;color:var(--a)">${used||0}</td>
+            <td style="padding:8px 6px;text-align:center;font-weight:800;color:${lowStock?'var(--r)':'var(--g)'}">${remaining}${lowStock&&qty>0?' ⚠️':''}</td>
+            <td style="padding:8px 6px;text-align:right;font-weight:700;color:var(--ind)">${remVal?Rs(remVal):'—'}</td>
+            <td style="padding:8px 6px;text-align:right;font-weight:800;color:${pts>0?'var(--a)':'var(--gr300)'}">${pts>0?pts:'—'}</td>
+          </tr>`;
+        }).join('')}
+        <tr style="background:var(--gl)">
+          <td colspan="5" style="padding:8px 10px;font-weight:800">जम्मा / बाँकी stock मूल्य</td>
+          <td style="padding:8px 6px;text-align:right;font-weight:800;color:var(--g)">${Rs(matDoc.total)}<br><span style="font-size:10px;color:var(--ind)">${Rs(matDoc.remaining||0)}</span></td>
+          <td style="padding:8px 6px;text-align:right;font-weight:800;color:var(--a)">${matDoc.yatra_points>0?matDoc.yatra_points.toLocaleString()+' pts':'—'}</td>
+        </tr>
+      </table></div>
       <div style="padding:8px 16px;font-size:11px;color:var(--gr400)">अपडेट: ${matDoc.bs_updated||matDoc.updated||'—'}</div>
     </div>`:''}
 
@@ -1808,9 +1877,29 @@ async function loadOv(){
     </div>`:''}
 
     <button class="btn" style="background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b)" onclick="document.getElementById('st-id').value='${CS}';openM('mSt')">🔄 स्थिति बदल्नुस्</button>
-    ${s.status!=='completed'?`<button class="btn" style="background:var(--gl);color:#065F46;border:1px solid #6EE7B7" onclick="if(confirm('सम्पन्न गर्ने?')){document.getElementById('st-id').value='${CS}';doSt('completed')}">✅ सम्पन्न चिन्ह लगाउनुस्</button>`:''}
-    <button class="btn" style="background:var(--gr100);color:var(--gr600);border:1px solid var(--gr200)" onclick="openMatModal()">📦 सामग्री अनुमान</button>
-    <button class="btn" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSitePhotoModal('${CS}')">📸 Before/After Photos</button>
+    ${s.status!=='completed'?`<button class="btn" style="background:var(--gl);color:#065F46;border:1px solid #6EE7B7" onclick="if(confirm('सम्पन्न गर्ने?')){document.getElementById('st-id').value='${CS}';doSt('completed')}">✅ सम्पन्न</button>`:''}
+    <button class="btn" style="background:var(--gr100);color:var(--gr600);border:1px solid var(--gr200)" onclick="openMatModal('${CS}')">📦 सामग्री</button>
+    <button class="btn" style="background:var(--al);color:#92400E;border:1px solid #FCD34D" onclick="openBillPhotoModal('${CS}')">🧾 Bill Photo</button>
+    <button class="btn" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSitePhotoModal('${CS}')">📸 Before/After</button>
+
+    ${billPhotos&&billPhotos.length?`
+    <div class="ic" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gr100)">
+        <span style="font-size:13px;font-weight:800;color:#92400E">🧾 Bill / Invoice Photos</span>
+        <span style="font-size:11px;color:var(--gr400)">${billPhotos.length} वटा</span>
+      </div>
+      <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        ${billPhotos.sort((a,b)=>a.date>b.date?-1:1).map(b=>`
+          <div style="border-radius:10px;overflow:hidden;border:1px solid var(--gr100)">
+            <img src="${b.photo}" style="width:100%;height:110px;object-fit:cover;display:block;cursor:pointer" onclick="this.style.height=this.style.height==='110px'?'220px':'110px'">
+            <div style="padding:6px 8px;background:var(--gr50)">
+              <div style="font-size:10px;font-weight:700;color:var(--gr600)">${b.note||'Bill'}</div>
+              <div style="font-size:9px;color:var(--gr400)">${b.bs_date||b.date} · ${b.added_by||''}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`:''}
+
     ${s.notes?`<div style="background:var(--blue-l);padding:12px;border-radius:12px;font-size:13px;color:#0369A1;border:1px solid #BAE6FD">📝 ${s.notes}</div>`:''}
   </div>`;
 }
@@ -2094,38 +2183,114 @@ async function saveWorkerAdv(){
   if(CDT==='wg')loadWages();
 }
 
-// ══ MATERIALS ESTIMATE ══
-function addMatRow(){
+// ══ YATRA POINTS TABLE (Asian Paints loyalty - points per unit purchased) ══
+const YATRA_POINTS={
+  'royale play':100,'royale bling':60,'royale shyne':22,'royale luxury':15,
+  'rbc':13,'premium emulsion':10,'tactor emulsion advanced':8,'tractor emulsion advanced':8,
+  'tactor emulsion':4,'tractor emulsion':4,'distemper':1,
+  'ultima protek shyne':55,'apex ultima':13,'ubc':12,'apex duracast pebbletex':15,
+  'ultima createx crosstex':20,'apex':10,'ace ext.emulsion paint':4,'ace exterior emulsion':4,
+  'damp proof':30,'db2k':30,'silicon shield shyne':30,'hydrolock':30,
+  'latex xtreme':15,'latex xtreme+':15,'salt clean':7,
+  'pu':100,'pge gold':100,'ap mela sealer':50,'ap mela glossy':50,'ap mela matt':50,
+  'pge enamel shade plus base':5,'tactor enamel':4,'tractor enamel':4,
+  'exterior cement primer':1,'dcp wt':1,'asian paints wall putty':0.5,'wall putty':0.5
+};
+function getYatraPoints(name,qty){
+  if(!name||!qty)return 0;
+  const n=name.toLowerCase().trim();
+  // exact match first
+  if(YATRA_POINTS[n]!=null)return YATRA_POINTS[n]*qty;
+  // partial match (contains)
+  for(const key in YATRA_POINTS){
+    if(n.includes(key)||key.includes(n)){return YATRA_POINTS[key]*qty;}
+  }
+  return 0;
+}
+function matRowHTML(d={}){
+  return`<div class="mat-row" style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+    <input class="fi" style="flex:2.2;padding:10px 8px;font-size:13px" placeholder="जस्तै: Asian Paint 20L" value="${d.name||''}" oninput="calcMat()">
+    <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="0" value="${d.qty||''}" oninput="calcMat()">
+    <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="रु." value="${d.rate||''}" oninput="calcMat()">
+    <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="0" value="${d.used||''}" oninput="calcMat()">
+    <button onclick="removeMat(this)" style="background:var(--rl);border:none;border-radius:8px;width:24px;height:36px;color:var(--r);cursor:pointer;font-size:16px;font-weight:800;flex-shrink:0">×</button>
+  </div>`;
+}
+function addMatRow(d={}){
   const div=document.createElement('div');
-  div.className='mat-row';div.style.cssText='display:flex;gap:8px;margin-bottom:8px';
-  div.innerHTML=`<input class="fi" style="flex:2" placeholder="सामग्री" oninput="calcMat()"><input type="number" class="fi" style="flex:1" placeholder="रकम" oninput="calcMat()"><button onclick="removeMat(this)" style="background:var(--rl);border:none;border-radius:8px;padding:0 10px;color:var(--r);cursor:pointer;font-size:16px;font-weight:800">×</button>`;
-  document.getElementById('mat-items').appendChild(div);
+  div.innerHTML=matRowHTML(d);
+  document.getElementById('mat-items').appendChild(div.firstElementChild);
 }
 function removeMat(btn){btn.parentElement.remove();calcMat();}
 function calcMat(){
-  let tot=0;document.querySelectorAll('#mat-items .mat-row input[type="number"]').forEach(i=>tot+=+i.value||0);
+  let tot=0,rem=0,pts=0;
+  document.querySelectorAll('#mat-items .mat-row').forEach(row=>{
+    const inps=row.querySelectorAll('input');
+    const name=inps[0].value.trim();
+    const qty=+inps[1].value||0,rate=+inps[2].value||0,used=+inps[3].value||0;
+    tot+=qty*rate;
+    rem+=Math.max(0,qty-used)*rate;
+    pts+=getYatraPoints(name,qty);
+  });
   document.getElementById('mat-total').textContent=Rs(tot);
+  document.getElementById('mat-remaining').textContent=Rs(rem);
+  const ptsEl=document.getElementById('mat-points');
+  if(ptsEl){
+    ptsEl.textContent=pts>0?pts.toLocaleString()+' pts':'—';
+    ptsEl.style.color=pts>0?'var(--a)':'var(--gr400)';
+  }
 }
-function openMatModal(){
+async function openMatModal(siteIdParam){
   populateES();document.getElementById('mat-site').innerHTML=document.getElementById('es').innerHTML;
-  document.getElementById('mat-items').innerHTML=`<div class="mat-row" style="display:flex;gap:8px;margin-bottom:8px"><input class="fi" style="flex:2" placeholder="सामग्री (जस्तै: Asian Paint 20L)" oninput="calcMat()"><input type="number" class="fi" style="flex:1" placeholder="रकम" oninput="calcMat()"><button onclick="removeMat(this)" style="background:var(--rl);border:none;border-radius:8px;padding:0 10px;color:var(--r);cursor:pointer;font-size:16px;font-weight:800">×</button></div>`;
-  document.getElementById('mat-total').textContent='Rs. 0';
+  if(siteIdParam)document.getElementById('mat-site').value=siteIdParam;
+  document.getElementById('mat-items').innerHTML='';
+  // Load existing data for selected site
+  const sid=siteIdParam||document.getElementById('mat-site').value;
+  let existing=null;
+  if(sid){try{const doc=await db.collection('materials').doc(sid).get();if(doc.exists)existing=doc.data();}catch{}}
+  if(existing&&existing.items&&existing.items.length){
+    existing.items.forEach(it=>addMatRow(it));
+  }else{
+    addMatRow();
+  }
+  calcMat();
   openM('mMat');
 }
+// Reload rows when site changes
+document.addEventListener('change',e=>{
+  if(e.target&&e.target.id==='mat-site'){
+    const sid=e.target.value;
+    document.getElementById('mat-items').innerHTML='';
+    if(sid){
+      db.collection('materials').doc(sid).get().then(doc=>{
+        if(doc.exists&&doc.data().items&&doc.data().items.length){
+          doc.data().items.forEach(it=>addMatRow(it));
+        }else{addMatRow();}
+        calcMat();
+      }).catch(()=>{addMatRow();calcMat();});
+    }else{addMatRow();calcMat();}
+  }
+});
 async function saveMat(){
   const siteId=document.getElementById('mat-site').value;
+  if(!siteId){toast('साइट छान्नुस्',false);return;}
   const rows=document.querySelectorAll('#mat-items .mat-row');
   const items=[];
   rows.forEach(r=>{
-    const nm=r.querySelectorAll('input')[0].value.trim();
-    const amt=+r.querySelectorAll('input')[1].value||0;
-    if(nm)items.push({name:nm,amount:amt});
+    const inps=r.querySelectorAll('input');
+    const nm=inps[0].value.trim();
+    const qty=+inps[1].value||0;
+    const rate=+inps[2].value||0;
+    const used=+inps[3].value||0;
+    if(nm)items.push({name:nm,qty,rate,used,amount:qty*rate});
   });
   if(!items.length){toast('सामग्री राख्नुस्',false);return;}
   const total=items.reduce((a,i)=>a+i.amount,0);
+  const remaining=items.reduce((a,i)=>a+Math.max(0,i.qty-i.used)*i.rate,0);
+  const yatra_points=items.reduce((a,i)=>a+getYatraPoints(i.name,i.qty),0);
   const sname=SITES.find(x=>x.id===siteId)?.name||'';
-  await dSet('materials',siteId||'general',{site_id:siteId,site_name:sname,items,total,updated:todStr(),bs_updated:bsToday()});
-  closeM('mMat');toast('सामग्री अनुमान सेभ ✓');
+  await dSet('materials',siteId,{site_id:siteId,site_name:sname,items,total,remaining,yatra_points,updated:todStr(),bs_updated:bsToday()});
+  closeM('mMat');toast('सामग्री Inventory सेभ ✓');
   if(CS===siteId)loadOv();
 }
 
@@ -2460,7 +2625,44 @@ async function showWorkerLedger(workerId, workerName){
   </body></html>`;
   const w=window.open('','_blank');w.document.write(html);w.document.close();
 }
-// ══ SITE PHOTOS ══
+// ══ BILL PHOTOS ══
+function openBillPhotoModal(siteId){
+  const s=SITES.find(x=>x.id===siteId);
+  document.getElementById('bill-lbl').textContent=s?s.name:'साइट';
+  document.getElementById('bill-site-id').value=siteId;
+  document.getElementById('bill-photo-input').value='';
+  document.getElementById('bill-preview').innerHTML='';
+  document.getElementById('bill-note').value='';
+  document.getElementById('bill-date').value=todStr();
+  document.getElementById('bill-date-b').textContent='📅 '+bsToday();
+  document.getElementById('bill-date-b').classList.add('show');
+  openM('mBillPhoto');
+}
+function previewBillPhoto(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>1000000){toast('Photo ठूलो छ (max 1MB)',false);input.value='';return;}
+  const rd=new FileReader();
+  rd.onload=e=>{
+    document.getElementById('bill-preview').innerHTML=`<img src="${e.target.result}" style="width:100%;border-radius:10px;max-height:160px;object-fit:cover">`;
+  };
+  rd.readAsDataURL(file);
+}
+async function saveBillPhoto(){
+  const siteId=document.getElementById('bill-site-id').value;
+  const file=document.getElementById('bill-photo-input').files[0];
+  if(!file){toast('Photo छान्नुस्',false);return;}
+  const toB64=f=>new Promise(r=>{const rd=new FileReader();rd.onload=e=>r(e.target.result);rd.readAsDataURL(f);});
+  const photo=await toB64(file);
+  const d=document.getElementById('bill-date').value;
+  await dAdd('bill_photos',{
+    site_id:siteId,
+    photo,
+    note:document.getElementById('bill-note').value,
+    date:d,bs_date:fBSD(d),
+    added_by:ME
+  });
+  closeM('mBillPhoto');toast('Bill photo सेभ ✓');loadOv();
+}
 async function openSitePhotoModal(siteId){
   const s=SITES.find(x=>x.id===siteId);
   document.getElementById('sphoto-lbl').textContent=s?s.name:'साइट';
