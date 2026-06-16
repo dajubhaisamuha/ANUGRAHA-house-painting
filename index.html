@@ -1543,7 +1543,7 @@ function go(p){
   const nm={home:0,sites:1,att:2,workers:3,profile:4};
   if(nm[p]!==undefined)document.querySelectorAll('.ni')[nm[p]].classList.add('on');
   CUR=p;
-  const mf=document.getElementById('mat-fab');
+  pushHistory(p);
   if(mf)mf.style.display=p==='home'?'flex':'none';
   if(p==='home')loadHome();
   else if(p==='sites')loadSites();
@@ -1619,7 +1619,9 @@ async function loadHome(){
     const active=sites.filter(s=>s.status==='active');
     const activeIds=new Set(active.map(s=>s.id));
     document.getElementById('h-act').textContent=active.length;
-    countUp('h-act',active.length);
+    // Count-up for number (no Rs prefix)
+    const actEl=document.getElementById('h-act');
+    let n=0;const actTimer=setInterval(()=>{n++;actEl.textContent=n;if(n>=active.length)clearInterval(actTimer);},80);
 
     // Only count active sites' financials on dashboard
     let totR=0;pays.forEach(p=>{if(activeIds.has(p.site_id))totR+=Number(p.amount||0);});
@@ -2055,7 +2057,9 @@ async function saveWage(){
   else{toast('कामदार छान्नुस्',false);return;}
   const fd=document.getElementById('wgfd').value;
   await dAdd('work_entries',{site_id:CS,worker_id:wId,worker_name:wName,days,daily_rate:rate,advance_given:+document.getElementById('wga').value||0,date_from:fd,bs_from:fBS(fd),date_to:document.getElementById('wgtd').value});
-  closeM('mWage');toast('ज्याला सेभ ✓');addNotif('worker',`${ME} ले ज्याला entry थपे`);loadWages();
+  closeM('mWage');toast('ज्याला सेभ ✓');
+  addNotif('worker',`👷 ${ME} — ज्याला entry · ${document.getElementById('wn')?.value||''} · ${fBS(document.getElementById('wd')?.value||'')}`);
+  loadWages();
 }
 
 async function loadSEx(){
@@ -2705,6 +2709,18 @@ async function addNotif(type,msg,extra={}){
   try{
     await dAdd('notifications',{type,msg,by:ME,date:todStr(),bs_date:bsToday(),read_by:[],created_at:Date.now(),...extra});
     loadNotifBadge();
+  }catch(e){console.log('Notif error:',e);}
+}
+function initNotifListener(){
+  try{
+    db.collection('notifications').onSnapshot(snap=>{
+      const unread=snap.docs.filter(d=>!(d.data().read_by||[]).includes(ME));
+      const badge=document.getElementById('notif-badge');
+      if(badge){
+        badge.textContent=unread.length>99?'99+':unread.length||'';
+        badge.style.display=unread.length?'block':'none';
+      }
+    });
   }catch(e){}
 }
 async function loadNotifBadge(){
@@ -3131,7 +3147,10 @@ async function saveExp(){
   const sid=document.getElementById('es').value,sn=SITES.find(x=>x.id===sid)?.name||'';
   const d=document.getElementById('ed').value;
   await dAdd('expenses',{site_id:sid,site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value});
-  closeM('mExp');toast('खर्च सेभ ✓');addNotif('expense',`${ME} ले खर्च थपे`);if(CUR==='exp')loadExp();else if(CDT==='ex')loadSEx();
+  closeM('mExp');
+  toast('खर्च सेभ ✓');
+  addNotif('expense',`💸 ${ME} — ${Rs(amt)} खर्च · ${sn||'—'} · ${fBS(d)}`);
+  if(CUR==='exp')loadExp();else if(CDT==='ex')loadSEx();
 }
 
 // ══ TEAM ══
@@ -3248,7 +3267,7 @@ function boot(){
   // Auto-add member to workers if not exists
   autoAddMemberAsWorker();
   loadHome();
-  loadNotifBadge();
+  initNotifListener();
   setInterval(loadNotifBadge,60000);
 }
 
@@ -3281,13 +3300,14 @@ window.addEventListener('load',async()=>{
 
 // ══ ANIMATIONS ══
 function countUp(elId,target,prefix='',suffix=''){
-  const el=document.getElementById(elId);if(!el||!target)return;
-  const dur=1000,start=Date.now();
+  const el=document.getElementById(elId);if(!el)return;
+  if(!target||target===0){el.textContent=Rs(0);return;}
+  const dur=900,start=Date.now();
   const timer=setInterval(()=>{
     const p=Math.min((Date.now()-start)/dur,1);
     const ease=1-Math.pow(1-p,3);
     const cur=Math.floor(ease*target);
-    el.textContent=prefix+(cur>=1000?(cur/1000).toFixed(1)+'k':cur)+suffix;
+    el.textContent=Rs(cur);
     if(p>=1){clearInterval(timer);el.textContent=Rs(target);}
   },16);
 }
@@ -3305,6 +3325,24 @@ function initRipples(){
     el.addEventListener('click',e=>addRipple(el,e));
   });
 }
+// ══ BACK BUTTON (PWA Android) ══
+function pushHistory(p){history.pushState({page:p},'',location.pathname);}
+window.addEventListener('popstate',e=>{
+  // Site detail open → go back to sites
+  const det=document.getElementById('det');
+  if(det&&det.style.display!=='none'){
+    det.style.display='none';
+    pushHistory('sites');return;
+  }
+  // On non-home page → go home
+  if(CUR&&CUR!=='home'){
+    go('home');pushHistory('home');return;
+  }
+  // On home → let OS close app naturally
+});
+// Push initial state so first back doesn't close app
+window.addEventListener('load',()=>{if(!history.state)pushHistory('home');});
+
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js')
