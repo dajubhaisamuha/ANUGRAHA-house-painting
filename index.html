@@ -1534,7 +1534,7 @@ function go(p){
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
   const pg=document.getElementById('pg-'+p);
   if(pg){pg.classList.add('on');pg.style.removeProperty('display');}
-  const nm={home:0,sites:1,att:2,workers:3,profile:4};
+  const nm={home:0,sites:1,att:2,workers:3,notif:4,profile:5};
   if(nm[p]!==undefined)document.querySelectorAll('.ni')[nm[p]].classList.add('on');
   CUR=p;
   pushHistory(p);
