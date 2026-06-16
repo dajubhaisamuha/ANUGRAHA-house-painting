@@ -601,7 +601,7 @@ select.fi option{background:#fff}
 </div>
 
 <!-- LANGUAGE TOGGLE -->
-<button id="lang-btn" class="lang-toggle" onclick="toggleLang()">EN</button>
+<button id="lang-btn" class="lang-toggle" style="display:none!important" onclick="">EN</button>
 
 <!-- LOGIN -->
 <div id="login">
@@ -872,7 +872,7 @@ select.fi option{background:#fff}
       <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="openRateModal()"><div class="si-ico" style="background:var(--gl)">💰</div><div><div class="si-t">दैनिक ज्याला सेट गर्नुस्</div><div class="si-s" id="my-rate-lbl">अहिलेसम्म सेट छैन</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="openThemePicker()"><div class="si-ico" style="background:linear-gradient(135deg,#C41E3A,#1A56DB,#7C3AED)">🎨</div><div><div class="si-t">App Theme</div><div class="si-s" id="theme-lbl">Default Blue</div></div><div class="si-arr">›</div></div>
-      <div class="set-item" onclick="toggleLang()"><div class="si-ico" style="background:var(--purl)">🌐</div><div><div class="si-t" id="lang-item-t">भाषा: नेपाली</div><div class="si-s" id="lang-item-s">English मा बदल्नुस्</div></div><div class="si-arr">›</div></div>
+      
     </div>
     <div class="set-group">
       <div class="set-item" onclick="doLogout()"><div class="si-ico" style="background:var(--rl)">🚪</div><div><div class="si-t" style="color:var(--r)">लगआउट</div><div class="si-s">App बाट बाहिर निस्कनुस्</div></div></div>
@@ -1428,25 +1428,19 @@ function bsF(inId,outId){
 }
 
 // ══ LANGUAGE ══
-let LANG='ne';
-const T={
-  home:{ne:'गृहपृष्ठ',en:'Home'},sites:{ne:'साइटहरू',en:'Sites'},
-  loading:{ne:'लोड हुँदैछ...',en:'Loading...'},
-};
-function toggleLang(){
-  LANG=LANG==='ne'?'en':'ne';
-  localStorage.setItem('lang',LANG);
-  applyLang();
-  document.getElementById('lang-item-t').textContent=LANG==='ne'?'भाषा: नेपाली':'Language: English';
-  document.getElementById('lang-item-s').textContent=LANG==='ne'?'English मा बदल्नुस्':'नेपालीमा बदल्नुस्';
-  toast(LANG==='en'?'Language: English':'भाषा: नेपाली');
+// ══ SIMPLE IN-MEMORY CACHE ══
+const CACHE={};
+const CACHE_TTL=90000; // 90 seconds
+async function dGetC(col,filter){
+  const key=col+(filter?JSON.stringify(filter):'');
+  const now=Date.now();
+  if(CACHE[key]&&(now-CACHE[key].ts)<CACHE_TTL)return CACHE[key].data;
+  const data=filter?await dGet(col,...[filter]):await dGet(col);
+  CACHE[key]={data,ts:now};
+  return data;
 }
-function applyLang(){
-  document.querySelectorAll('[data-ne]').forEach(el=>{
-    el.textContent=LANG==='en'?(el.dataset.en||el.dataset.ne):el.dataset.ne;
-  });
-  const lb=document.getElementById('lang-btn');
-  if(lb){lb.textContent=LANG==='ne'?'EN':'NE';}
+function clearCache(col){
+  Object.keys(CACHE).forEach(k=>{if(k.startsWith(col))delete CACHE[k];});
 }
 
 // ══ HELPERS ══
@@ -1612,8 +1606,8 @@ async function loadHome(){
 
   try{
     const[sites,pays,work,exps,wkrs,attToday,extraIncomes]=await Promise.all([
-      dGet('sites'),dGet('payments'),dGet('work_entries'),dGet('expenses'),dGet('workers'),
-      dGet('attendance',['date','==',td]),dGet('extra_income')
+      dGetC('sites'),dGetC('payments'),dGetC('work_entries'),dGetC('expenses'),dGetC('workers'),
+      dGet('attendance',['date','==',td]),dGetC('extra_income')
     ]);
     SITES=sites;WKRS=wkrs;
     const active=sites.filter(s=>s.status==='active');
@@ -1740,7 +1734,7 @@ async function saveSite(){
   const d={name:nm,client_name:cl,client_phone:document.getElementById('sph').value.trim(),location:document.getElementById('sloc').value.trim(),contract_type:t,brought_by:document.getElementById('sby').value,status:document.getElementById('sst').value,start_date:ssd,bs_start:fBS(ssd),end_date:document.getElementById('sed').value,notes:document.getElementById('snote').value.trim()};
   if(t==='full'||t==='labour')d.contract_amount=+document.getElementById('sa').value||0;
   else if(t==='sqft'){d.sqft=+document.getElementById('ssq').value||0;d.sqft_rate=+document.getElementById('srt').value||0;d.contract_amount=d.sqft*d.sqft_rate;}
-  await dAdd('sites',d);closeM('mSite');toast('साइट सेभ ✓');loadSites();
+  await dAdd('sites',d);clearCache('sites');closeM('mSite');toast('साइट सेभ ✓');loadSites();
 }
 
 // ══ SITE DETAIL ══
@@ -1965,7 +1959,7 @@ async function loadPays(){
   </div>`;
 }
 function openPayModal(){const s=SITES.find(x=>x.id===CS);document.getElementById('pay-lbl').textContent=s?s.name:'';document.getElementById('pa').value='';document.getElementById('pt').value='advance';document.getElementById('pd').value=todStr();document.getElementById('pd-b').textContent=bsToday();document.getElementById('pn').value='';openM('mPay');}
-async function savePay(){const amt=+document.getElementById('pa').value;if(!amt){toast('रकम राख्नुस्',false);return;}const d=document.getElementById('pd').value;await dAdd('payments',{site_id:CS,amount:amt,type:document.getElementById('pt').value,date:d,bs_date:fBS(d),note:document.getElementById('pn').value});closeM('mPay');toast('भुक्तानी सेभ ✓');addNotif('payment',`${ME} ले ${Rs(amt)} भुक्तानी थपे — site: ${SITES.find(s=>s.id===CS)?.name||CS}`);loadPays();}
+async function savePay(){const amt=+document.getElementById('pa').value;if(!amt){toast('रकम राख्नुस्',false);return;}const d=document.getElementById('pd').value;await dAdd('payments',{site_id:CS,amount:amt,type:document.getElementById('pt').value,date:d,bs_date:fBS(d),note:document.getElementById('pn').value});clearCache('payments');closeM('mPay');toast('भुक्तानी सेभ ✓');addNotif('payment',`${ME} ले ${Rs(amt)} भुक्तानी थपे — site: ${SITES.find(s=>s.id===CS)?.name||CS}`);loadPays();}
 
 async function loadWages(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
@@ -2057,7 +2051,7 @@ async function saveWage(){
   else{toast('कामदार छान्नुस्',false);return;}
   const fd=document.getElementById('wgfd').value;
   await dAdd('work_entries',{site_id:CS,worker_id:wId,worker_name:wName,days,daily_rate:rate,advance_given:+document.getElementById('wga').value||0,date_from:fd,bs_from:fBS(fd),date_to:document.getElementById('wgtd').value});
-  closeM('mWage');toast('ज्याला सेभ ✓');
+  clearCache('work_entries');closeM('mWage');toast('ज्याला सेभ ✓');
   addNotif('worker',`👷 ${ME} — ज्याला entry · ${document.getElementById('wn')?.value||''} · ${fBS(document.getElementById('wd')?.value||'')}`);
   loadWages();
 }
@@ -3148,7 +3142,7 @@ async function saveExp(){
   const d=document.getElementById('ed').value;
   await dAdd('expenses',{site_id:sid,site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value});
   closeM('mExp');
-  toast('खर्च सेभ ✓');
+  clearCache('expenses');toast('खर्च सेभ ✓');
   addNotif('expense',`💸 ${ME} — ${Rs(amt)} खर्च · ${sn||'—'} · ${fBS(d)}`);
   if(CUR==='exp')loadExp();else if(CDT==='ex')loadSEx();
 }
