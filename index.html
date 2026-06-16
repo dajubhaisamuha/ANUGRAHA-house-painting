@@ -441,7 +441,20 @@ select.fi option{background:#fff}
 .txn-amt{font-family:'Inter',sans-serif;font-size:14px;font-weight:800;color:var(--g)}
 .txn-dt{font-size:10px;color:var(--gr400);margin-top:1px}
 
-/* COLOR PICKER */
+/* ── COLLAPSIBLE SECTIONS ── */
+.coll-hd{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;user-select:none;border-bottom:1px solid var(--gr100)}
+.coll-hd:active{background:var(--gr50)}
+.coll-arrow{font-size:14px;color:var(--gr400);transition:transform .22s;display:inline-block}
+.coll-arrow.open{transform:rotate(180deg)}
+.coll-body{overflow:hidden;transition:max-height .3s ease}
+.coll-body.closed{max-height:0!important}
+
+/* ── FULLSCREEN PHOTO VIEWER ── */
+#photo-viewer{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;flex-direction:column}
+#photo-viewer.show{display:flex}
+#photo-viewer img{max-width:95vw;max-height:80vh;border-radius:10px;object-fit:contain}
+#photo-viewer-caption{color:rgba(255,255,255,.7);font-size:12px;margin-top:10px;text-align:center}
+#photo-viewer-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer}
 .color-picker{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .cp-opt{width:40px;height:40px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;font-weight:800}
 .cp-opt.sel{border-color:var(--gr900);transform:scale(1.1)}
@@ -608,6 +621,11 @@ select.fi option{background:#fff}
 
 <div id="toast"></div>
 <div id="ptr"><div id="ptr-spin"></div></div>
+<div id="photo-viewer" onclick="closePhotoViewer()">
+  <button id="photo-viewer-close" onclick="closePhotoViewer()">✕</button>
+  <img id="photo-viewer-img" src="">
+  <div id="photo-viewer-caption"></div>
+</div>
 
 <!-- NAV -->
 <nav id="nav" style="display:none">
@@ -626,6 +644,11 @@ select.fi option{background:#fff}
   <div class="ni" onclick="go('workers')">
     <svg class="ni-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
     <span class="ni-l">कामदार</span>
+  </div>
+  <div class="ni" onclick="go('notif')" style="position:relative">
+    <svg class="ni-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    <span class="ni-l">सूचना</span>
+    <span id="notif-badge" style="display:none;position:absolute;top:4px;right:10px;background:var(--r);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center"></span>
   </div>
   <div class="ni" onclick="go('profile')">
     <svg class="ni-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -818,6 +841,15 @@ select.fi option{background:#fff}
     </div>
   </div>
   <div style="padding:14px 16px 20px" id="t-list"><div class="ld">लोड हुँदैछ...</div></div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="page" id="pg-notif">
+  <div class="plain-top" style="display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:17px;font-weight:800">🔔 सूचनाहरू</div>
+    <button onclick="markAllRead()" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:12px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer">सबै पढियो ✓</button>
+  </div>
+  <div style="padding:12px 16px 80px" id="notif-body"><div class="ld">लोड हुँदैछ...</div></div>
 </div>
 
 <!-- PROFILE -->
@@ -1519,6 +1551,7 @@ function go(p){
   else if(p==='att'){AD=todStr();loadAtt();}
   else if(p==='exp')loadExp();
   else if(p==='team')loadTeam();
+  else if(p==='notif')loadNotif();
   else if(p==='profile')loadProfile();
   const lb=document.getElementById('lang-btn');
   if(lb)lb.style.display=(p==='home'||p==='sites')?'none':'block';
@@ -1645,8 +1678,8 @@ async function loadHome(){
     if(!sorted.length){txEl.innerHTML=emptyS('💰','कुनै भुक्तानी छैन');return;}
     txEl.innerHTML=sorted.map(p=>{
       const s=sites.find(x=>x.id===p.site_id);
-      return`<div class="txn-r"${s?` onclick="openDet('${p.site_id}')" style="cursor:pointer"`:''}>
-        <div class="txn-i" style="background:var(--gl);font-size:18px">${p.type==='advance'?'⚡':p.type==='final'?'✅':'📥'}</div>
+      const txClick=s?' onclick="openDet(\''+p.site_id+'\')" style="cursor:pointer"':'';
+      return`<div class="txn-r"${txClick}>        <div class="txn-i" style="background:var(--gl);font-size:18px">${p.type==='advance'?'⚡':p.type==='final'?'✅':'📥'}</div>
         <div style="flex:1"><div class="txn-nm">${{advance:'अग्रिम',installment:'किस्ता',final:'अन्तिम'}[p.type]||p.type}</div><div class="txn-s">${s?.name||'—'}${p.note?' · '+p.note:''}</div></div>
         <div style="text-align:right"><div class="txn-amt">+${Rs(p.amount)}</div><div class="txn-dt">${fBS(p.date)||fD(p.date)}</div></div>
       </div>`;
@@ -1718,7 +1751,6 @@ function openDet(id){
 function closeDet(){document.getElementById('det').classList.remove('open');document.getElementById('nav').style.display='flex';}
 function dTab(t,btn){document.querySelectorAll('.dtab').forEach(x=>x.classList.remove('on'));btn.classList.add('on');CDT=t;loadDT(t);}
 function loadDT(t){if(t==='ov')loadOv();else if(t==='pay')loadPays();else if(t==='wg')loadWages();else if(t==='ex')loadSEx();else if(t==='at')loadSAtt();}
-
 async function loadOv(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
   const s=SITES.find(x=>x.id===CS);if(!s)return;
@@ -1752,155 +1784,162 @@ async function loadOv(){
 
   el.innerHTML=`<div class="pc">
     <!-- TIME METER -->
-    ${tp&&s.start_date?`<div class="ic" style="margin-bottom:12px;padding:14px 16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:800">⏱ समय ट्र्याकिङ</div>
-        <span class="${sl.cls} score-badge" onclick="alert('📊 Credit Score कसरी गणना हुन्छ?\\n\\n✅ भुक्तानी पूरा (40pts)\\n📈 नाफा margin (30pts)\\n⏰ समयमा सम्पन्न (30pts)\\n\\nScore जति बढी = काम राम्रो!')" style="cursor:pointer">${sl.txt} ${score}pts ℹ️</span>
+    ${tp&&s.start_date?`<div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-time')">
+        <span style="font-size:13px;font-weight:800">⏱ समय ट्र्याकिङ</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="${sl.cls} score-badge" style="font-size:11px">${sl.txt} ${score}pts</span>
+          <span class="coll-arrow open" id="arr-c-time">▼</span>
+        </div>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gr500);margin-bottom:6px">
-        <span>सुरु: ${fBS(s.start_date)}</span>
-        <span>${s.end_date?'अनुमानित: '+fBS(s.end_date):''}</span>
-      </div>
-      <div style="height:8px;background:var(--gr100);border-radius:6px;overflow:hidden;margin-bottom:6px">
-        <div style="height:100%;width:${Math.min(100,tp.pct)}%;background:${tp.overdue?'var(--r)':tp.pct>80?'var(--a)':'var(--g)'};border-radius:6px;transition:width .5s"></div>
-      </div>
-      <div style="font-size:12px;font-weight:700;color:${tp.overdue?'var(--r)':'var(--g)'}">
-        ${s.status==='completed'?`✅ ${tp.elapsed} दिनमा सम्पन्न`:tp.overdue?`⚠️ अनुमान (${tp.estimated} दिन) भन्दा ${tp.elapsed-tp.estimated} दिन बढी!`:`${tp.elapsed} दिन बितेको · ${tp.estimated?tp.estimated-tp.elapsed+' दिन बाँकी':''}` }
+      <div class="coll-body" id="c-time" style="max-height:200px">
+        <div style="padding:12px 16px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gr500);margin-bottom:6px">
+            <span>सुरु: ${fBS(s.start_date)}</span>
+            <span>${s.end_date?'अनुमानित: '+fBS(s.end_date):''}</span>
+          </div>
+          <div style="height:8px;background:var(--gr100);border-radius:6px;overflow:hidden;margin-bottom:6px">
+            <div style="height:100%;width:${Math.min(100,tp.pct)}%;background:${tp.overdue?'var(--r)':tp.pct>80?'var(--a)':'var(--g)'};border-radius:6px"></div>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:${tp.overdue?'var(--r)':'var(--g)'}">
+            ${s.status==='completed'?`✅ ${tp.elapsed} दिनमा सम्पन्न`:tp.overdue?`⚠️ अनुमान (${tp.estimated} दिन) भन्दा ${tp.elapsed-tp.estimated} दिन बढी!`:`${tp.elapsed} दिन बितेको · ${tp.estimated?tp.estimated-tp.elapsed+' दिन बाँकी':''}`}
+          </div>
+        </div>
       </div>
     </div>`:''}
 
     <!-- FINANCIAL OVERVIEW -->
-    <div class="pbox">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <span style="font-size:11px;font-weight:700;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px">📊 आर्थिक सारांश</span>
-        ${sv!=null?`<button onclick="openEditContractModal('${CS}')" style="background:rgba(234,88,12,.1);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>`:''}
+    <div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-fin')">
+        <span style="font-size:13px;font-weight:800">📊 आर्थिक सारांश</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="n" style="font-size:13px;color:${profit>=0?'var(--g)':'var(--r)'};font-weight:800">${Rs(Math.abs(profit))}</span>
+          <span class="coll-arrow open" id="arr-c-fin">▼</span>
+        </div>
       </div>
-      ${sv!=null?`<div class="pr"><span class="pl">📋 ठेक्का मूल्य</span><span style="color:var(--ind);font-weight:800;font-family:'Inter',sans-serif;font-size:16px">${Rs(sv)}</span></div>`:''}
-      <div class="pr"><span class="pl">💰 ग्राहकबाट प्राप्त</span><span style="color:var(--g);font-weight:800;font-family:'Inter',sans-serif">${Rs(totR)}</span></div>
-      ${sv!=null?`<div class="pr"><span class="pl">⏳ बाँकी (ग्राहकबाट)</span><span style="color:${(sv-totR)>=0?'var(--a)':'var(--g)'};font-weight:800;font-family:'Inter',sans-serif">${(sv-totR)>=0?Rs(sv-totR):'अतिरिक्त: '+Rs(Math.abs(sv-totR))}</span></div>`:''}
-      <div class="pr"><span class="pl">👷 ज्याला खर्च</span><span style="color:var(--r);font-weight:800;font-family:'Inter',sans-serif">− ${Rs(totL)}</span></div>
-      ${totA>0?`<div class="pr"><span class="pl">💵 कामदार अग्रिम</span><span style="color:var(--a);font-weight:800;font-family:'Inter',sans-serif">${Rs(totA)}</span></div>`:''}
-      <div class="pr"><span class="pl">💸 साइट खर्च</span><span style="color:var(--r);font-weight:800;font-family:'Inter',sans-serif">− ${Rs(totE)}</span></div>
-      ${totExtra>0?`<div class="pr"><span class="pl">✨ अतिरिक्त कमाइ</span><span style="color:var(--g);font-weight:800;font-family:'Inter',sans-serif">+ ${Rs(totExtra)}</span></div>`:''}
-      <div class="pdiv"></div>
-      <div class="pr"><span style="font-size:15px;font-weight:800">📈 कुल नाफा</span><span style="font-size:26px;font-weight:800;font-family:'Inter',sans-serif;color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
-      <div class="pr" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--ind-b)"><span style="font-size:12px;color:var(--gr500)">👥 हरेकको हिस्सा (÷ ३)</span><span style="font-size:17px;font-weight:800;font-family:'Inter',sans-serif;color:var(--ind)">${Rs(Math.abs(profit/3))}</span></div>
+      <div class="coll-body" id="c-fin" style="max-height:600px">
+        <div class="pbox" style="margin:12px;border-radius:12px">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px">${sv!=null?`<button onclick="openEditContractModal('${CS}')" style="background:rgba(234,88,12,.1);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>`:''}</div>
+          ${sv!=null?`<div class="pr"><span class="pl">📋 ठेक्का</span><span style="color:var(--ind);font-weight:800">${Rs(sv)}</span></div>`:''}
+          <div class="pr"><span class="pl">💰 प्राप्त</span><span style="color:var(--g);font-weight:800">${Rs(totR)}</span></div>
+          ${sv!=null?`<div class="pr"><span class="pl">⏳ बाँकी</span><span style="color:${(sv-totR)>=0?'var(--a)':'var(--g)'};font-weight:800">${(sv-totR)>=0?Rs(sv-totR):'अतिरिक्त '+Rs(Math.abs(sv-totR))}</span></div>`:''}
+          <div class="pr"><span class="pl">👷 ज्याला</span><span style="color:var(--r);font-weight:800">−${Rs(totL)}</span></div>
+          <div class="pr"><span class="pl">💸 खर्च</span><span style="color:var(--r);font-weight:800">−${Rs(totE)}</span></div>
+          ${totExtra>0?`<div class="pr"><span class="pl">✨ अतिरिक्त</span><span style="color:var(--g);font-weight:800">+${Rs(totExtra)}</span></div>`:''}
+          <div class="pdiv"></div>
+          <div class="pr"><span style="font-weight:800">📈 नाफा</span><span style="font-size:22px;font-weight:800;color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
+          <div class="pr"><span style="font-size:12px;color:var(--gr500)">÷ ३ हरेकको</span><span style="font-size:16px;font-weight:800;color:var(--ind)">${Rs(Math.abs(profit/3))}</span></div>
+        </div>
+      </div>
     </div>
 
-    <!-- EXTRA INCOME / PROFIT SECTION -->
-    <div class="ic" style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gr100)">
-        <span style="font-size:13px;font-weight:800;color:var(--g)">✨ अतिरिक्त कमाइ / Profit</span>
-        <button onclick="openExtraIncomeModal('${CS}')" style="background:var(--gl);border:1px solid #6EE7B7;color:#065F46;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer">+ थप्नुस्</button>
+    <!-- EXTRA INCOME -->
+    <div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-extra')">
+        <span style="font-size:13px;font-weight:800">✨ अतिरिक्त कमाइ</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onclick="event.stopPropagation();openExtraIncomeModal('${CS}')" style="background:var(--gl);border:1px solid #6EE7B7;color:#065F46;font-size:11px;font-weight:700;padding:3px 10px;border-radius:8px;cursor:pointer">+ थप्नुस्</button>
+          <span class="coll-arrow" id="arr-c-extra">▼</span>
+        </div>
       </div>
-      ${extraIncome.length?extraIncome.map(x=>`
-        <div class="li">
-          <div class="li-i" style="background:var(--gl);font-size:18px">✨</div>
-          <div style="flex:1"><div class="li-t">${x.note||x.category||'अतिरिक्त कमाइ'}</div><div class="li-s">${fBSD(x.date)||''}</div></div>
-          <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <div class="pos">+${Rs(x.amount)}</div>
-            <button onclick="delEntry('extra_income','${x.id}','loadOv')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑</button>
-          </div>
-        </div>`).join(''):`<div style="padding:14px 16px;font-size:13px;color:var(--gr400)">सामग्री बच्यो, paint coupon, वा अन्य अतिरिक्त कमाइ यहाँ थप्नुस्</div>`}
-      ${extraIncome.length?`<div style="padding:10px 16px;border-top:1px solid var(--gr100);display:flex;justify-content:space-between;font-weight:800;font-size:13px"><span>जम्मा</span><span class="n" style="color:var(--g)">${Rs(totExtra)}</span></div>`:''}
-    </div>
-
-    <!-- EXPENSE BREAKDOWN -->
-    ${Object.keys(expByCat).length>0?`<div class="ic" style="margin-bottom:12px">
-      <div style="padding:12px 16px;font-size:13px;font-weight:800;border-bottom:1px solid var(--gr100)">💸 खर्चको विवरण</div>
-      ${Object.entries(expByCat).map(([cat,amt])=>`<div class="ir"><span class="il">${ET_ICO[cat]||'📦'} ${ET[cat]||cat}</span><span class="iv" style="color:var(--r)">${Rs(amt)}</span></div>`).join('')}
-    </div>`:''}
-
-    <!-- SITE INFO -->
-    <div class="ic" style="margin-bottom:12px">
-      <div class="ir"><span class="il">📁 प्रकार</span><span class="iv">${SN[s.contract_type]||s.contract_type}</span></div>
-      <div class="ir"><span class="il">🤝 ल्याउने</span><span class="iv" style="color:var(--ind)">${s.brought_by}</span></div>
-      ${s.client_phone?`<div class="ir"><span class="il">📞 ग्राहक</span><span class="iv">${s.client_phone}</span></div>`:''}
-    </div>
-
-    ${matDoc&&matDoc.items?.length?`
-    <div class="ic" style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gr100)">
-        <span style="font-size:13px;font-weight:800">📦 सामग्री Inventory</span>
-        <button onclick="openMatModal('${CS}')" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>
-      </div>
-      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
-        <tr style="background:var(--ind-l)">
-          <th style="padding:8px 10px;text-align:left">सामग्री</th>
-          <th style="padding:8px 6px;text-align:center">परिमाण</th>
-          <th style="padding:8px 6px;text-align:right">दर</th>
-          <th style="padding:8px 6px;text-align:center">प्रयोग</th>
-          <th style="padding:8px 6px;text-align:center">बाँकी</th>
-          <th style="padding:8px 6px;text-align:right">मूल्य</th>
-          <th style="padding:8px 6px;text-align:right;color:var(--a)">🎯 Points</th>
-        </tr>
-        ${matDoc.items.map(i=>{
-          const qty=Number(i.qty||0),rate=Number(i.rate||0),used=Number(i.used||0);
-          const remaining=Math.max(0,qty-used);
-          const remVal=remaining*rate;
-          const lowStock=qty>0&&remaining/qty<=0.15;
-          const pts=getYatraPoints(i.name,qty);
-          return`<tr style="border-bottom:1px solid var(--gr100)">
-            <td style="padding:8px 10px;font-weight:700">${i.name}</td>
-            <td style="padding:8px 6px;text-align:center">${qty||'—'}</td>
-            <td style="padding:8px 6px;text-align:right">${rate?Rs(rate):'—'}</td>
-            <td style="padding:8px 6px;text-align:center;color:var(--a)">${used||0}</td>
-            <td style="padding:8px 6px;text-align:center;font-weight:800;color:${lowStock?'var(--r)':'var(--g)'}">${remaining}${lowStock&&qty>0?' ⚠️':''}</td>
-            <td style="padding:8px 6px;text-align:right;font-weight:700;color:var(--ind)">${remVal?Rs(remVal):'—'}</td>
-            <td style="padding:8px 6px;text-align:right;font-weight:800;color:${pts>0?'var(--a)':'var(--gr300)'}">${pts>0?pts:'—'}</td>
-          </tr>`;
-        }).join('')}
-        <tr style="background:var(--gl)">
-          <td colspan="5" style="padding:8px 10px;font-weight:800">जम्मा / बाँकी stock मूल्य</td>
-          <td style="padding:8px 6px;text-align:right;font-weight:800;color:var(--g)">${Rs(matDoc.total)}<br><span style="font-size:10px;color:var(--ind)">${Rs(matDoc.remaining||0)}</span></td>
-          <td style="padding:8px 6px;text-align:right;font-weight:800;color:var(--a)">${matDoc.yatra_points>0?matDoc.yatra_points.toLocaleString()+' pts':'—'}</td>
-        </tr>
-      </table></div>
-      <div style="padding:8px 16px;font-size:11px;color:var(--gr400)">अपडेट: ${matDoc.bs_updated||matDoc.updated||'—'}</div>
-    </div>`:''}
-
-    ${personalAdv.length?`
-    <div style="background:var(--al);padding:12px 14px;border-radius:12px;font-size:13px;color:#92400E;border:1px solid #FCD34D;margin-bottom:12px">
-      ⚠️ व्यक्तिगत अग्रिम (return गर्नुपर्ने):
-      ${personalAdv.map(a=>`<div style="display:flex;justify-content:space-between;margin-top:6px"><span>${a.source} → ${a.worker_name}</span><span class="n" style="font-weight:800">${Rs(a.amount)}</span></div>`).join('')}
-    </div>`:''}
-
-    ${attSummaryHtml}
-
-    ${photoDoc&&(photoDoc.before||photoDoc.after)?`
-    <div class="ic" style="margin-bottom:12px">
-      <div style="padding:10px 16px;font-size:13px;font-weight:800;border-bottom:1px solid var(--gr100);color:var(--pur)">📸 Before / After</div>
-      <div class="fr" style="padding:12px 16px;gap:10px">
-        ${photoDoc.before?`<div style="flex:1"><div style="font-size:10px;font-weight:700;color:var(--gr500);margin-bottom:5px">BEFORE</div><img src="${photoDoc.before}" style="width:100%;border-radius:10px;max-height:140px;object-fit:cover"></div>`:''}
-        ${photoDoc.after?`<div style="flex:1"><div style="font-size:10px;font-weight:700;color:var(--gr500);margin-bottom:5px">AFTER</div><img src="${photoDoc.after}" style="width:100%;border-radius:10px;max-height:140px;object-fit:cover"></div>`:''}
-      </div>
-    </div>`:''}
-
-    <button class="btn" style="background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b)" onclick="document.getElementById('st-id').value='${CS}';openM('mSt')">🔄 स्थिति बदल्नुस्</button>
-    ${s.status!=='completed'?`<button class="btn" style="background:var(--gl);color:#065F46;border:1px solid #6EE7B7" onclick="if(confirm('सम्पन्न गर्ने?')){document.getElementById('st-id').value='${CS}';doSt('completed')}">✅ सम्पन्न</button>`:''}
-    <button class="btn" style="background:var(--gr100);color:var(--gr600);border:1px solid var(--gr200)" onclick="openMatModal('${CS}')">📦 सामग्री</button>
-    <button class="btn" style="background:var(--al);color:#92400E;border:1px solid #FCD34D" onclick="openBillPhotoModal('${CS}')">🧾 Bill Photo</button>
-    <button class="btn" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSitePhotoModal('${CS}')">📸 Before/After</button>
-
-    ${billPhotos&&billPhotos.length?`
-    <div class="ic" style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gr100)">
-        <span style="font-size:13px;font-weight:800;color:#92400E">🧾 Bill / Invoice Photos</span>
-        <span style="font-size:11px;color:var(--gr400)">${billPhotos.length} वटा</span>
-      </div>
-      <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        ${billPhotos.sort((a,b)=>a.date>b.date?-1:1).map(b=>`
-          <div style="border-radius:10px;overflow:hidden;border:1px solid var(--gr100)">
-            <img src="${b.photo}" style="width:100%;height:110px;object-fit:cover;display:block;cursor:pointer" onclick="this.style.height=this.style.height==='110px'?'220px':'110px'">
-            <div style="padding:6px 8px;background:var(--gr50)">
-              <div style="font-size:10px;font-weight:700;color:var(--gr600)">${b.note||'Bill'}</div>
-              <div style="font-size:9px;color:var(--gr400)">${b.bs_date||b.date} · ${b.added_by||''}</div>
+      <div class="coll-body closed" id="c-extra" style="max-height:0">
+        ${extraIncome.length?extraIncome.map(x=>`
+          <div class="li">
+            <div class="li-i" style="background:var(--gl)">✨</div>
+            <div style="flex:1"><div class="li-t">${x.note||x.category||'अतिरिक्त'}</div><div class="li-s">${fBSD(x.date)||''}</div></div>
+            <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+              <div class="pos">+${Rs(x.amount)}</div>
+              <button onclick="delEntry('extra_income','${x.id}','loadOv')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;cursor:pointer">🗑</button>
             </div>
-          </div>`).join('')}
+          </div>`).join(''):`<div style="padding:12px 16px;font-size:13px;color:var(--gr400)">अहिलेसम्म छैन</div>`}
+        ${extraIncome.length?`<div style="padding:10px 16px;border-top:1px solid var(--gr100);display:flex;justify-content:space-between;font-weight:800;font-size:13px"><span>जम्मा</span><span class="n" style="color:var(--g)">${Rs(totExtra)}</span></div>`:''}
+      </div>
+    </div>
+
+    <!-- WORKER SUMMARY -->
+    <div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-workers')">
+        <span style="font-size:13px;font-weight:800">👷 कामदार हाजिर + कमाइ</span>
+        <span class="coll-arrow" id="arr-c-workers">▼</span>
+      </div>
+      <div class="coll-body closed" id="c-workers" style="max-height:0">
+        <div style="padding:10px 14px">${attSummaryHtml||'<div style="padding:10px;color:var(--gr400);font-size:13px">रेकर्ड छैन</div>'}</div>
+      </div>
+    </div>
+
+    <!-- MATERIALS -->
+    ${matDoc&&matDoc.items?.length?`
+    <div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-mat')">
+        <span style="font-size:13px;font-weight:800">📦 सामग्री Inventory</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--gr400)">${matDoc.items.length} items</span>
+          <span class="coll-arrow" id="arr-c-mat">▼</span>
+        </div>
+      </div>
+      <div class="coll-body closed" id="c-mat" style="max-height:0">
+        <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+          <tr style="background:var(--ind-l)"><th style="padding:7px 10px;text-align:left">सामग्री</th><th style="padding:7px 6px;text-align:center">qty</th><th style="padding:7px 6px;text-align:center">बाँकी</th><th style="padding:7px 6px;text-align:right">मूल्य</th><th style="padding:7px 6px;text-align:right;color:var(--a)">pts</th></tr>
+          ${matDoc.items.map(i=>{
+            const qty=Number(i.qty||0),rate=Number(i.rate||0),used=Number(i.used||0);
+            const rem=Math.max(0,qty-used);const low=qty>0&&rem/qty<=0.15;
+            return`<tr style="border-bottom:1px solid var(--gr100)"><td style="padding:7px 10px;font-weight:700">${i.name}</td><td style="padding:7px 6px;text-align:center">${qty}</td><td style="padding:7px 6px;text-align:center;color:${low?'var(--r)':'var(--g)'};font-weight:800">${rem}${low?' ⚠️':''}</td><td style="padding:7px 6px;text-align:right;color:var(--ind)">${rem?Rs(rem*rate):'—'}</td><td style="padding:7px 6px;text-align:right;color:var(--a);font-weight:700">${getYatraPoints(i.name,qty)||'—'}</td></tr>`;
+          }).join('')}
+          <tr style="background:var(--gl)"><td colspan="3" style="padding:7px 10px;font-weight:800">बाँकी / Yatra जम्मा</td><td style="padding:7px 6px;text-align:right;font-weight:800;color:var(--g)">${Rs(matDoc.remaining||0)}</td><td style="padding:7px 6px;text-align:right;font-weight:800;color:var(--a)">${matDoc.yatra_points>0?matDoc.yatra_points+'pts':'—'}</td></tr>
+        </table></div>
+        <div style="padding:8px 16px;text-align:right"><button onclick="openMatModal('${CS}')" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer">✏️ Edit</button></div>
       </div>
     </div>`:''}
 
+    <!-- BILL PHOTOS -->
+    <div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-bills')">
+        <span style="font-size:13px;font-weight:800">🧾 Bill / Invoice Photos</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button onclick="event.stopPropagation();openBillPhotoModal('${CS}')" style="background:var(--al);border:1px solid #FCD34D;color:#92400E;font-size:11px;font-weight:700;padding:3px 10px;border-radius:8px;cursor:pointer">+ थप्नुस्</button>
+          <span class="coll-arrow" id="arr-c-bills">▼</span>
+        </div>
+      </div>
+      <div class="coll-body closed" id="c-bills" style="max-height:0">
+        ${billPhotos&&billPhotos.length?`
+        <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${billPhotos.sort((a,b)=>a.date>b.date?-1:1).map(b=>`
+            <div style="border-radius:10px;overflow:hidden;border:1px solid var(--gr100);cursor:pointer" onclick="viewPhoto('${b.photo}','${b.note||'Bill'} · ${b.bs_date||b.date}')">
+              <img src="${b.photo}" style="width:100%;height:110px;object-fit:cover;display:block">
+              <div style="padding:5px 8px;background:var(--gr50)">
+                <div style="font-size:10px;font-weight:700;color:var(--gr600)">${b.note||'Bill'}</div>
+                <div style="font-size:9px;color:var(--gr400)">${b.bs_date||b.date}</div>
+              </div>
+            </div>`).join('')}
+        </div>`:`<div style="padding:14px 16px;font-size:13px;color:var(--gr400)">कुनै bill photo छैन</div>`}
+      </div>
+    </div>
+
+    <!-- BEFORE/AFTER PHOTOS -->
+    ${photoDoc&&(photoDoc.before||photoDoc.after)?`
+    <div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-photos')">
+        <span style="font-size:13px;font-weight:800">📸 Before / After Photos</span>
+        <span class="coll-arrow" id="arr-c-photos">▼</span>
+      </div>
+      <div class="coll-body closed" id="c-photos" style="max-height:0">
+        <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${photoDoc.before?`<div><div style="font-size:10px;font-weight:700;color:var(--gr500);margin-bottom:4px">BEFORE</div><img src="${photoDoc.before}" style="width:100%;border-radius:10px;height:130px;object-fit:cover;cursor:pointer" onclick="viewPhoto('${photoDoc.before}','Before')"></div>`:''}
+          ${photoDoc.after?`<div><div style="font-size:10px;font-weight:700;color:var(--gr500);margin-bottom:4px">AFTER</div><img src="${photoDoc.after}" style="width:100%;border-radius:10px;height:130px;object-fit:cover;cursor:pointer" onclick="viewPhoto('${photoDoc.after}','After')"></div>`:''}
+        </div>
+        <div style="padding:0 14px 12px;text-align:right"><button onclick="openSitePhotoModal('${CS}')" style="background:var(--purl);border:1px solid #C4B5FD;color:var(--pur);font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;cursor:pointer">✏️ Update</button></div>
+      </div>
+    </div>`:''}
+
+    <!-- ACTION BUTTONS -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+      <button class="btn" style="background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b)" onclick="document.getElementById('st-id').value='${CS}';openM('mSt')">🔄 स्थिति बदल्नुस्</button>
+      ${s.status!=='completed'?`<button class="btn" style="background:var(--gl);color:#065F46;border:1px solid #6EE7B7" onclick="if(confirm('सम्पन्न गर्ने?')){document.getElementById('st-id').value='${CS}';doSt('completed')}">✅ सम्पन्न</button>`:''}
+      ${!matDoc?`<button class="btn" style="background:var(--gr100);color:var(--gr600);border:1px solid var(--gr200)" onclick="openMatModal('${CS}')">📦 सामग्री थप्नुस्</button>`:''}
+      ${!photoDoc?`<button class="btn" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSitePhotoModal('${CS}')">📸 Before/After थप्नुस्</button>`:''}
+    </div>
     ${s.notes?`<div style="background:var(--blue-l);padding:12px;border-radius:12px;font-size:13px;color:#0369A1;border:1px solid #BAE6FD">📝 ${s.notes}</div>`:''}
+    ${personalAdv.length?`<div style="background:var(--al);padding:12px 14px;border-radius:12px;font-size:13px;color:#92400E;border:1px solid #FCD34D;margin-top:8px">⚠️ व्यक्तिगत अग्रिम (return गर्नुपर्ने): ${personalAdv.map(a=>`${a.worker_name}: ${Rs(a.amount)}`).join(', ')}</div>`:''}
   </div>`;
 }
 
@@ -1924,7 +1963,7 @@ async function loadPays(){
   </div>`;
 }
 function openPayModal(){const s=SITES.find(x=>x.id===CS);document.getElementById('pay-lbl').textContent=s?s.name:'';document.getElementById('pa').value='';document.getElementById('pt').value='advance';document.getElementById('pd').value=todStr();document.getElementById('pd-b').textContent=bsToday();document.getElementById('pn').value='';openM('mPay');}
-async function savePay(){const amt=+document.getElementById('pa').value;if(!amt){toast('रकम राख्नुस्',false);return;}const d=document.getElementById('pd').value;await dAdd('payments',{site_id:CS,amount:amt,type:document.getElementById('pt').value,date:d,bs_date:fBS(d),note:document.getElementById('pn').value});closeM('mPay');toast('भुक्तानी सेभ ✓');loadPays();}
+async function savePay(){const amt=+document.getElementById('pa').value;if(!amt){toast('रकम राख्नुस्',false);return;}const d=document.getElementById('pd').value;await dAdd('payments',{site_id:CS,amount:amt,type:document.getElementById('pt').value,date:d,bs_date:fBS(d),note:document.getElementById('pn').value});closeM('mPay');toast('भुक्तानी सेभ ✓');addNotif('payment',`${ME} ले ${Rs(amt)} भुक्तानी थपे — site: ${SITES.find(s=>s.id===CS)?.name||CS}`);loadPays();}
 
 async function loadWages(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
@@ -2016,7 +2055,7 @@ async function saveWage(){
   else{toast('कामदार छान्नुस्',false);return;}
   const fd=document.getElementById('wgfd').value;
   await dAdd('work_entries',{site_id:CS,worker_id:wId,worker_name:wName,days,daily_rate:rate,advance_given:+document.getElementById('wga').value||0,date_from:fd,bs_from:fBS(fd),date_to:document.getElementById('wgtd').value});
-  closeM('mWage');toast('ज्याला सेभ ✓');loadWages();
+  closeM('mWage');toast('ज्याला सेभ ✓');addNotif('worker',`${ME} ले ज्याला entry थपे`);loadWages();
 }
 
 async function loadSEx(){
@@ -2379,7 +2418,9 @@ async function loadWorkers(){
           </div>
           <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
             <button onclick="event.stopPropagation();openEditWModal(${JSON.stringify({id:w.id,name:w.name,phone:w.phone||'',join_date:w.join_date||'',daily_wage:w.daily_wage||0,note:w.note||''}).replace(/"/g,'&quot;')})" style="background:var(--ind-l);border:none;color:var(--ind);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>
+            <button onclick="event.stopPropagation();if(confirm('${w.name} हटाउने? सबै record मेटिन्छ!')){delEntry('workers','${w.id}','loadWorkers')}" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer">🗑</button>
             <button onclick="event.stopPropagation();toggleWorkerActive('${w.id}',${w.active===false?'true':'false'})" style="background:${w.active===false?'var(--gl)':'var(--al)'};border:none;color:${w.active===false?'#065F46':'#92400E'};font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer">${w.active===false?'▶ सक्रिय':'⏸ Pause'}</button>
+            <button onclick="event.stopPropagation();deleteWorker('${w.id}','${w.name.replace(/'/g,"\\'")}')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer">🗑 Delete</button>
             ${w.active!==false?`<div style="font-size:10px;color:var(--ind);font-weight:700;cursor:pointer" onclick="openWAM('${w.id}','${w.name.replace(/'/g,"\\'")}')">✅ हाजिर</div>`:''}
           </div>
         </div>
@@ -2404,6 +2445,11 @@ async function loadWorkers(){
     console.error(e);
     el.innerHTML=emptyS('⚠️','लोड गर्न सकिएन','पुनः प्रयास गर्नुस्');
   }
+}
+async function deleteWorker(wid, name){
+  if(!confirm(`"${name}" लाई permanently delete गर्ने?\n\nसबै काम/हाजिर रेकर्ड बाँकी रहन्छन्।`))return;
+  await db.collection('workers').doc(wid).delete();
+  toast(name+' delete गरियो');loadWorkers();
 }
 async function toggleWorkerActive(wid, makeActive){
   await dUp('workers', wid, {active: makeActive===true||makeActive==='true'});
@@ -2625,7 +2671,85 @@ async function showWorkerLedger(workerId, workerName){
   </body></html>`;
   const w=window.open('','_blank');w.document.write(html);w.document.close();
 }
-// ══ BILL PHOTOS ══
+// ══ FULLSCREEN PHOTO VIEWER ══
+function viewPhoto(src,caption=''){
+  document.getElementById('photo-viewer-img').src=src;
+  document.getElementById('photo-viewer-caption').textContent=caption;
+  document.getElementById('photo-viewer').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closePhotoViewer(){
+  document.getElementById('photo-viewer').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+// ══ COLLAPSIBLE SECTIONS ══
+function toggleColl(id){
+  const body=document.getElementById(id);
+  const arrow=document.getElementById('arr-'+id);
+  if(!body)return;
+  if(body.classList.contains('closed')){
+    body.classList.remove('closed');
+    body.style.maxHeight=body.scrollHeight+'px';
+    if(arrow)arrow.classList.add('open');
+  }else{
+    body.style.maxHeight=body.scrollHeight+'px';
+    requestAnimationFrame(()=>{body.style.maxHeight='0';});
+    body.classList.add('closed');
+    if(arrow)arrow.classList.remove('open');
+  }
+}
+
+// ══ NOTIFICATION SYSTEM ══
+async function addNotif(type,msg,extra={}){
+  try{
+    await dAdd('notifications',{type,msg,by:ME,date:todStr(),bs_date:bsToday(),read_by:[],created_at:Date.now(),...extra});
+    loadNotifBadge();
+  }catch(e){}
+}
+async function loadNotifBadge(){
+  try{
+    const notifs=await dGet('notifications');
+    const unread=notifs.filter(n=>!n.read_by?.includes(ME));
+    const badge=document.getElementById('notif-badge');
+    if(badge){badge.textContent=unread.length>99?'99+':unread.length;badge.style.display=unread.length?'block':'none';}
+  }catch(e){}
+}
+async function loadNotif(){
+  const el=document.getElementById('notif-body');
+  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  const notifs=await dGet('notifications');
+  notifs.sort((a,b)=>(b.created_at||0)-(a.created_at||0));
+  if(!notifs.length){el.innerHTML=emptyS('🔔','कुनै सूचना छैन');return;}
+  const unreadIds=notifs.filter(n=>!n.read_by?.includes(ME)).map(n=>n.id);
+  if(unreadIds.length){
+    unreadIds.forEach(id=>db.collection('notifications').doc(id).update({read_by:firebase.firestore.FieldValue.arrayUnion(ME)}).catch(()=>{}));
+    setTimeout(loadNotifBadge,600);
+  }
+  const icons={attendance:'✅',payment:'💰',expense:'💸',advance:'💵',withdrawal:'💳',site:'🏗️',worker:'👷',material:'📦',extra_income:'✨',other:'📌'};
+  el.innerHTML=notifs.map(n=>{
+    const isUnread=!n.read_by?.includes(ME);
+    return`<div style="background:${isUnread?'var(--ind-l)':'var(--w)'};border:1px solid ${isUnread?'var(--ind-b)':'var(--gr100)'};border-radius:12px;padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+        <div style="font-size:20px">${icons[n.type]||'📌'}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:${isUnread?700:500};color:var(--gr900)">${n.msg}</div>
+          <div style="font-size:11px;color:var(--gr400);margin-top:3px">${n.by} · ${n.bs_date||n.date}</div>
+        </div>
+        ${isUnread?'<span style="background:var(--ind);color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:700;flex-shrink:0">NEW</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+async function markAllRead(){
+  const notifs=await dGet('notifications');
+  const toRead=notifs.filter(n=>!n.read_by?.includes(ME));
+  for(const n of toRead){
+    await db.collection('notifications').doc(n.id).update({read_by:firebase.firestore.FieldValue.arrayUnion(ME)}).catch(()=>{});
+  }
+  loadNotif();loadNotifBadge();toast('सबै पढियो ✓');
+}
+
 function openBillPhotoModal(siteId){
   const s=SITES.find(x=>x.id===siteId);
   document.getElementById('bill-lbl').textContent=s?s.name:'साइट';
@@ -2931,8 +3055,16 @@ async function loadAtt(){
   let html = summaryHtml;
   active.forEach(site=>{
     const saved=recs.find(r=>r.site_id===site.id);
+    const cid='att-'+site.id;
     html+=`<div class="sac">
-      <div class="sac-h"><div><div class="sac-nm">${site.name}</div><div class="sac-s">${site.client_name}${site.location?' · '+site.location:''}</div></div>${saved?'<span class="saved-t">✓ सेभ</span>':''}</div>`;
+      <div class="sac-h coll-hd" onclick="toggleColl('${cid}')">
+        <div><div class="sac-nm">${site.name}</div><div class="sac-s">${site.client_name}${site.location?' · '+site.location:''}</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${saved?'<span class="saved-t">✓ सेभ</span>':''}
+          <span class="coll-arrow open" id="arr-${cid}">▼</span>
+        </div>
+      </div>
+      <div class="coll-body" id="${cid}" style="max-height:2000px">`;
     WKRS.forEach(w=>{
       const sv=ATT_DATA[site.id]?.[w.id]||{};const st=sv.status||'';
       html+=`<div class="awr" id="awr-${site.id}-${w.id}">
@@ -2948,7 +3080,7 @@ async function loadAtt(){
     });
     html+=`<button class="sac-save" onclick="saveAttS('${site.id}','${site.name.replace(/'/g,"\\'")}')">
       💾 सेभ — ${site.name}
-    </button></div>`;
+    </button></div></div>`;
   });
   el.innerHTML=html;
 }
@@ -2962,9 +3094,18 @@ async function saveAttS(sid,sname){
   if(!entries.length){toast('कम्तीमा एकजना',false);return;}
   const docId=`${AD}_${sid}`;
   await dSet('attendance',docId,{date:AD,bs_date:fBS(AD),site_id:sid,site_name:sname,slot:'full',entries,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
-  toast(sname+' हाजिर सेभ ✓');loadAtt();
+  toast(sname+' हाजिर सेभ ✓');addNotif('attendance',`${ME} ले ${sname} को हाजिर सेभ गरे — ${fBS(AD)}`);loadAtt();
 }
-function chgD(dir){if(dir===0){AD=todStr();}else{const dt=new Date(AD);dt.setDate(dt.getDate()+dir);AD=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}loadAtt();}
+function chgD(dir){
+  if(dir===0){AD=todStr();}
+  else{
+    const dt=new Date(AD);dt.setDate(dt.getDate()+dir);
+    const next=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+    if(next>todStr()){toast('🔒 भविष्यको हाजिर राख्न मिल्दैन',false);return;}
+    AD=next;
+  }
+  loadAtt();
+}
 
 // ══ EXPENSES ══
 async function loadExp(){
@@ -2990,7 +3131,7 @@ async function saveExp(){
   const sid=document.getElementById('es').value,sn=SITES.find(x=>x.id===sid)?.name||'';
   const d=document.getElementById('ed').value;
   await dAdd('expenses',{site_id:sid,site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value});
-  closeM('mExp');toast('खर्च सेभ ✓');if(CUR==='exp')loadExp();else if(CDT==='ex')loadSEx();
+  closeM('mExp');toast('खर्च सेभ ✓');addNotif('expense',`${ME} ले खर्च थपे`);if(CUR==='exp')loadExp();else if(CDT==='ex')loadSEx();
 }
 
 // ══ TEAM ══
@@ -3107,6 +3248,8 @@ function boot(){
   // Auto-add member to workers if not exists
   autoAddMemberAsWorker();
   loadHome();
+  loadNotifBadge();
+  setInterval(loadNotifBadge,60000);
 }
 
 async function autoAddMemberAsWorker(){
@@ -3124,6 +3267,7 @@ window.addEventListener('load',async()=>{
   applyStoredTheme();
   applyStoredDarkMode();
   initPullToRefresh();
+  setTimeout(loadNotifBadge, 2000);
   document.getElementById('ssd').value=todStr();
   // Load profiles
   await loadProfiles();
