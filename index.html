@@ -117,31 +117,16 @@ input,select,textarea,button{font-family:'Mukta','Inter',sans-serif}
 .n{font-family:'Inter',sans-serif}
 
 /* SPLASH */
-/* ── ANIMATED SPLASH ── */
-#splash{background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;position:fixed;inset:0;z-index:999;overflow:hidden}
-#sp-scene{width:360px;display:flex;flex-direction:column;align-items:center}
+/* ── ANIMATED SPLASH (typewriter) ── */
+#splash{background:linear-gradient(160deg,#1C1917 0%,#292524 45%,#431407 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;position:fixed;inset:0;z-index:999;overflow:hidden}
+#sp-scene{display:flex;flex-direction:column;align-items:center}
 
-/* Drips grow downward */
-.drip{animation:dripGrow .6s cubic-bezier(.4,0,.2,1) var(--dd) forwards;transform-origin:top}
-@keyframes dripGrow{0%{height:0}100%{height:var(--dh)}}
+#sp-type-wrap{display:flex;align-items:center;font-family:'Yatra One',sans-serif;font-size:40px;color:#fff;letter-spacing:1px;min-height:54px}
+#sp-type-text{background:linear-gradient(135deg,#fff,#FED7AA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#sp-cursor{color:#EA580C;font-weight:300;font-size:38px;margin-left:2px;animation:cursorBlink .8s step-end infinite}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
 
-/* Drips hidden initially */
-#sp-drips{opacity:0}
-
-/* Logo */
-#sp-logo-box{opacity:0;transform:scale(.6);animation:logoIn .5s cubic-bezier(.34,1.4,.64,1) 1.7s forwards;margin-bottom:8px}
-@keyframes logoIn{to{opacity:1;transform:scale(1)}}
-
-/* Text */
-#sp-text{opacity:0;transform:translateY(12px);animation:textIn .4s ease 2s forwards;text-align:center}
-@keyframes textIn{to{opacity:1;transform:translateY(0)}}
-
-/* Override text colors for white bg */
-.sp-nm{color:#1C1917!important;font-size:28px;font-weight:900;letter-spacing:-1px}
-.sp-en{color:#78716C!important;font-size:13px;font-weight:600;letter-spacing:.5px}
-.sp-d{background:#EA580C!important}
-.sp-nm{font-family:'Yatra One',sans-serif;font-size:34px;color:#fff}
-.sp-en{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:4px;text-transform:uppercase;margin-top:3px}
+.sp-en{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:4px;text-transform:uppercase;margin-top:10px;transition:opacity .5s ease}
 .sp-dots{display:flex;gap:6px;margin-top:24px}
 .sp-d{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);animation:spd 1.4s infinite}
 .sp-d:nth-child(2){animation-delay:.2s}.sp-d:nth-child(3){animation-delay:.4s}
@@ -308,7 +293,21 @@ select.fi option{background:#fff}
   display:none;border:1px solid var(--ind-b);
 }
 .fbs.show{display:block;animation:fadeSlideUp .2s ease}
+.fbs-top{
+  font-size:15px;font-weight:800;color:var(--ind);margin-bottom:6px;
+  background:var(--ind-l);padding:9px 12px;border-radius:10px;
+  border:1.5px solid var(--ind-b);display:flex;align-items:center;gap:6px;
+}
+.fbs-top:empty::before{content:'📅 मिति छान्नुस्...';color:var(--gr400);font-weight:600;font-size:13px}
+.fi-ad-small{font-size:12px!important;padding:8px 12px!important;color:var(--gr500)!important;background:var(--gr50)!important}
 .fn{font-size:13px;font-weight:700;color:var(--ind);margin-top:-8px;margin-bottom:10px}
+
+/* ── BS DATE PICKER (selectable Nepali date) ── */
+.bsp-row{display:flex;gap:6px;margin-bottom:6px}
+.bsp-sel{flex:1;padding:11px 4px;border-radius:10px;border:1.5px solid var(--ind-b);background:var(--ind-l);color:var(--ind-d);font-weight:800;font-size:14px;text-align:center;font-family:inherit;-webkit-appearance:none;appearance:none}
+.bsp-sel.bsp-m{flex:1.6}
+.bsp-ad{font-size:11px;color:var(--gr400);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.bsp-clear{color:var(--r);font-weight:700;cursor:pointer;font-size:11px}
 .btn{padding:13px;border-radius:12px;font-weight:800;font-size:15px;border:none;cursor:pointer;width:100%;display:block;text-align:center;margin-bottom:10px}
 .btn:active{opacity:.87}
 .bp{background:linear-gradient(135deg,#EA580C,#C2410C);color:#fff;box-shadow:0 4px 12px rgba(234,88,12,.3)}
@@ -593,69 +592,12 @@ select.fi option{background:#fff}
 <!-- SPLASH -->
 <div id="splash">
   <div id="sp-scene">
-    <!-- BRUSH + STROKE LAYER -->
-    <svg id="sp-svg" viewBox="0 0 360 180" width="360" height="180" style="overflow:visible;display:block">
-      <!-- Paint stroke that reveals left to right -->
-      <rect id="sp-stroke-rect" x="-360" y="18" width="360" height="32" rx="6" fill="url(#brushGrad)"/>
-      <clipPath id="sp-reveal-clip">
-        <rect id="sp-clip-rect" x="-360" y="0" width="360" height="80"/>
-      </clipPath>
-      <rect x="0" y="18" width="360" height="32" rx="6" fill="url(#brushGrad)" clip-path="url(#sp-reveal-clip)"/>
-
-      <!-- DRIPS - 10 drips of different colors, heights -->
-      <g id="sp-drips" opacity="0">
-        <rect x="18" y="48" width="8" height="0" rx="4" fill="#EA580C" class="drip" style="--dh:95px;--dd:.82s"/>
-        <rect x="38" y="48" width="14" height="0" rx="4" fill="#1D4ED8" class="drip" style="--dh:115px;--dd:.88s"/>
-        <rect x="62" y="48" width="7" height="0" rx="4" fill="#F59E0B" class="drip" style="--dh:85px;--dd:.95s"/>
-        <rect x="82" y="48" width="18" height="0" rx="4" fill="#06B6D4" class="drip" style="--dh:130px;--dd:.78s"/>
-        <rect x="108" y="48" width="6" height="0" rx="4" fill="#EA580C" class="drip" style="--dh:75px;--dd:1s"/>
-        <rect x="128" y="48" width="15" height="0" rx="4" fill="#DC2626" class="drip" style="--dh:105px;--dd:.85s"/>
-        <rect x="158" y="48" width="10" height="0" rx="4" fill="#F59E0B" class="drip" style="--dh:120px;--dd:.9s"/>
-        <rect x="182" y="48" width="7" height="0" rx="4" fill="#1D4ED8" class="drip" style="--dh:90px;--dd:.75s"/>
-        <rect x="208" y="48" width="20" height="0" rx="4" fill="#EA580C" class="drip" style="--dh:140px;--dd:.92s"/>
-        <rect x="240" y="48" width="9" height="0" rx="4" fill="#06B6D4" class="drip" style="--dh:80px;--dd:.8s"/>
-        <rect x="265" y="48" width="13" height="0" rx="4" fill="#F59E0B" class="drip" style="--dh:110px;--dd:.87s"/>
-        <rect x="292" y="48" width="6" height="0" rx="4" fill="#DC2626" class="drip" style="--dh:95px;--dd:.93s"/>
-        <rect x="316" y="48" width="16" height="0" rx="4" fill="#EA580C" class="drip" style="--dh:125px;--dd:.77s"/>
-        <rect x="342" y="48" width="8" height="0" rx="4" fill="#1D4ED8" class="drip" style="--dh:70px;--dd:.98s"/>
-      </g>
-
-      <!-- BRUSH SVG - moves left to right -->
-      <g id="sp-brush" transform="translate(-40,0)">
-        <!-- Handle -->
-        <rect x="0" y="-2" width="48" height="10" rx="4" fill="#8B5E3C" transform="rotate(-28,24,24)"/>
-        <!-- Metal ferrule -->
-        <rect x="14" y="20" width="16" height="8" rx="2" fill="#9CA3AF"/>
-        <!-- Bristles -->
-        <rect x="10" y="26" width="24" height="18" rx="3" fill="#C2410C" opacity=".9"/>
-        <rect x="12" y="26" width="4" height="18" rx="2" fill="#EA580C" opacity=".7"/>
-        <rect x="18" y="26" width="5" height="18" rx="2" fill="#F97316" opacity=".6"/>
-        <rect x="25" y="26" width="4" height="18" rx="2" fill="#EA580C" opacity=".8"/>
-        <!-- Wet paint drip from brush tip -->
-        <ellipse cx="22" cy="44" rx="4" ry="2.5" fill="#EA580C" opacity=".9"/>
-      </g>
-
-      <defs>
-        <linearGradient id="brushGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#C2410C"/>
-          <stop offset="30%" stop-color="#EA580C"/>
-          <stop offset="60%" stop-color="#1D4ED8"/>
-          <stop offset="80%" stop-color="#F59E0B"/>
-          <stop offset="100%" stop-color="#DC2626"/>
-        </linearGradient>
-      </defs>
-    </svg>
-
-    <!-- Logo + text after brush -->
-    <div id="sp-logo-box">
-      <div style="font-size:56px">🏠</div>
+    <div id="sp-type-wrap">
+      <span id="sp-type-text"></span><span id="sp-cursor">|</span>
     </div>
-    <div id="sp-text">
-      <div class="sp-nm">अनुग्रह</div>
-      <div class="sp-en">House Painting · A.N.S.</div>
-    </div>
+    <div class="sp-en" id="sp-en" style="opacity:0">House Painting · A.N.S.</div>
   </div>
-  <div class="sp-dots" style="margin-top:16px">
+  <div class="sp-dots" style="margin-top:20px">
     <div class="sp-d"></div><div class="sp-d"></div><div class="sp-d"></div>
   </div>
 </div>
@@ -1025,8 +967,8 @@ select.fi option{background:#fff}
     <div class="fg"><label class="fl">स्थिति</label><select class="fi" id="sst"><option value="active">सक्रिय</option><option value="hold">रोकिएको</option></select></div>
   </div>
   <div class="fr">
-    <div class="fg"><label class="fl">सुरु मिति</label><input type="date" class="fi" id="ssd" oninput="bsF('ssd','ssd-b')"><div class="fbs" id="ssd-b"></div></div>
-    <div class="fg"><label class="fl">अन्त्य (अनुमान)</label><input type="date" class="fi" id="sed" oninput="bsF('sed','sed-b')"><div class="fbs" id="sed-b"></div></div>
+    <div class="fg"><label class="fl">सुरु मिति</label><div class="fbs-top" id="ssd-b"></div><input type="date" class="fi fi-ad-small" id="ssd" oninput="bsF('ssd','ssd-b')"></div>
+    <div class="fg"><label class="fl">अन्त्य (अनुमान)</label><div class="fbs-top" id="sed-b"></div><input type="date" class="fi fi-ad-small" id="sed" oninput="bsF('sed','sed-b')"></div>
   </div>
   <div class="fg"><label class="fl">नोट</label><input class="fi" id="snote" placeholder="थप जानकारी..."></div>
   <button class="btn bp" onclick="saveSite()">💾 साइट सेभ</button>
@@ -1039,7 +981,7 @@ select.fi option{background:#fff}
   <div style="background:var(--ind-l);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--ind);font-weight:700;margin-bottom:14px" id="pay-lbl"></div>
   <div class="fg"><label class="fl">रकम *</label><input type="number" class="fi" id="pa" placeholder="0"></div>
   <div class="fg"><label class="fl">प्रकार</label><select class="fi" id="pt"><option value="advance">अग्रिम</option><option value="installment">किस्ता</option><option value="final">अन्तिम</option></select></div>
-  <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="pd" oninput="bsF('pd','pd-b')"><div class="fbs" id="pd-b"></div></div>
+  <div class="fg"><label class="fl">मिति</label><div class="fbs-top" id="pd-b"></div><input type="date" class="fi fi-ad-small" id="pd" oninput="bsF('pd','pd-b')"></div>
   <div class="fg"><label class="fl">नोट</label><input class="fi" id="pn" placeholder="ऐच्छिक"></div>
   <button class="btn bp" onclick="savePay()">💾 सेभ</button>
   <button class="btn bs" onclick="closeM('mPay')">रद्द</button>
@@ -1064,7 +1006,7 @@ select.fi option{background:#fff}
   <div class="fg"><label class="fl">अग्रिम (Rs.)</label><input type="number" class="fi" id="wga" placeholder="0" oninput="cWG()"></div>
   <div class="fn" id="wg-bal" style="color:var(--a)">बाँकी: Rs. 0</div>
   <div class="fr">
-    <div class="fg"><label class="fl">सुरु</label><input type="date" class="fi" id="wgfd" oninput="bsF('wgfd','wgfd-b')"><div class="fbs" id="wgfd-b"></div></div>
+    <div class="fg"><label class="fl">सुरु</label><div class="fbs-top" id="wgfd-b"></div><input type="date" class="fi fi-ad-small" id="wgfd" oninput="bsF('wgfd','wgfd-b')"></div>
     <div class="fg"><label class="fl">अन्त्य</label><input type="date" class="fi" id="wgtd"></div>
   </div>
   <button class="btn bp" onclick="saveWage()">💾 सेभ</button>
@@ -1086,7 +1028,7 @@ select.fi option{background:#fff}
   </div>
   <div class="fg"><label class="fl">रकम *</label><input type="number" class="fi" id="ea" placeholder="0"></div>
   <div class="fr">
-    <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="ed" oninput="bsF('ed','ed-b')"><div class="fbs" id="ed-b"></div></div>
+    <div class="fg"><label class="fl">मिति</label><div class="fbs-top" id="ed-b"></div><input type="date" class="fi fi-ad-small" id="ed" oninput="bsF('ed','ed-b')"></div>
     <div class="fg"><label class="fl">कसले?</label><select class="fi" id="eby"><option>AMRIT</option><option>NIRAN</option><option>SUBEIN</option><option value="common">साझा</option></select></div>
   </div>
   <div class="fg"><label class="fl">विवरण</label><input class="fi" id="en" placeholder="जस्तै: Asian Paints 20L..."></div>
@@ -1100,7 +1042,7 @@ select.fi option{background:#fff}
   <div style="background:var(--ind-l);padding:10px 14px;border-radius:10px;font-size:13px;color:var(--ind);font-weight:700;margin-bottom:14px" id="adv-lbl">—</div>
   <div class="fg"><label class="fl">कामदार</label><select class="fi" id="adv-wkr"><option value="">छान्नुस्...</option></select></div>
   <div class="fg"><label class="fl">रकम (Rs.) *</label><input type="number" class="fi" id="adv-amt" placeholder="0"></div>
-  <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="adv-d" oninput="bsF('adv-d','adv-db')"><div class="fbs" id="adv-db"></div></div>
+  <div class="fg"><label class="fl">मिति</label><div class="fbs-top" id="adv-db"></div><input type="date" class="fi fi-ad-small" id="adv-d" oninput="bsF('adv-d','adv-db')"></div>
   <div class="fg"><label class="fl">स्रोत</label>
     <select class="fi" id="adv-src" onchange="document.getElementById('adv-personal-note').style.display=this.value!=='site'?'block':'none'">
       <option value="site">🏗️ साइट बजेटबाट (साझा खर्च)</option>
@@ -1154,7 +1096,7 @@ select.fi option{background:#fff}
   <div class="fg"><label class="fl">पूरा नाम *</label><input class="fi" id="nwn" placeholder="पूरा नाम"></div>
   <div class="fg"><label class="fl">फोन नम्बर</label><input type="tel" class="fi" id="nwp" placeholder="98XXXXXXXX"></div>
   <div class="fr">
-    <div class="fg"><label class="fl">जोइनिङ मिति</label><input type="date" class="fi" id="nwjd" oninput="bsF('nwjd','nwjd-b')"><div class="fbs" id="nwjd-b"></div></div>
+    <div class="fg"><label class="fl">जोइनिङ मिति</label><div class="fbs-top" id="nwjd-b"></div><input type="date" class="fi fi-ad-small" id="nwjd" oninput="bsF('nwjd','nwjd-b')"></div>
     <div class="fg"><label class="fl">दैनिक ज्याला (Rs.)</label><input type="number" class="fi" id="nwdw" placeholder="0"></div>
   </div>
   <div class="fg"><label class="fl">नोट / विशेष जानकारी</label><input class="fi" id="nwnote" placeholder="ऐच्छिक"></div>
@@ -1175,7 +1117,7 @@ select.fi option{background:#fff}
       <option value="salary">💳 तलब</option>
     </select>
   </div>
-  <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="wdraw-d" oninput="bsF('wdraw-d','wdraw-db')"><div class="fbs" id="wdraw-db"></div></div>
+  <div class="fg"><label class="fl">मिति</label><div class="fbs-top" id="wdraw-db"></div><input type="date" class="fi fi-ad-small" id="wdraw-d" oninput="bsF('wdraw-d','wdraw-db')"></div>
   <div class="fg"><label class="fl">नोट</label><input class="fi" id="wdraw-note" placeholder="जस्तै: घर खर्च, site सामान..."></div>
   <button class="btn bp" onclick="saveWithdrawal()">💾 सेभ</button>
   <button class="btn bs" onclick="closeM('mWdraw')">रद्द</button>
@@ -1196,7 +1138,7 @@ select.fi option{background:#fff}
 <!-- MODAL: WORKER ATT -->
 <div class="mbo" id="mWA"><div class="msh">
   <div class="mhd"></div><div class="mtit" id="wa-title">हाजिर दर्ता</div>
-  <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="wa-d" oninput="bsF('wa-d','wa-db')"><div class="fbs" id="wa-db"></div></div>
+  <div class="fg"><label class="fl">मिति</label><div class="fbs-top" id="wa-db"></div><input type="date" class="fi fi-ad-small" id="wa-d" oninput="bsF('wa-d','wa-db')"></div>
   <div class="fg"><label class="fl">साइट</label><select class="fi" id="wa-s"><option value="">छान्नुस्...</option></select></div>
   <div class="fg"><label class="fl">खण्ड</label><select class="fi" id="wa-sl"><option value="full">पूरा दिन</option><option value="morning">बिहान</option><option value="afternoon">दिउँसो</option></select></div>
   <div class="fg"><label class="fl">स्थिति</label><select class="fi" id="wa-st"><option value="P">उपस्थित</option><option value="A">अनुपस्थित</option><option value="H">आधा दिन</option><option value="V">बिदा</option></select></div>
@@ -1268,8 +1210,7 @@ select.fi option{background:#fff}
   </div>
   <div class="fg">
     <label class="fl">मिति</label>
-    <input type="date" class="fi" id="bill-date" oninput="bsF('bill-date','bill-date-b')">
-    <div class="fbs" id="bill-date-b"></div>
+    <div class="fbs-top" id="bill-date-b"></div><input type="date" class="fi fi-ad-small" id="bill-date" oninput="bsF('bill-date','bill-date-b')">
   </div>
   <input type="hidden" id="bill-site-id">
   <button class="btn bp" onclick="saveBillPhoto()">💾 सेभ</button>
@@ -1330,7 +1271,7 @@ select.fi option{background:#fff}
       <option value="other">📦 अन्य</option>
     </select>
   </div>
-  <div class="fg"><label class="fl">मिति</label><input type="date" class="fi" id="ei-date" oninput="bsF('ei-date','ei-date-b')"><div class="fbs" id="ei-date-b"></div></div>
+  <div class="fg"><label class="fl">मिति</label><div class="fbs-top" id="ei-date-b"></div><input type="date" class="fi fi-ad-small" id="ei-date" oninput="bsF('ei-date','ei-date-b')"></div>
   <div class="fg"><label class="fl">विवरण</label><input class="fi" id="ei-note" placeholder="जस्तै: Asian Paint coupon Rs.2000"></div>
   <input type="hidden" id="ei-site-id">
   <button class="btn bp" onclick="saveExtraIncome()">💾 सेभ</button>
@@ -1371,6 +1312,7 @@ select.fi option{background:#fff}
 // ══ FIREBASE ══
 firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});
 const db = firebase.firestore();
+try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{});}catch(e){}
 
 // ══ AUTH ══
 const DEF_PW = {AMRIT:'amrit@2082',NIRAN:'niran@2082',SUBEIN:'subein@2082'};
@@ -1519,8 +1461,84 @@ function bsToday(){return fBS(todStr());}
 function bsF(inId,outId){
   const v=document.getElementById(inId)?.value;
   const el=document.getElementById(outId);if(!el)return;
-  if(v){el.textContent='📅 '+fBS(v);el.classList.add('show');}
-  else{el.textContent='';el.classList.remove('show');}
+  if(v){el.innerHTML='📅 '+fBS(v);el.classList.add('show');}
+  else{el.innerHTML='';el.classList.remove('show');}
+}
+
+// ══ BS DATE PICKER (selectable Nepali date — drives AD underneath) ══
+function bsToAd(y,m,d){
+  let cy=2082,cm=1,days=0;
+  if(y>2082||(y===2082&&m>1)||(y===2082&&m===1)){
+    while(cy<y||cm<m){days+=bsMD(cy,cm);cm++;if(cm>12){cm=1;cy++;}}
+    days+=(d-1);
+  }else{
+    while(cy>y||(cy===y&&cm>m)){cm--;if(cm<1){cm=12;cy--;}days-=bsMD(cy,cm);}
+    days-=(1-d);
+  }
+  const ref=new Date(REF_Y,REF_M-1,REF_D);
+  const r=new Date(ref);r.setDate(r.getDate()+days);
+  return`${r.getFullYear()}-${String(r.getMonth()+1).padStart(2,'0')}-${String(r.getDate()).padStart(2,'0')}`;
+}
+function bsDayOpts(y,m,sel){
+  const max=bsMD(y,m);let h='';
+  for(let i=1;i<=max;i++)h+=`<option value="${i}"${i===sel?' selected':''}>${i}</option>`;
+  return h;
+}
+function bsMonthOpts(sel){return NM.map((n,i)=>`<option value="${i+1}"${i+1===sel?' selected':''}>${n}</option>`).join('');}
+function bsYearOpts(sel){let h='';for(let y=2078;y<=2090;y++)h+=`<option value="${y}"${y===sel?' selected':''}>${y}</option>`;return h;}
+function bspHTML(id,optional){
+  return`<div class="bsp-row">
+    <select class="bsp-sel" id="${id}-bd" onchange="bsPickChange('${id}')"></select>
+    <select class="bsp-sel bsp-m" id="${id}-bm" onchange="bsPickChange('${id}')"></select>
+    <select class="bsp-sel" id="${id}-by" onchange="bsPickChange('${id}')"></select>
+  </div>
+  <div class="bsp-ad"><span id="${id}-adlbl">AD: —</span>${optional?`<span class="bsp-clear" onclick="clearDateField('${id}')">✕ हटाउनुस्</span>`:''}</div>
+  <input type="hidden" id="${id}">`;
+}
+function mountAllBsPickers(){
+  document.querySelectorAll('.bsp-mount').forEach(el=>{
+    const id=el.dataset.id,optional=el.dataset.optional==='1';
+    if(!el.dataset.mounted){
+      el.innerHTML=bspHTML(id,optional);
+      el.dataset.mounted='1';
+    }
+  });
+}
+function setDateField(id,adStr){
+  const hidden=document.getElementById(id);if(!hidden)return;
+  const b=adToBS(adStr||todStr())||{y:2082,m:1,d:1};
+  hidden.value=adStr||'';
+  const dSel=document.getElementById(id+'-bd'),mSel=document.getElementById(id+'-bm'),ySel=document.getElementById(id+'-by');
+  if(mSel)mSel.innerHTML=bsMonthOpts(b.m);
+  if(ySel)ySel.innerHTML=bsYearOpts(b.y);
+  if(dSel)dSel.innerHTML=bsDayOpts(b.y,b.m,b.d);
+  const lbl=document.getElementById(id+'-adlbl');
+  if(lbl)lbl.textContent='AD: '+(adStr||'—');
+}
+function bsPickChange(id){
+  const dSel=document.getElementById(id+'-bd'),mSel=document.getElementById(id+'-bm'),ySel=document.getElementById(id+'-by');
+  if(!dSel||!mSel||!ySel)return;
+  const y=+ySel.value,m=+mSel.value;let d=+dSel.value;
+  const maxDay=bsMD(y,m);
+  if(dSel.options.length!==maxDay){
+    d=Math.min(d,maxDay);
+    dSel.innerHTML=bsDayOpts(y,m,d);
+  }
+  const adStr=bsToAd(y,m,d);
+  document.getElementById(id).value=adStr;
+  const lbl=document.getElementById(id+'-adlbl');
+  if(lbl)lbl.textContent='AD: '+adStr;
+}
+function initEmptyDateField(id){
+  // Populate picker with today's BS values but keep hidden value empty (silent, no toast)
+  setDateField(id,todStr());
+  document.getElementById(id).value='';
+  const lbl=document.getElementById(id+'-adlbl');
+  if(lbl)lbl.textContent='AD: —';
+}
+function clearDateField(id){
+  initEmptyDateField(id);
+  toast('मिति खाली गरियो');
 }
 
 // ══ LANGUAGE ══
@@ -1649,13 +1667,11 @@ function go(p){
 // Auto-show BS on all date inputs when modal opens
 const openM=id=>{
   document.getElementById(id).classList.add('open');
-  // Trigger BS display for all date inputs in this modal
   setTimeout(()=>{
     document.getElementById(id).querySelectorAll('input[type="date"]').forEach(inp=>{
       if(inp.value){
-        const outId=inp.id+'-b';
-        const outEl=document.getElementById(outId);
-        if(outEl){outEl.textContent='📅 '+fBS(inp.value);outEl.classList.add('show');}
+        const outEl=document.getElementById(inp.id+'-b')||document.getElementById(inp.id+'-db');
+        if(outEl){outEl.innerHTML='📅 '+fBS(inp.value);outEl.classList.add('show');}
       }
     });
   },50);
@@ -1831,8 +1847,8 @@ function renderSites(){const list=sFil==='all'?SITES:SITES.filter(s=>s.status===
 function openSiteModal(){
   ['sn','scl','sph','sloc','sa','ssq','srt','snote'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('sct').value='full';document.getElementById('sst').value='active';
-  document.getElementById('ssd').value=todStr();document.getElementById('ssd-b').textContent=bsToday();
-  document.getElementById('sed').value='';document.getElementById('sed-b').textContent='';
+  document.getElementById('ssd').value=todStr();bsF('ssd','ssd-b');
+  document.getElementById('sed').value='';document.getElementById('sed-b').innerHTML='';
   document.getElementById('sby').value=ME||'AMRIT';onCT();openM('mSite');
 }
 function onCT(){const t=document.getElementById('sct').value;document.getElementById('cga').style.display=(t==='full'||t==='labour')?'block':'none';document.getElementById('cgs').style.display=t==='sqft'?'block':'none';}
@@ -1850,6 +1866,7 @@ async function saveSite(){
 // ══ SITE DETAIL ══
 function openDet(id){
   CS=id;const s=SITES.find(x=>x.id===id);
+  EX_FILTER=null;
   if(s){document.getElementById('det-nm').textContent=s.name;document.getElementById('det-mt').textContent=`${s.client_name}${s.location?' · '+s.location:''}${s.bs_start?' · '+s.bs_start:''}`;}
   document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.dtab')[0].classList.add('on');
   CDT='ov';document.getElementById('det').classList.add('open');document.getElementById('nav').style.display='none';loadDT('ov');
@@ -2068,7 +2085,7 @@ async function loadPays(){
       </div></div>`).join('')}</div>
   </div>`;
 }
-function openPayModal(){const s=SITES.find(x=>x.id===CS);document.getElementById('pay-lbl').textContent=s?s.name:'';document.getElementById('pa').value='';document.getElementById('pt').value='advance';document.getElementById('pd').value=todStr();document.getElementById('pd-b').textContent=bsToday();document.getElementById('pn').value='';openM('mPay');}
+function openPayModal(){const s=SITES.find(x=>x.id===CS);document.getElementById('pay-lbl').textContent=s?s.name:'';document.getElementById('pa').value='';document.getElementById('pt').value='advance';document.getElementById('pd').value=todStr();bsF('pd','pd-b');document.getElementById('pn').value='';openM('mPay');}
 async function savePay(){const amt=+document.getElementById('pa').value;if(!amt){toast('रकम राख्नुस्',false);return;}const d=document.getElementById('pd').value;await dAdd('payments',{site_id:CS,amount:amt,type:document.getElementById('pt').value,date:d,bs_date:fBS(d),note:document.getElementById('pn').value});clearCache('payments');closeM('mPay');toast('भुक्तानी सेभ ✓');addNotif('payment',`${ME} ले ${Rs(amt)} भुक्तानी थपे — site: ${SITES.find(s=>s.id===CS)?.name||CS}`);loadPays();}
 
 async function loadWages(){
@@ -2145,7 +2162,7 @@ async function openWageModal(){
   const sel=document.getElementById('wgw');
   sel.innerHTML=`<option value="">छान्नुस्...</option>${WKRS.map(w=>`<option value="${w.id}">${w.name}${w.phone?' · '+w.phone:''}</option>`).join('')}<option value="__new__">+ नयाँ कामदार</option>`;
   ['wgd','wgr','wga'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('wgfd').value=todStr();document.getElementById('wgfd-b').textContent=bsToday();
+  document.getElementById('wgfd').value=todStr();bsF('wgfd','wgfd-b');
   document.getElementById('wgtd').value='';document.getElementById('wg-new').style.display='none';
   document.getElementById('wg-earn').textContent='कुल: Rs. 0';document.getElementById('wg-bal').textContent='बाँकी: Rs. 0';
   openM('mWage');
@@ -2171,21 +2188,71 @@ async function loadSEx(){
   const exps=await dGet('expenses',['site_id','==',CS]);
   exps.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
   const tot=exps.reduce((a,e)=>a+Number(e.amount||0),0);
+  const totUnclaimed=exps.filter(e=>!e.claimed).reduce((a,e)=>a+Number(e.amount||0),0);
+
+  // Payer-wise breakdown (with claim status)
+  const byPayer={};
+  exps.forEach(e=>{
+    const p=e.paid_by||'—';
+    if(!byPayer[p])byPayer[p]={total:0,count:0,unclaimed:0};
+    byPayer[p].total+=Number(e.amount||0);
+    byPayer[p].count++;
+    if(!e.claimed)byPayer[p].unclaimed+=Number(e.amount||0);
+  });
+  const payers=Object.entries(byPayer).sort((a,b)=>b[1].total-a[1].total);
+
+  const filtered=EX_FILTER?exps.filter(e=>(e.paid_by||'—')===EX_FILTER):exps;
+
   el.innerHTML=`<div class="pc">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <div><div style="font-size:12px;color:var(--gr500)">जम्मा खर्च</div><div class="n" style="font-size:28px;font-weight:800;color:var(--r)">${Rs(tot)}</div></div>
       <button class="btn bp bsm" onclick="openSiteExpM()">+ थप्नुस्</button>
     </div>
-    <div class="ic" style="padding:0">${!exps.length?emptyS('💸','खर्च छैन'):exps.map(e=>`
-      <div class="li"><div class="li-i" style="font-size:18px">${ET_ICO[e.category]||'📦'}</div>
-      <div style="flex:1"><div class="li-t">${e.note||ET[e.category]||e.category}</div><div class="li-s">${fBS(e.date)||fD(e.date)} · ${e.paid_by}</div></div>
+    ${totUnclaimed>0?`<div style="background:var(--al);border:1px solid #FCD34D;border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;font-weight:700;color:#92400E">⏳ साइटबाट फिर्ता लिन बाँकी</span>
+      <span class="n" style="font-size:16px;font-weight:800;color:#92400E">${Rs(totUnclaimed)}</span>
+    </div>`:''}
+
+    ${payers.length>1?`
+    <div class="ic" style="margin-bottom:12px">
+      <div style="padding:10px 16px;font-size:12px;font-weight:800;color:var(--gr500);text-transform:uppercase;border-bottom:1px solid var(--gr100)">👤 कसले कति खर्च गर्यो</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px">
+        ${EX_FILTER?`<div onclick="setExFilter(null)" style="padding:8px 14px;border-radius:20px;background:var(--gr100);color:var(--gr600);font-size:12px;font-weight:700;cursor:pointer">✕ सबै देखाउनुस्</div>`:''}
+        ${payers.map(([name,d])=>`
+          <div onclick="setExFilter('${name}')" style="padding:10px 14px;border-radius:14px;background:${EX_FILTER===name?'var(--ind)':'var(--ind-l)'};color:${EX_FILTER===name?'#fff':'var(--ind)'};cursor:pointer;min-width:100px;transition:all .15s">
+            <div style="font-size:13px;font-weight:800">${name}</div>
+            <div style="font-size:16px;font-weight:800;font-family:'Inter',sans-serif">${Rs(d.total)}</div>
+            <div style="font-size:10px;opacity:.8">${d.count} entries${d.unclaimed>0?` · ⏳${Rs(d.unclaimed)} बाँकी`:' · ✅ सबै लियो'}</div>
+          </div>`).join('')}
+      </div>
+    </div>`:''}
+
+    <div class="ic" style="padding:0">${!filtered.length?emptyS('💸','खर्च छैन'):filtered.map(e=>`
+      <div class="li" style="${e.claimed?'opacity:.55':''}"><div class="li-i" style="font-size:18px">${ET_ICO[e.category]||'📦'}</div>
+      <div style="flex:1"><div class="li-t">${e.note||ET[e.category]||e.category}${e.claimed?' <span style=\"color:var(--g);font-size:11px;font-weight:700\">✅ लियो</span>':''}</div><div class="li-s">${fBS(e.date)||fD(e.date)} · ${e.paid_by}</div></div>
       <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
         <div class="neg">${Rs(e.amount)}</div>
+        ${e.paid_by===ME?`<button onclick="toggleClaim('${e.id}',${e.claimed||false})" style="background:${e.claimed?'var(--gr100)':'var(--gl)'};border:none;color:${e.claimed?'var(--gr500)':'#065F46'};font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;white-space:nowrap">${e.claimed?'↩️ फिर्ता':'✅ लिएँ'}</button>`:e.claimed?`<span style="font-size:10px;color:var(--g);font-weight:700">✅ लियो</span>`:`<span style="font-size:10px;color:var(--a);font-weight:700">⏳ बाँकी</span>`}
         <button onclick="delEntry('expenses','${e.id}','loadSEx')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑</button>
       </div></div>`).join('')}</div>
   </div>`;
 }
-function openSiteExpM(){populateES(CS);document.getElementById('ea').value='';document.getElementById('ed').value=todStr();document.getElementById('ed-b').textContent=bsToday();document.getElementById('en').value='';openM('mExp');}
+// ══ EXPENSE CLAIM STATUS ══
+let EX_FILTER=null;
+function setExFilter(name){EX_FILTER=name;loadSEx();}
+async function toggleClaim(id,current){
+  try{
+    const doc=await db.collection('expenses').doc(id).get();
+    if(doc.exists&&doc.data().paid_by!==ME){
+      toast('यो खर्च तपाईंले गर्नुभएको होइन',false);return;
+    }
+  }catch(e){}
+  await dUp('expenses',id,{claimed:!current});
+  clearCache('expenses');
+  toast(!current?'✅ पैसा लिइयो भनेर चिन्ह लाग्यो':'⏳ फेरि बाँकी मा राखियो');
+  if(CDT==='ex')loadSEx();else loadExp();
+}
+function openSiteExpM(){populateES(CS);document.getElementById('ea').value='';document.getElementById('ed').value=todStr();bsF('ed','ed-b');document.getElementById('en').value='';openM('mExp');}
 
 async function loadSAtt(){
   const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
@@ -2263,7 +2330,7 @@ function openExtraIncomeModal(siteId){
   document.getElementById('ei-site-id').value=siteId;
   document.getElementById('ei-amount').value='';
   document.getElementById('ei-category').value='material_savings';
-  document.getElementById('ei-date').value=todStr();
+  document.getElementById('ei-date').value=todStr();bsF('ei-date','ei-date-b');
   document.getElementById('ei-date-b').textContent='📅 '+bsToday();
   document.getElementById('ei-date-b').classList.add('show');
   document.getElementById('ei-note').value='';
@@ -2305,7 +2372,7 @@ async function openAdvModal(siteId){
   WKRS=await dGet('workers');
   document.getElementById('adv-wkr').innerHTML=`<option value="">कामदार छान्नुस्...</option>${WKRS.map(w=>`<option value="${w.id}|${w.name}">${w.name}${w.phone?' · '+w.phone:''}</option>`).join('')}`;
   document.getElementById('adv-amt').value='';
-  document.getElementById('adv-d').value=todStr();document.getElementById('adv-db').textContent=bsToday();
+  document.getElementById('adv-d').value=todStr();bsF('adv-d','adv-db');
   document.getElementById('adv-src').value='site';document.getElementById('adv-note').value='';
   document.getElementById('adv-personal-note').style.display='none';
   document.getElementById('adv-site-id').value=siteId||'';
@@ -2568,7 +2635,7 @@ function openNewWModal(){
   document.getElementById('nw-id').value='';
   document.getElementById('nw-title').textContent='👷 नयाँ कामदार';
   ['nwn','nwp','nwnote'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('nwjd').value=todStr();
+  document.getElementById('nwjd').value=todStr();bsF('nwjd','nwjd-b');
   document.getElementById('nwjd-b').textContent=bsToday();
   document.getElementById('nwdw').value='';
   openM('mNW');
@@ -2578,7 +2645,7 @@ function openEditWModal(w){
   document.getElementById('nw-title').textContent='✏️ कामदार सम्पादन';
   document.getElementById('nwn').value=w.name||'';
   document.getElementById('nwp').value=w.phone||'';
-  document.getElementById('nwjd').value=w.join_date||'';
+  document.getElementById('nwjd').value=w.join_date||'';bsF('nwjd','nwjd-b');
   document.getElementById('nwjd-b').textContent=w.join_date?fBS(w.join_date):'';
   document.getElementById('nwdw').value=w.daily_wage||'';
   document.getElementById('nwnote').value=w.note||'';
@@ -2877,7 +2944,7 @@ function openBillPhotoModal(siteId){
   document.getElementById('bill-photo-input').value='';
   document.getElementById('bill-preview').innerHTML='';
   document.getElementById('bill-note').value='';
-  document.getElementById('bill-date').value=todStr();
+  document.getElementById('bill-date').value=todStr();bsF('bill-date','bill-date-b');
   document.getElementById('bill-date-b').textContent='📅 '+bsToday();
   document.getElementById('bill-date-b').classList.add('show');
   openM('mBillPhoto');
@@ -3051,7 +3118,7 @@ async function delEntry(collection, id, reloadFn){
 function openWithdrawalModal(){
   document.getElementById('wdraw-who').textContent=ME+' को Share बाट रकम';
   document.getElementById('wdraw-amt').value='';
-  document.getElementById('wdraw-d').value=todStr();
+  document.getElementById('wdraw-d').value=todStr();bsF('wdraw-d','wdraw-db');
   document.getElementById('wdraw-db').textContent=bsToday();
   document.getElementById('wdraw-note').value='';
   document.getElementById('wdraw-type').value='cash';
@@ -3073,7 +3140,7 @@ async function openWAM(wid,wname){
   SITES=await dGet('sites');
   document.getElementById('wa-title').textContent=wname+' — हाजिर';
   document.getElementById('wa-wid').value=wid;document.getElementById('wa-wname').value=wname;
-  document.getElementById('wa-d').value=todStr();document.getElementById('wa-db').textContent=bsToday();
+  document.getElementById('wa-d').value=todStr();bsF('wa-d','wa-db');
   document.getElementById('wa-sl').value='full';document.getElementById('wa-st').value='P';
   document.getElementById('wa-in').value='';document.getElementById('wa-out').value='';
   document.getElementById('wa-s').innerHTML=`<option value="">साइट छान्नुस्...</option>${SITES.filter(s=>s.status==='active').map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}`;
@@ -3112,12 +3179,12 @@ async function loadAtt(){
   WKRS.forEach(w => {
     workerSummary[w.id] = {name:w.name, status:'', site:''};
   });
-  // Override with actual attendance data
+  // Override with actual attendance data — but skip workers not in active WKRS (paused)
   recs.forEach(r => {
     const siteName = r.site_name||SITES.find(s=>s.id===r.site_id)?.name||'';
     (r.entries||[]).forEach(e => {
       const key = e.wid||e.name;
-      if(!workerSummary[key]) workerSummary[key] = {name:e.name, status:'', site:''};
+      if(!workerSummary[key])return; // paused/removed worker — don't show
       workerSummary[key].status = e.status;
       workerSummary[key].site = siteName;
     });
@@ -3234,23 +3301,24 @@ async function loadExp(){
   exps.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
   if(eFil!=='all')exps=exps.filter(e=>e.category===eFil);
   const tot=exps.reduce((a,e)=>a+Number(e.amount||0),0);
-  document.getElementById('exp-sub').textContent='जम्मा: '+Rs(tot);
+  const totUnclaimed=exps.filter(e=>!e.claimed).reduce((a,e)=>a+Number(e.amount||0),0);
+  document.getElementById('exp-sub').textContent='जम्मा: '+Rs(tot)+(totUnclaimed>0?' · ⏳ बाँकी: '+Rs(totUnclaimed):'');
   const bySite={};exps.forEach(e=>{const k=e.site_id||'__';if(!bySite[k])bySite[k]={name:e.site_name||'—',items:[]};bySite[k].items.push(e);});
   if(!exps.length){document.getElementById('e-list').innerHTML=emptyS('💸','कुनै खर्च छैन');return;}
   document.getElementById('e-list').innerHTML=Object.values(bySite).map(sg=>{
     const st=sg.items.reduce((a,e)=>a+Number(e.amount||0),0);
     return`<div class="esb"><div class="esb-h"><div class="esb-hn">📍 ${sg.name}</div><div class="esb-ht">${Rs(st)}</div></div>
-    ${sg.items.map(e=>`<div class="esb-row"><div class="esb-ico">${ET_ICO[e.category]||'📦'}</div><div class="esb-det"><div class="esb-cn">${e.note||ET[e.category]||e.category}</div><div class="esb-cs">${fBS(e.date)||fD(e.date)} · ${e.paid_by}</div></div><div class="esb-amt">${Rs(e.amount)}</div></div>`).join('')}</div>`;
+    ${sg.items.map(e=>`<div class="esb-row" style="${e.claimed?'opacity:.55':''}"><div class="esb-ico">${ET_ICO[e.category]||'📦'}</div><div class="esb-det"><div class="esb-cn">${e.note||ET[e.category]||e.category}${e.claimed?' <span style=\"color:var(--g);font-size:10px;font-weight:700\">✅</span>':''}</div><div class="esb-cs">${fBS(e.date)||fD(e.date)} · ${e.paid_by}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px"><div class="esb-amt">${Rs(e.amount)}</div>${e.paid_by===ME?`<button onclick="event.stopPropagation();toggleClaim('${e.id}',${e.claimed||false})" style="background:${e.claimed?'var(--gr100)':'var(--gl)'};border:none;color:${e.claimed?'var(--gr500)':'#065F46'};font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;cursor:pointer;white-space:nowrap">${e.claimed?'↩️':'✅ लिएँ'}</button>`:''}</div></div>`).join('')}</div>`;
   }).join('');
 }
 function fExp(f,btn){eFil=f;document.querySelectorAll('#pg-exp .fil').forEach(t=>t.classList.remove('on'));btn.classList.add('on');loadExp();}
-function openGlobalExp(){populateES();document.getElementById('ea').value='';document.getElementById('ed').value=todStr();document.getElementById('ed-b').textContent=bsToday();document.getElementById('en').value='';openM('mExp');}
+function openGlobalExp(){populateES();document.getElementById('ea').value='';document.getElementById('ed').value=todStr();bsF('ed','ed-b');document.getElementById('en').value='';openM('mExp');}
 function populateES(def=null){document.getElementById('es').innerHTML=`<option value="">साइट छान्नुस्...</option>${SITES.filter(s=>s.status==='active').map(s=>`<option value="${s.id}"${s.id===def?' selected':''}>${s.name}</option>`).join('')}`;}
 async function saveExp(){
   const amt=+document.getElementById('ea').value;if(!amt){toast('रकम',false);return;}
   const sid=document.getElementById('es').value,sn=SITES.find(x=>x.id===sid)?.name||'';
   const d=document.getElementById('ed').value;
-  await dAdd('expenses',{site_id:sid,site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value});
+  await dAdd('expenses',{site_id:sid,site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value,claimed:false});
   closeM('mExp');
   clearCache('expenses');toast('खर्च सेभ ✓');
   addNotif('expense',`💸 ${ME} — ${Rs(amt)} खर्च · ${sn||'—'} · ${fBS(d)}`);
@@ -3386,29 +3454,24 @@ async function autoAddMemberAsWorker(){
 
 // ══ SPLASH BRUSH ANIMATION ══
 function animateSplashBrush(){
-  const brush=document.getElementById('sp-brush');
-  const clipRect=document.getElementById('sp-clip-rect');
-  const drips=document.getElementById('sp-drips');
-  if(!brush||!clipRect)return;
-
-  const duration=1300; // ms for brush stroke
-  const startTime=performance.now();
-  const totalDist=400; // brush travels -40 to 360
-
-  function frame(now){
-    const elapsed=now-startTime;
-    const t=Math.min(elapsed/duration,1);
-    const ease=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2; // easeInOutQuad
-    const x=-40+ease*totalDist;
-    brush.setAttribute('transform',`translate(${x},0)`);
-    clipRect.setAttribute('x',-360+ease*360);
-    if(t<1)requestAnimationFrame(frame);
-    else{
-      // Stroke complete — show drips
-      if(drips)drips.style.opacity='1';
+  const word='अनुग्रह';
+  const el=document.getElementById('sp-type-text');
+  const enEl=document.getElementById('sp-en');
+  if(!el)return;
+  let i=0;
+  el.textContent='';
+  const speed=130; // ms per character
+  function typeChar(){
+    if(i<word.length){
+      el.textContent+=word[i];
+      i++;
+      setTimeout(typeChar,speed);
+    }else{
+      // Done typing — fade in subtitle
+      setTimeout(()=>{if(enEl)enEl.style.opacity='1';},150);
     }
   }
-  requestAnimationFrame(frame);
+  setTimeout(typeChar,200);
 }
 
 window.addEventListener('load',async()=>{
@@ -3417,14 +3480,14 @@ window.addEventListener('load',async()=>{
   applyStoredDarkMode();
   initPullToRefresh();
   setTimeout(loadNotifBadge, 2000);
-  document.getElementById('ssd').value=todStr();
+  document.getElementById('ssd').value=todStr();bsF('ssd','ssd-b');
 
   // ── ANIMATE BRUSH PAINTING SPLASH ──
   animateSplashBrush();
 
-  // Load profiles
-  await loadProfiles();
-  await new Promise(r=>setTimeout(r,2300));
+  // Run data loading + splash animation in PARALLEL (not sequential) for faster perceived load
+  const minSplash=new Promise(r=>setTimeout(r,2000));
+  await Promise.all([loadProfiles(), minSplash]);
   document.getElementById('splash').style.opacity='0';document.getElementById('splash').style.transition='opacity .35s';
   setTimeout(()=>document.getElementById('splash').style.display='none',380);
   if(ME){boot();}
