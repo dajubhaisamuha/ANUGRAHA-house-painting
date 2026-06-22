@@ -549,9 +549,41 @@ select.fi option{background:#fff}
 .btn:active{opacity:.85}
 .btn.bp:hover{box-shadow:0 4px 14px rgba(234,88,12,.25)}
 
+.btn.bp:hover{box-shadow:0 4px 14px rgba(234,88,12,.25)}
+
 .qb{transition:background .15s}
 .qb:hover{background:rgba(255,255,255,.16)}
 .qb:active{opacity:.8}
+
+/* ── NATIVE APP FEEL ── */
+/* Disable text selection on UI elements */
+.ni,.btn,.stat-card,.site-card,.wc,.tcard,.li,.set-item,.qb,.sac,.ao,.det-tab,.ic,.coll-hd{
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+}
+/* Smooth momentum scroll on all scrollable areas */
+.page,.msh,.det-body,.e-list,#notif-body,#s-list,#t-list,#att-body{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+}
+/* All interactive elements — instant press feel */
+.btn:active{transform:scale(.96)!important;transition:transform .08s}
+.stat-card:active{transform:scale(.97)!important;transition:transform .08s}
+.site-card:active{transform:scale(.98)!important;transition:transform .08s}
+.ni:active{transform:scale(.88)!important;transition:transform .08s}
+.qb:active{transform:scale(.93)!important;transition:transform .08s}
+.set-item:active{background:var(--gr100)!important}
+.ao:active{transform:scale(.92)!important;transition:transform .08s}
+.coll-hd:active{background:var(--gr50)!important}
+/* Fast tap response — no 300ms delay */
+*{touch-action:manipulation}
+/* Remove focus outline (mobile) */
+*:focus{outline:none}
+/* Smooth scrollbar hide on mobile */
+::-webkit-scrollbar{display:none}
+/* Input feel */
+.fi:focus{border-color:var(--ind);transform:none}
+/* Page scroll feel */
+.page{overflow-y:auto;height:calc(100vh - var(--nh));position:absolute;left:0;right:0;top:0}
 
 .sp-box{}
 
@@ -1643,27 +1675,7 @@ function endOnboard(){
 }
 
 // ══ ROUTER ══
-function go(p){
-  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
-  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
-  const pg=document.getElementById('pg-'+p);
-  if(pg){pg.classList.add('on');pg.style.removeProperty('display');}
-  const nm={home:0,sites:1,att:2,workers:3,notif:4,profile:5};
-  if(nm[p]!==undefined)document.querySelectorAll('.ni')[nm[p]].classList.add('on');
-  CUR=p;
-  pushHistory(p);
-  if(mf)mf.style.display=p==='home'?'flex':'none';
-  if(p==='home')loadHome();
-  else if(p==='sites')loadSites();
-  else if(p==='workers')loadWorkers();
-  else if(p==='att'){AD=todStr();loadAtt();}
-  else if(p==='exp')loadExp();
-  else if(p==='team')loadTeam();
-  else if(p==='notif')loadNotif();
-  else if(p==='profile')loadProfile();
-  const lb=document.getElementById('lang-btn');
-  if(lb)lb.style.display=(p==='home'||p==='sites')?'none':'block';
-}
+// go() function is defined below with native transitions
 // Auto-show BS on all date inputs when modal opens
 const openM=id=>{
   document.getElementById(id).classList.add('open');
@@ -3522,7 +3534,61 @@ function initRipples(){
     el.addEventListener('click',e=>addRipple(el,e));
   });
 }
-// ══ BACK BUTTON (PWA Android) ══
+// ══ HAPTIC FEEDBACK (phone vibrate on tap) ══
+function haptic(type='light'){
+  if(!navigator.vibrate)return;
+  const p={light:10,medium:20,heavy:35,success:[10,50,10],error:[20,50,20]};
+  navigator.vibrate(p[type]||10);
+}
+// Add haptic to all interactive elements automatically
+document.addEventListener('touchstart',e=>{
+  const el=e.target.closest('.btn,.ni,.qb,.ao,.stat-card,.site-card,.set-item,.coll-hd,.li-r button,.det-tab');
+  if(el)haptic('light');
+},{passive:true});
+// Extra haptic on save actions
+function toastSuccess(msg){toast(msg);haptic('success');}
+function toastError(msg){toast(msg,false);haptic('error');}
+
+// ══ SMOOTH PAGE TRANSITION ══
+function go(p){
+  const cur=document.querySelector('.page.on');
+  const next=document.getElementById('pg-'+p);
+  if(!next||cur===next)return;
+  // Slide out current
+  if(cur){
+    cur.style.transition='transform .2s ease,opacity .2s ease';
+    cur.style.transform='translateX(-20px)';
+    cur.style.opacity='0';
+    setTimeout(()=>{cur.classList.remove('on');cur.style.transform='';cur.style.opacity='';cur.style.transition='';},200);
+  }
+  // Slide in next
+  setTimeout(()=>{
+    next.style.transform='translateX(20px)';next.style.opacity='0';
+    next.classList.add('on');
+    requestAnimationFrame(()=>{
+      next.style.transition='transform .22s ease,opacity .22s ease';
+      next.style.transform='';next.style.opacity='';
+    });
+    setTimeout(()=>next.style.transition='',250);
+  },cur?50:0);
+
+  // Update nav active state
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
+  const nm={home:0,sites:1,att:2,workers:3,notif:4,profile:5};
+  if(nm[p]!==undefined)document.querySelectorAll('.ni')[nm[p]].classList.add('on');
+  CUR=p;
+  pushHistory(p);
+  const mf=document.getElementById('mat-fab');
+  if(mf)mf.style.display=p==='home'?'flex':'none';
+  if(p==='home')loadHome();
+  else if(p==='sites')loadSites();
+  else if(p==='workers')loadWorkers();
+  else if(p==='att'){AD=todStr();loadAtt();}
+  else if(p==='exp')loadExp();
+  else if(p==='team')loadTeam();
+  else if(p==='notif')loadNotif();
+  else if(p==='profile')loadProfile();
+}
 let _fromPop=false;
 function pushHistory(p){
   if(!_fromPop)history.pushState({page:p},'',location.pathname);
