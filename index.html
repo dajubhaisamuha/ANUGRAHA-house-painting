@@ -2281,7 +2281,7 @@ async function loadSAtt(){
       </div>`;
     (r.entries||[]).forEach(e=>{
       const sc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='E'?'var(--g)':e.status==='M'?'#854D0E':e.status==='H'?'var(--a)':'var(--ind)';
-      const sn=e.status==='P'?'पूरा दिन':e.status==='A'?'अनुपस्थित':e.status==='E'?'☀️ दिउँसो(पूरा)':e.status==='M'?'🌅 बिहान(आधा)':e.status==='H'?'आधा':'बिदा';
+      const sn=e.status==='P'?'पूरा दिन':e.status==='A'?'अनुपस्थित':e.status==='E'?'☀️ दिउँसो(पूरा)':e.status==='M'?'🔶 आधा':e.status==='H'?'आधा':'बिदा';
       html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;font-weight:700">${e.name}</span><div style="display:flex;align-items:center;gap:10px">${e.tin?`<span style="font-size:11px;color:var(--gr400)">${e.tin}${e.tout?'→'+e.tout:''}</span>`:''}<span style="font-weight:700;font-size:12px;color:${sc}">${sn}</span></div></div>`;
     });
     html+='</div>';
@@ -2434,14 +2434,58 @@ function getYatraPoints(name,qty){
   return 0;
 }
 function matRowHTML(d={}){
-  return`<div class="mat-row" style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
-    <input class="fi" style="flex:2.2;padding:10px 8px;font-size:13px" placeholder="जस्तै: Asian Paint 20L" value="${d.name||''}" oninput="calcMat()">
-    <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="0" value="${d.qty||''}" oninput="calcMat()">
-    <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="रु." value="${d.rate||''}" oninput="calcMat()">
-    <input type="number" class="fi" style="flex:1;padding:10px 6px;font-size:13px" placeholder="0" value="${d.used||''}" oninput="calcMat()">
-    <button onclick="removeMat(this)" style="background:var(--rl);border:none;border-radius:8px;width:24px;height:36px;color:var(--r);cursor:pointer;font-size:16px;font-weight:800;flex-shrink:0">×</button>
+  const uid='mr'+Date.now()+Math.random().toString(36).slice(2,6);
+  return`<div class="mat-row" style="margin-bottom:10px">
+    <div style="position:relative;margin-bottom:6px">
+      <input class="fi mat-name" style="font-size:13px;padding:10px 12px" placeholder="🔍 paint खोज्नुस्..." value="${d.name||''}" oninput="matSearch(this,'${uid}')" autocomplete="off">
+      <div id="drop-${uid}" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--w);border:1.5px solid var(--ind-b);border-radius:12px;box-shadow:var(--shm);z-index:50;max-height:180px;overflow-y:auto;margin-top:2px"></div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="number" class="fi mat-qty" style="flex:1;padding:9px 8px;font-size:13px;text-align:center" placeholder="qty" value="${d.qty||''}" oninput="calcMat()">
+      <input type="number" class="fi mat-rate" style="flex:1;padding:9px 8px;font-size:13px;text-align:center" placeholder="दर रु." value="${d.rate||''}" oninput="calcMat()">
+      <input type="number" class="fi mat-used" style="flex:1;padding:9px 8px;font-size:13px;text-align:center" placeholder="प्रयोग" value="${d.used||''}" oninput="calcMat()">
+      <button onclick="removeMat(this)" style="background:var(--rl);border:none;border-radius:8px;width:32px;height:36px;color:var(--r);cursor:pointer;font-size:16px;font-weight:800;flex-shrink:0">×</button>
+    </div>
+    <div class="mat-pts" style="font-size:11px;color:var(--a);font-weight:700;display:none;margin-top:3px">🎯 Yatra: 0 pts</div>
   </div>`;
 }
+
+function matSearch(inp,uid){
+  const q=inp.value.toLowerCase().trim();
+  const drop=document.getElementById('drop-'+uid);
+  if(!drop)return;
+  calcMat();
+  if(!q){drop.style.display='none';return;}
+  const matches=Object.keys(YATRA_POINTS).filter(k=>k.includes(q)).slice(0,10);
+  if(!matches.length){drop.style.display='none';return;}
+  drop.innerHTML=matches.map(k=>`
+    <div onclick="selectMat(this,'${uid}')" data-name="${k}" style="padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;border-bottom:1px solid var(--gr100);display:flex;justify-content:space-between;align-items:center">
+      <span style="text-transform:capitalize">${k}</span>
+      <span style="font-size:11px;color:var(--a);font-weight:700">🎯 ${YATRA_POINTS[k]}pts</span>
+    </div>`).join('');
+  drop.style.display='block';
+}
+
+function selectMat(el,uid){
+  const name=el.dataset.name;
+  const drop=document.getElementById('drop-'+uid);
+  const row=drop.closest('.mat-row');
+  const nameInp=row.querySelector('.mat-name');
+  nameInp.value=name.charAt(0).toUpperCase()+name.slice(1);
+  drop.style.display='none';
+  calcMat();
+  // Auto-update pts label
+  const qty=+row.querySelector('.mat-qty').value||0;
+  const pts=getYatraPoints(name,qty);
+  const ptsEl=row.querySelector('.mat-pts');
+  if(ptsEl){ptsEl.style.display=pts>0?'block':'none';ptsEl.textContent='🎯 Yatra: '+pts+' pts';}
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.mat-row'))
+    document.querySelectorAll('[id^="drop-"]').forEach(d=>d.style.display='none');
+});
 function addMatRow(d={}){
   const div=document.createElement('div');
   div.innerHTML=matRowHTML(d);
@@ -2552,7 +2596,7 @@ async function printAttendance(type, id=''){
       const h=rows.filter(r=>(r.status==='H'||r.status==='M')).length;
       html+=`<h3>👷 ${nm}</h3><table><tr><th>मिति</th><th>साइट</th><th>खण्ड</th><th>स्थिति</th><th>समय</th></tr>`;
       rows.forEach(r=>{
-        const st=r.status==='P'?'✅ पूरा':r.status==='E'?'☀️ दिउँसो(पूरा)':r.status==='M'?'🌅 बिहान(आधा)':r.status==='A'?'❌ अनु.':r.status==='H'?'🔶 आधा':'🏖️ बिदा';
+        const st=r.status==='P'?'✅ पूरा':r.status==='E'?'☀️ दिउँसो(पूरा)':r.status==='M'?'🔶 आधा':r.status==='A'?'❌ अनु.':r.status==='H'?'🔶 आधा':'🏖️ बिदा';
         html+=`<tr><td>${r.date}</td><td>${r.site||'—'}</td><td>${r.slot}</td><td>${st}</td><td>${r.tin||'—'}${r.tout?' → '+r.tout:''}</td></tr>`;
       });
       html+=`<tr><td colspan="5" class="total">उपस्थित: ${p} दिन · आधा: ${h} दिन · जम्मा: ${p+h*0.5} दिन</td></tr></table>`;
@@ -3270,8 +3314,9 @@ async function loadAtt(){
         <div class="awr-nm">${w.name}</div>
         <div class="ao-btns">
           <button class="ao ${st==='P'?'P':''}" onclick="setA('${site.id}','${w.id}','P',this)" title="पूरा दिन">🌞 पूरा</button>
-          <button class="ao ${st==='M'?'M':''}" onclick="setA('${site.id}','${w.id}','M',this)" title="बिहान मात्र">🌅 बिहान</button>
-          <button class="ao ${st==='E'?'E':''}" onclick="setA('${site.id}','${w.id}','E',this)" title="दिउँसो मात्र">☀️ दिउँसो</button>
+          <button class="ao ${st==='M'?'M':''}" onclick="setA('${site.id}','${w.id}','M',this)" title="बिहान">🌅 बिहान</button>
+          <button class="ao ${st==='E'?'E':''}" onclick="setA('${site.id}','${w.id}','E',this)" title="दिउँसो">☀️ दिउँसो</button>
+          <button class="ao ${st==='H'?'H':''}" onclick="setA('${site.id}','${w.id}','H',this)" title="आधा">🔶 आधा</button>
           <button class="ao ${st==='A'?'A':''}" onclick="setA('${site.id}','${w.id}','A',this)" title="आएन">❌ आएन</button>
           <button class="ao ${st==='V'?'V':''}" onclick="setA('${site.id}','${w.id}','V',this)" title="बिदा">🏖 बिदा</button>
         </div>
