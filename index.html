@@ -114,7 +114,7 @@ body.dark-mode .bs{background:var(--gr100);color:var(--gr700);border-color:var(-
 html,body{height:100%;overflow:hidden}
 body{font-family:'Noto Sans Devanagari','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased}
 input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-serif}
-.n{font-family:'Inter',sans-serif}
+.n{font-family:'Inter',sans-serif;font-feature-settings:'tnum';letter-spacing:-.02em}.amt{font-family:'Inter',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.03em}.Rs{font-size:.65em;font-weight:700;opacity:.7;margin-right:1px}
 
 /* SPLASH */
 /* ── ANIMATED SPLASH (typewriter) ── */
@@ -734,113 +734,110 @@ select.fi option{background:#fff}
   <div class="hero-bar">
     <div class="hero-orb orb-a"></div>
     <div class="hero-orb orb-b"></div>
-    <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn" title="Dark/Light Mode">
-      <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-    </button>
-    <!-- Top row: Avatar + name only, no settings button -->
     <div class="hb-top">
       <div class="hb-user" onclick="go('profile')" style="cursor:pointer">
         <div class="hb-avatar" id="hb-av">A</div>
         <div>
-          <div class="hb-hey" id="hb-hey">नमस्ते 👋</div>
+          <div class="hb-hey" id="hb-hey">शुभबिहानी 🌅</div>
           <div class="hb-name" id="hb-nm">AMRIT</div>
         </div>
       </div>
-      <div class="hb-right">
-        <div id="h-date" style="font-size:11px;color:rgba(255,255,255,.65);text-align:right;font-weight:600">📅 —</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div id="h-date" style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">—</div>
+        <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn">
+          <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:none;width:18px;height:18px"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+          <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
       </div>
     </div>
 
-    <!-- EARNING CARD: hierarchy design -->
-    <div class="bal-card" style="border:1px solid rgba(255,255,255,.12)">
-      <!-- 1. Personal Earning (primary) -->
-      <div style="margin-bottom:16px;cursor:pointer" onclick="openMyActivity()">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div style="font-size:11px;color:rgba(255,255,255,.55);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px"><span id="hb-nm2">AMRIT</span> को कमाइ</div>
-          <span style="font-size:11px;color:rgba(255,255,255,.4);font-weight:600">पूरा विवरण ›</span>
-        </div>
-        <div class="n" id="h-my-wage" style="font-size:36px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:-.5px">Rs. —</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:3px" id="h-wage-detail">— दिन काम</div>
+    <!-- EARNING CARD -->
+    <div style="background:rgba(255,255,255,.06);border-radius:20px;padding:18px;border:1px solid rgba(255,255,255,.1);margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden" onclick="openMyActivity()">
+      <div style="font-size:9px;color:rgba(255,255,255,.45);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px"><span id="hb-nm2">AMRIT</span> को व्यक्तिगत कमाइ</div>
+      <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px">
+        <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,.5)">Rs.</span>
+        <span class="n" id="h-my-wage" style="font-size:46px;font-weight:900;color:#fff;line-height:1;letter-spacing:-2px">0</span>
       </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4)" id="h-wage-detail">Profile मा Rate सेट गर्नुस्</div>
+      <div style="position:absolute;right:-10px;top:-10px;width:80px;height:80px;background:rgba(255,255,255,.04);border-radius:50%"></div>
+      <div style="position:absolute;right:20px;bottom:-20px;width:60px;height:60px;background:rgba(255,255,255,.03);border-radius:50%"></div>
+      <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">थिच्नुस् — साइट-वाइज विवरण हेर्नुस् ›</div>
+    </div>
 
-      <div style="height:1px;background:rgba(255,255,255,.1);margin-bottom:14px"></div>
-
-      <!-- 2. Total Received (secondary) -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px">
-        <div>
-          <div style="font-size:10px;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px">कुल प्राप्त</div>
-          <div class="n" id="h-recv" style="font-size:20px;font-weight:700;color:#fff">Rs. —</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:10px;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px">कुल नाफा</div>
-          <div class="n" id="h-pr" style="font-size:15px;font-weight:700;color:rgba(255,255,255,.85)">—</div>
-        </div>
+    <!-- 3 PILLS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:10px;border:1px solid rgba(255,255,255,.08);text-align:center">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">प्राप्त</div>
+        <div class="n" id="h-recv" style="font-size:13px;font-weight:800;color:#fff">—</div>
       </div>
-
-      <div style="height:1px;background:rgba(255,255,255,.1);margin-bottom:12px"></div>
-
-      <!-- 3. Today's attendance (tertiary) -->
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:10px;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.5px;text-transform:uppercase">आजको हाजिर</div>
-        <div id="h-today-att" style="font-size:13px;font-weight:600;color:#fff">जाँच हुँदैछ...</div>
+      <div style="background:rgba(22,163,74,.15);border-radius:12px;padding:10px;border:1px solid rgba(22,163,74,.25);text-align:center">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">नाफा</div>
+        <div class="n" id="h-pr" style="font-size:13px;font-weight:800;color:#6EE7B7">—</div>
       </div>
+      <div style="background:rgba(251,191,36,.1);border-radius:12px;padding:10px;border:1px solid rgba(251,191,36,.2);text-align:center">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">बाँकी</div>
+        <div class="n" id="h-pd" style="font-size:13px;font-weight:800;color:#FCD34D">—</div>
+      </div>
+    </div>
 
-      <!-- Quick buttons -->
-      <div class="qbtns" style="margin-top:16px">
-        <div class="qb" onclick="openSiteModal()">
-          <div class="qb-i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-          <div class="qb-l">नयाँ साइट</div>
-        </div>
-        <div class="qb" onclick="go('att')">
-          <div class="qb-i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-          <div class="qb-l">हाजिर</div>
-        </div>
-        <div class="qb" onclick="openGlobalExp()">
-          <div class="qb-i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-          <div class="qb-l">खर्च</div>
-        </div>
-        <div class="qb" onclick="go('team')">
-          <div class="qb-i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-          <div class="qb-l">टोली</div>
-        </div>
+    <!-- TODAY ATT -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:12px;margin-bottom:14px;border:1px solid rgba(255,255,255,.06)">
+      <span style="font-size:11px;color:rgba(255,255,255,.45);font-weight:600">📍 आजको हाजिर</span>
+      <span id="h-today-att" style="font-size:12px;font-weight:700;color:#fff">जाँच हुँदैछ...</span>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="qbtns">
+      <div class="qb" onclick="openSiteModal()">
+        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+        <div class="qb-l">नयाँ साइट</div>
+      </div>
+      <div class="qb" onclick="go('att')">
+        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <div class="qb-l">हाजिर</div>
+      </div>
+      <div class="qb" onclick="openGlobalExp()">
+        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div class="qb-l">खर्च</div>
+      </div>
+      <div class="qb" onclick="go('team')">
+        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div class="qb-l">टोली</div>
       </div>
     </div>
   </div>
 
-  <div class="stat-grid" style="padding-top:16px">
-    <div class="stat-card glow-card" style="border-left-color:var(--ind)" onclick="go('sites')">
-      <div class="sc-ico" style="background:var(--ind-l)"><svg viewBox="0 0 24 24" fill="var(--ind)" width="20" height="20"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3l5 4h-3v5h-4v-5H7l5-4z"/></svg></div>
-      <div class="sc-v n" style="color:var(--ind)" id="h-act">—</div><div class="sc-l">सक्रिय साइट</div>
+  <!-- STATS ROW -->
+  <div style="display:flex;gap:10px;padding:16px 16px 0;overflow-x:auto;scrollbar-width:none">
+    <div style="flex-shrink:0;background:var(--w);border-radius:14px;padding:14px 16px;border:1px solid var(--gr100);border-left:3px solid var(--ind);box-shadow:var(--sh);min-width:100px;cursor:pointer" onclick="go('sites')">
+      <div style="font-size:10px;color:var(--gr400);font-weight:700;margin-bottom:6px">🏗️ साइट</div>
+      <div class="n" id="h-act" style="font-size:22px;font-weight:900;color:var(--ind)">—</div>
     </div>
-    <div class="stat-card glow-card" style="border-left-color:var(--r)" onclick="go('exp')">
-      <div class="sc-ico" style="background:var(--rl)"><svg viewBox="0 0 24 24" fill="var(--r)" width="20" height="20"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
-      <div class="sc-v n" style="color:var(--r)" id="h-exp">—</div><div class="sc-l">कुल खर्च</div>
+    <div style="flex-shrink:0;background:var(--w);border-radius:14px;padding:14px 16px;border:1px solid var(--gr100);border-left:3px solid var(--r);box-shadow:var(--sh);min-width:100px;cursor:pointer" onclick="go('exp')">
+      <div style="font-size:10px;color:var(--gr400);font-weight:700;margin-bottom:6px">💸 खर्च</div>
+      <div class="n" id="h-exp" style="font-size:22px;font-weight:900;color:var(--r)">—</div>
     </div>
-    <div class="stat-card glow-card" style="border-left-color:var(--g)" onclick="go('team')">
-      <div class="sc-ico" style="background:var(--gl)"><svg viewBox="0 0 24 24" fill="var(--g)" width="20" height="20"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></div>
-      <div class="sc-v n" id="h-pr">—</div><div class="sc-l" id="h-prl">कुल नाफा</div>
-    </div>
-    <div class="stat-card glow-card" style="border-left-color:var(--a)" onclick="go('sites')">
-      <div class="sc-ico" style="background:var(--al)"><svg viewBox="0 0 24 24" fill="var(--a)" width="20" height="20"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></div>
-      <div class="sc-v n" style="color:var(--a)" id="h-pd">—</div><div class="sc-l">बाँकी रकम</div>
+    <div style="flex-shrink:0;background:var(--w);border-radius:14px;padding:14px 16px;border:1px solid var(--gr100);border-left:3px solid var(--g);box-shadow:var(--sh);min-width:100px;cursor:pointer" onclick="go('team')">
+      <div style="font-size:10px;color:var(--gr400);font-weight:700;margin-bottom:6px" id="h-prl">📈 नाफा</div>
+      <div class="n" id="h-pr2" style="font-size:22px;font-weight:900;color:var(--g)">—</div>
     </div>
   </div>
 
-  <div class="section">
-    <div class="sec-head"><span class="sec-title" data-ne="मेरा साइट" data-en="My Sites">मेरा साइट</span><span class="sec-link" onclick="go('sites')">सबै →</span></div>
+  <!-- MY SITES -->
+  <div style="padding:16px 16px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--gr800)">मेरा सक्रिय साइट</div>
+      <div onclick="go('sites')" style="font-size:12px;color:var(--ind);font-weight:700;cursor:pointer">सबै →</div>
+    </div>
     <div id="h-my"></div>
   </div>
-  <div class="section">
-    <div class="sec-head"><span class="sec-title" data-ne="हालका भुक्तानी" data-en="Recent Payments">हालका भुक्तानी</span></div>
-    <div class="txn-card" id="h-txn"></div>
+
+  <!-- RECENT TXN -->
+  <div style="padding:16px 16px 80px">
+    <div style="font-size:13px;font-weight:800;color:var(--gr800);margin-bottom:12px">हालका भुक्तानी</div>
+    <div class="txn-card" id="h-txn" style="padding:0"></div>
   </div>
-  <div style="height:10px"></div>
 </div>
-<!-- Materials estimate FAB (home page only) -->
-<button id="mat-fab" class="fab" style="bottom:calc(var(--nh)+80px);background:linear-gradient(135deg,#059669,#10B981);display:none" onclick="openMatModal()" title="सामग्री Inventory">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-</button>
 
 <!-- SITES -->
 <div class="page" id="pg-sites">
@@ -1428,18 +1425,34 @@ function initPullToRefresh(){
     pulling=false;
   },{passive:true});
 }
+// ══ DAILY RATE (Firebase मा save, localStorage backup) ══
+async function getMyRate(){
+  // Try Firebase first
+  try{
+    const doc=await db.collection('settings').doc('rates').get();
+    if(doc.exists&&doc.data()[ME]){
+      const r=doc.data()[ME];
+      localStorage.setItem('rate_'+ME,r); // backup
+      return+r;
+    }
+  }catch{}
+  // Fallback to localStorage
+  return+localStorage.getItem('rate_'+ME)||0;
+}
+async function saveMyRate(){
+  const v=+document.getElementById('rate-val').value;
+  if(!v){toast('Rate राख्नुस्',false);return;}
+  // Save to Firebase
+  try{await db.collection('settings').doc('rates').set({[ME]:v},{merge:true});}catch{}
+  // Save to localStorage as backup
+  localStorage.setItem('rate_'+ME,v);
+  closeM('mRate');toast('Rate सेभ ✓');loadProfile();loadHome();
+}
 function openRateModal(){
   const rate=localStorage.getItem('rate_'+ME)||'';
   document.getElementById('rate-val').value=rate;
   openM('mRate');
 }
-function saveMyRate(){
-  const v=+document.getElementById('rate-val').value;
-  if(!v){toast('Rate राख्नुस्',false);return;}
-  localStorage.setItem('rate_'+ME,v);
-  closeM('mRate');toast('Rate सेभ ✓');loadProfile();loadHome();
-}
-function getMyRate(){return+localStorage.getItem('rate_'+ME)||0;}
 function openChangePW(){document.getElementById('pw-who').textContent=ME+' का Password';['pw-cur','pw-new','pw-cf'].forEach(id=>document.getElementById(id).value='');document.getElementById('pw-err').textContent='';openM('mPW');}
 async function savePW(){
   const cur=document.getElementById('pw-cur').value,nw=document.getElementById('pw-new').value,cf=document.getElementById('pw-cf').value;
@@ -1763,7 +1776,7 @@ async function loadHome(){
 
     let totL=0;work.forEach(w=>{if(activeIds.has(w.site_id))totL+=Number(w.days||0)*Number(w.daily_rate||0);});
     const profit=totR-totL-totE+totX;
-    document.getElementById('h-pr').textContent=Rs(Math.abs(profit));
+    document.getElementById('h-pr').textContent=Rs(Math.abs(profit));try{document.getElementById('h-pr2').textContent=Rs(Math.abs(profit));}catch{}
     document.getElementById('h-pr').style.color=profit>=0?'rgba(255,255,255,.95)':'#FCA5A5';
     document.getElementById('h-prl').textContent=profit>=0?'नाफा':'घाटा';
 
@@ -1771,7 +1784,7 @@ async function loadHome(){
     document.getElementById('h-pd').textContent=Rs(totCV-totR);
 
     // ── PERSONAL WAGE EARNING = attendance days × my rate ──
-    const myRate=getMyRate();
+    const myRate=await getMyRate();
     let myAttDays=0;
     const allAtt=await dGet('attendance');
     allAtt.forEach(r=>(r.entries||[]).forEach(e=>{
@@ -2743,7 +2756,7 @@ async function openMyActivity(){
   const[allAtt,allWdraw,allSites]=await Promise.all([
     dGet('attendance'),dGet('withdrawals',['member','==',ME]),dGet('sites')
   ]);
-  const myRate=getMyRate();
+  const myRate=await getMyRate();
 
   // Per-site attendance breakdown
   const siteData={};
@@ -2830,7 +2843,7 @@ async function showMonthly(){
       }
     });
   });
-  const myRate=getMyRate();
+  const myRate=await getMyRate();
   const sorted=Object.keys(months).sort((a,b)=>b>a?1:-1);
   let html=`<html><head><meta charset="UTF-8"><title>Monthly Report</title>
   <style>body{font-family:sans-serif;padding:20px;font-size:13px}h2{margin-bottom:4px}h3{color:#4F46E5;margin:16px 0 6px}table{width:100%;border-collapse:collapse;margin-bottom:20px}th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}th{background:#EEF2FF;font-weight:700}.pos{color:green;font-weight:800}.neg{color:red;font-weight:800}.total{background:#EEF2FF;font-weight:800}</style>
@@ -3489,13 +3502,13 @@ async function loadTeam(){
 }
 
 // ══ PROFILE ══
-function loadProfile(){
+async function loadProfile(){
   const p=PROFILES[ME]||{};
   const avEl=document.getElementById('prof-av');
   document.getElementById('prof-nm').textContent=ME||'';
   if(p.photo){avEl.innerHTML=`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover"><div class="prof-av-edit">✏️</div>`;avEl.style.background='transparent';}
   else{avEl.innerHTML=`<span id="prof-av-txt">${ME?ME[0]:'?'}</span><div class="prof-av-edit">✏️</div>`;avEl.style.background=AV_GRADS[p.color||'blue'];}
-  const rate=getMyRate();
+  const rate=await getMyRate();
   const rateLbl=document.getElementById('my-rate-lbl');
   if(rateLbl)rateLbl.textContent=rate?`हालको rate: Rs.${rate}/दिन`:'अहिलेसम्म सेट छैन';
 }
