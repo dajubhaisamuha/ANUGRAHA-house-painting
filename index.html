@@ -823,6 +823,54 @@ select.fi option{background:#fff}
     </div>
   </div>
 
+  <!-- FINANCIAL SUMMARY -->
+  <div style="padding:16px 16px 0">
+    <div style="font-size:13px;font-weight:800;color:var(--gr800);margin-bottom:12px">💼 आर्थिक सारांश</div>
+
+    <!-- Main cards row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <!-- Received -->
+      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">✅ हातमा आयो</div>
+        <div class="n" id="fs-recv" style="font-size:20px;font-weight:900;color:var(--g)">—</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:3px">ग्राहकले दियो</div>
+      </div>
+      <!-- Due -->
+      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">⏳ पाउन बाँकी</div>
+        <div class="n" id="fs-due" style="font-size:20px;font-weight:900;color:var(--a)">—</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:3px">ठेक्का − प्राप्त</div>
+      </div>
+    </div>
+
+    <!-- Second row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <!-- Expenses -->
+      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">💸 कुल खर्च</div>
+        <div class="n" id="fs-exp" style="font-size:20px;font-weight:900;color:var(--r)">—</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:3px">ज्याला + साइट खर्च</div>
+      </div>
+      <!-- Profit -->
+      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">📈 शुद्ध नाफा</div>
+        <div class="n" id="fs-profit" style="font-size:20px;font-weight:900;color:var(--g)">—</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:3px" id="fs-share">हरेकको हिस्सा: —</div>
+      </div>
+    </div>
+
+    <!-- Monthly breakdown -->
+    <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100);margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:800;color:var(--gr700)">📅 महिना अनुसार प्राप्त</div>
+        <div onclick="showMonthly()" style="font-size:11px;color:var(--ind);font-weight:700;cursor:pointer">पूरा रिपोर्ट →</div>
+      </div>
+      <div id="fs-monthly">
+        <div style="font-size:12px;color:var(--gr400);text-align:center;padding:8px">लोड हुँदैछ...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- MY SITES -->
   <div style="padding:16px 16px 0">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -1782,6 +1830,44 @@ async function loadHome(){
 
     let totCV=0;active.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
     document.getElementById('h-pd').textContent=Rs(totCV-totR);
+
+    // Financial summary section
+    const fsRecv=document.getElementById('fs-recv');
+    const fsDue=document.getElementById('fs-due');
+    const fsExp=document.getElementById('fs-exp');
+    const fsProfit=document.getElementById('fs-profit');
+    const fsShare=document.getElementById('fs-share');
+    if(fsRecv)fsRecv.textContent=Rs(totR);
+    if(fsDue)fsDue.textContent=Rs(Math.max(0,totCV-totR));
+    const totAllExp=totE+totL;
+    if(fsExp)fsExp.textContent=Rs(totAllExp);
+    const profit2=totR-totAllExp+totX;
+    if(fsProfit){fsProfit.textContent=Rs(Math.abs(profit2));fsProfit.style.color=profit2>=0?'var(--g)':'var(--r)';}
+    if(fsShare)fsShare.textContent='हरेकको हिस्सा: '+Rs(Math.abs(profit2/3));
+
+    // Monthly breakdown (last 4 months)
+    const monthMap={};
+    pays.forEach(p=>{if(!activeIds.has(p.site_id))return;const m=p.date?.slice(0,7);if(m)monthMap[m]=(monthMap[m]||0)+Number(p.amount||0);});
+    const months=Object.keys(monthMap).sort((a,b)=>b>a?1:-1).slice(0,4);
+    const fsM=document.getElementById('fs-monthly');
+    if(fsM){
+      if(!months.length){fsM.innerHTML='<div style="font-size:12px;color:var(--gr400);text-align:center">भुक्तानी रेकर्ड छैन</div>';}
+      else{fsM.innerHTML=months.map(m=>{
+        const bs=adToBS(m+'-15');
+        const label=bs?`${NM[bs.m-1]} ${bs.y}`:m;
+        const amt=monthMap[m];
+        const pct=Math.min(100,(amt/(Math.max(...Object.values(monthMap))))*100);
+        return`<div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;font-weight:700;color:var(--gr700)">${label}</span>
+            <span class="n" style="font-size:12px;font-weight:800;color:var(--g)">${Rs(amt)}</span>
+          </div>
+          <div style="height:6px;background:var(--gr100);border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--ind),var(--g));border-radius:4px;transition:width .6s ease"></div>
+          </div>
+        </div>`;
+      }).join('');}
+    }
 
     // ── PERSONAL WAGE EARNING = attendance days × my rate ──
     const myRate=await getMyRate();
