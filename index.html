@@ -833,13 +833,13 @@ select.fi option{background:#fff}
       <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
         <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">✅ हातमा आयो</div>
         <div class="n" id="fs-recv" style="font-size:20px;font-weight:900;color:var(--g)">—</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:3px">ग्राहकले दियो</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:3px">Withdrawals बाट प्राप्त</div>
       </div>
       <!-- Due -->
       <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
         <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">⏳ पाउन बाँकी</div>
         <div class="n" id="fs-due" style="font-size:20px;font-weight:900;color:var(--a)">—</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:3px">ठेक्का − प्राप्त</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:3px">कमाइ − हातमा आयो</div>
       </div>
     </div>
 
@@ -1272,6 +1272,59 @@ select.fi option{background:#fff}
   <div class="mtit" id="ma-title">📋 मेरो विवरण</div>
   <div id="ma-body"><div class="ld">लोड हुँदैछ...</div></div>
   <button class="btn bs" onclick="closeM('mMyActivity')">बन्द गर्नुस्</button>
+</div></div>
+
+<!-- MODAL: ESTIMATE -->
+<div class="mbo" id="mEst"><div class="msh" style="max-height:95vh">
+  <div class="mhd"></div>
+  <div class="mtit">📋 Estimate बनाउनुस्</div>
+  <div class="fg">
+    <label class="fl">साइट / Project</label>
+    <select class="fi" id="est-site" onchange="loadEstMaterials()"><option value="">साइट छान्नुस्...</option></select>
+  </div>
+  <div class="fg">
+    <label class="fl">Client नाम</label>
+    <input class="fi" id="est-client" placeholder="जस्तै: Ram Sharma">
+  </div>
+  <div class="fg">
+    <label class="fl">मिति (BS)</label>
+    <div class="fbs-top" id="est-d-b" style="margin-bottom:6px"></div>
+    <input type="date" class="fi fi-ad-small" id="est-d" oninput="bsF('est-d','est-d-b')" value="">
+  </div>
+  <div style="margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--gr600);margin-bottom:8px">🧱 Material Cost</div>
+    <div id="est-mat-list" style="font-size:13px;color:var(--gr400);padding:10px;background:var(--gr50);border-radius:10px">साइट छान्दा auto-fill हुन्छ</div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-weight:800;font-size:13px">
+      <span>Material जम्मा</span>
+      <span class="n" id="est-mat-tot" style="color:var(--ind)">Rs.0</span>
+    </div>
+    <div class="fg" style="margin-top:8px">
+      <label class="fl">थप सानो सामग्री (sandpaper, tape, etc.)</label>
+      <input type="number" class="fi" id="est-extra-mat" placeholder="0" oninput="calcEst()">
+    </div>
+  </div>
+  <div style="margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--gr600);margin-bottom:8px">👷 Labour Cost</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div><label class="fl">कामदार</label><input type="number" class="fi" id="est-workers" placeholder="3" oninput="calcEst()"></div>
+      <div><label class="fl">दिन</label><input type="number" class="fi" id="est-days" placeholder="20" oninput="calcEst()"></div>
+      <div><label class="fl">दर/दिन</label><input type="number" class="fi" id="est-rate" placeholder="1200" oninput="calcEst()"></div>
+    </div>
+  </div>
+  <div style="background:var(--ind-l);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+      <span>Material</span><span class="n" id="est-s-mat">Rs.0</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+      <span>Labour</span><span class="n" id="est-s-lab">Rs.0</span>
+    </div>
+    <div style="height:1px;background:var(--ind-b);margin-bottom:6px"></div>
+    <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:800">
+      <span>Grand Total</span><span class="n" id="est-grand" style="color:var(--ind)">Rs.0</span>
+    </div>
+  </div>
+  <button class="btn bp" onclick="generateEstimate()">📄 Estimate Generate गर्नुस्</button>
+  <button class="btn bs" onclick="closeM('mEst')">रद्द</button>
 </div></div>
 
 <!-- MODAL: BILL PHOTOS -->
@@ -1817,12 +1870,17 @@ async function loadHome(){
     let totR=0;pays.forEach(p=>{if(activeIds.has(p.site_id))totR+=Number(p.amount||0);});
 
     let totE=0;exps.forEach(e=>{if(activeIds.has(e.site_id))totE+=Number(e.amount||0);});
-    countUp('h-exp',totE,'Rs. ');
+    try{document.getElementById('h-exp').textContent=Rs(totE);}catch{};
 
     let totX=0;extraIncomes.forEach(x=>{if(activeIds.has(x.site_id))totX+=Number(x.amount||0);});
 
     let totL=0;work.forEach(w=>{if(activeIds.has(w.site_id))totL+=Number(w.days||0)*Number(w.daily_rate||0);});
     const profit=totR-totL-totE+totX;
+    try{
+      document.getElementById('h-pr2').textContent=profit>=0?Rs(profit):'−'+Rs(Math.abs(profit));
+      document.getElementById('h-pr2').style.color=profit>=0?'var(--g)':'var(--r)';
+      document.getElementById('h-prl').textContent=profit>=0?'📈 नाफा':'📉 घाटा';
+    }catch{}
 
     let totCV=0;active.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
 
@@ -2181,7 +2239,7 @@ async function loadOv(){
       ${s.status!=='completed'?`<button class="btn" style="background:var(--gl);color:#065F46;border:1px solid #6EE7B7" onclick="if(confirm('सम्पन्न गर्ने?')){document.getElementById('st-id').value='${CS}';doSt('completed')}">✅ सम्पन्न</button>`:''}
       ${!matDoc?`<button class="btn" style="background:var(--gr100);color:var(--gr600);border:1px solid var(--gr200)" onclick="openMatModal('${CS}')">📦 सामग्री थप्नुस्</button>`:''}
       ${!photoDoc?`<button class="btn" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSitePhotoModal('${CS}')">📸 Before/After थप्नुस्</button>`:''}
-    </div>
+      <button class="btn" style="background:linear-gradient(135deg,#1E3A5F,#1E40AF);color:#fff" onclick="openEstModal('${CS}')">📋 Estimate बनाउनुस्</button>    </div>
     ${s.notes?`<div style="background:var(--blue-l);padding:12px;border-radius:12px;font-size:13px;color:#0369A1;border:1px solid #BAE6FD">📝 ${s.notes}</div>`:''}
     ${personalAdv.length?`<div style="background:var(--al);padding:12px 14px;border-radius:12px;font-size:13px;color:#92400E;border:1px solid #FCD34D;margin-top:8px">⚠️ व्यक्तिगत अग्रिम (return गर्नुपर्ने): ${personalAdv.map(a=>`${a.worker_name}: ${Rs(a.amount)}`).join(', ')}</div>`:''}
   </div>`;
@@ -2358,7 +2416,158 @@ async function loadSEx(){
       </div></div>`).join('')}</div>
   </div>`;
 }
-// ══ EXPENSE CLAIM STATUS ══
+// ══ ESTIMATE GENERATOR ══
+async function openEstModal(siteId){
+  SITES=SITES.length?SITES:await dGet('sites');
+  const sel=document.getElementById('est-site');
+  sel.innerHTML='<option value="">साइट छान्नुस्...</option>'+
+    SITES.map(s=>`<option value="${s.id}" ${s.id===siteId?'selected':''}>${s.name}</option>`).join('');
+  const s=SITES.find(x=>x.id===siteId);
+  document.getElementById('est-client').value=s?.client_name||'';
+  document.getElementById('est-d').value=todStr();
+  bsF('est-d','est-d-b');
+  document.getElementById('est-workers').value=3;
+  document.getElementById('est-days').value='';
+  document.getElementById('est-rate').value=1200;
+  document.getElementById('est-extra-mat').value='';
+  if(siteId)await loadEstMaterials(siteId);
+  calcEst();
+  openM('mEst');
+}
+async function loadEstMaterials(siteId){
+  const sid=siteId||document.getElementById('est-site').value;
+  if(!sid){document.getElementById('est-mat-list').innerHTML='साइट छान्नुस्';return;}
+  const matDoc=await db.collection('materials').doc(sid).get();
+  const el=document.getElementById('est-mat-list');
+  if(!matDoc.exists||!matDoc.data().items?.length){
+    el.innerHTML='<span style="color:var(--gr400)">Materials थपिएको छैन</span>';
+    document.getElementById('est-mat-tot').textContent='Rs.0';
+    calcEst();return;
+  }
+  const items=matDoc.data().items;
+  const tot=items.reduce((a,i)=>a+Number(i.amount||0),0);
+  el.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px">
+    ${items.map(i=>`<tr style="border-bottom:1px solid var(--gr100)">
+      <td style="padding:4px 0;color:var(--gr700)">${i.name}</td>
+      <td style="padding:4px 0;text-align:center;color:var(--gr500)">${i.qty} ${i.unit||''}</td>
+      <td style="padding:4px 0;text-align:right;font-weight:700;color:var(--ind)">${Rs(i.amount||i.qty*i.rate)}</td>
+    </tr>`).join('')}
+  </table>`;
+  document.getElementById('est-mat-tot').textContent=Rs(tot);
+  el.dataset.total=tot;
+  calcEst();
+}
+function calcEst(){
+  const matEl=document.getElementById('est-mat-list');
+  const matTot=Number(matEl.dataset?.total||0);
+  const extraMat=Number(document.getElementById('est-extra-mat').value||0);
+  const workers=Number(document.getElementById('est-workers').value||0);
+  const days=Number(document.getElementById('est-days').value||0);
+  const rate=Number(document.getElementById('est-rate').value||0);
+  const labour=workers*days*rate;
+  const totalMat=matTot+extraMat;
+  const grand=totalMat+labour;
+  document.getElementById('est-s-mat').textContent=Rs(totalMat);
+  document.getElementById('est-s-lab').textContent=Rs(labour);
+  document.getElementById('est-grand').textContent=Rs(grand);
+}
+function generateEstimate(){
+  const siteId=document.getElementById('est-site').value;
+  const site=SITES.find(s=>s.id===siteId)||{name:'—'};
+  const client=document.getElementById('est-client').value||site.client_name||'—';
+  const bsDate=document.getElementById('est-d-b').textContent||bsToday();
+  const workers=document.getElementById('est-workers').value||3;
+  const days=document.getElementById('est-days').value||'—';
+  const rate=document.getElementById('est-rate').value||1200;
+  const matEl=document.getElementById('est-mat-list');
+  const matTot=Number(matEl.dataset?.total||0);
+  const extraMat=Number(document.getElementById('est-extra-mat').value||0);
+  const totalMat=matTot+extraMat;
+  const labour=Number(workers)*Number(days)*Number(rate);
+  const grand=totalMat+labour;
+
+  // Generate printable HTML
+  const html=`<!DOCTYPE html><html lang="ne"><head><meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Estimate - ${site.name}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans Devanagari','Arial',sans-serif;background:#f5f5f5;padding:16px}
+    .page{background:#fff;max-width:800px;margin:0 auto;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+    .header{background:linear-gradient(135deg,#1E3A5F,#1E40AF);color:#fff;padding:24px;display:flex;justify-content:space-between;align-items:flex-start}
+    .logo-area h1{font-size:22px;font-weight:900;letter-spacing:1px}
+    .logo-area p{font-size:12px;opacity:.7;margin-top:4px}
+    .meta{text-align:right;font-size:13px}
+    .meta div{margin-bottom:4px}
+    .meta strong{color:#FCD34D}
+    .stripe{background:linear-gradient(90deg,#EA580C,#F97316);height:4px}
+    .body{padding:24px}
+    h2{font-size:14px;font-weight:800;color:#1E3A5F;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #E5E7EB}
+    table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px}
+    th{background:#1E3A5F;color:#fff;padding:10px 12px;text-align:left}
+    td{padding:9px 12px;border-bottom:1px solid #F3F4F6}
+    tr:nth-child(even){background:#F9FAFB}
+    .total-row td{font-weight:800;background:#EFF6FF;color:#1E40AF;font-size:14px}
+    .grand{background:#1E40AF;color:#fff;padding:20px 24px;text-align:center}
+    .grand h3{font-size:13px;opacity:.8;margin-bottom:6px}
+    .grand .amount{font-size:32px;font-weight:900;letter-spacing:-1px}
+    .footer{padding:16px 24px;background:#F9FAFB;text-align:center;font-size:11px;color:#9CA3AF}
+    .note{background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:12px;margin-top:16px;font-size:12px;color:#92400E}
+    @media print{body{padding:0;background:#fff}.page{box-shadow:none}}
+  </style>
+  </head><body>
+  <div class="page">
+    <div class="header">
+      <div class="logo-area">
+        <h1>🏠 ANUGRAHA</h1>
+        <p>House Painting Services</p>
+        <p style="margin-top:8px;font-size:14px;font-weight:700;color:#FCD34D">PAINT MATERIAL & LABOUR ESTIMATE</p>
+      </div>
+      <div class="meta">
+        <div>📍 <strong>${site.name}</strong></div>
+        <div>👤 ${client}</div>
+        <div>📅 ${bsDate}</div>
+      </div>
+    </div>
+    <div class="stripe"></div>
+    <div class="body">
+      ${matTot>0?`
+      <h2>1. Material Cost Details</h2>
+      ${matEl.querySelector('table')?`<table>
+        <tr><th>सामग्री</th><th>परिमाण</th><th style="text-align:right">रकम (रु.)</th></tr>
+        ${Array.from(matEl.querySelectorAll('tr')).map(r=>`<tr>${Array.from(r.querySelectorAll('td')).map(td=>`<td>${td.textContent}</td>`).join('')}</tr>`).join('')}
+        ${extraMat>0?`<tr><td>सानो सामग्री (tape, sandpaper, etc.)</td><td>—</td><td>${Rs(extraMat)}</td></tr>`:''}
+        <tr class="total-row"><td colspan="2">Material जम्मा</td><td>${Rs(totalMat)}</td></tr>
+      </table>`:`<p>Material: ${Rs(totalMat)}</p>`}`:''}
+
+      <h2>${matTot>0?'2.':''} Labour Cost Details</h2>
+      <table>
+        <tr><th>विवरण</th><th>संख्या / समय</th><th style="text-align:right">जम्मा (रु.)</th></tr>
+        <tr><td>कामदार संख्या</td><td>${workers} जना</td><td>—</td></tr>
+        <tr><td>दैनिक ज्याला प्रति जना</td><td style="color:#EA580C;font-weight:700">रु. ${rate}</td><td>—</td></tr>
+        <tr><td>काम गरेको दिन</td><td>${days} दिन</td><td>—</td></tr>
+        <tr class="total-row"><td colspan="2">👷 कुल ज्याला खर्च (${workers}×${rate}×${days})</td><td>${Rs(labour)}</td></tr>
+      </table>
+
+      <div class="note">⚠️ नोट: माथिको मूल्य अनुमानित हो। वास्तविकता अनुसार ५–१०% तलमाथि हुन सक्छ।</div>
+    </div>
+    <div class="grand">
+      <h3>GRAND TOTAL (कुल जम्मा रकम)</h3>
+      <div class="amount">रु. ${grand.toLocaleString('ne-NP')}/-</div>
+    </div>
+    <div class="footer">
+      धन्यवाद! हामीलाई सेवा गर्ने मौका दिनुहोस् • ANUGRAHA House Painting Services • Your Satisfaction, Our Commitment
+      <br><button onclick="window.print()" style="margin-top:10px;padding:8px 20px;background:#1E40AF;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">🖨️ Print / Download</button>
+    </div>
+  </div>
+  </body></html>`;
+
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  closeM('mEst');
+  toast('✅ Estimate तयार! Print गर्नुस्');
+}
 let EX_FILTER=null;
 function setExFilter(name){EX_FILTER=name;loadSEx();}
 async function toggleClaim(id,current){
