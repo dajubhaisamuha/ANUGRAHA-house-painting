@@ -586,7 +586,7 @@ select.fi option{background:#fff}
 /* Input feel */
 .fi:focus{border-color:var(--ind);transform:none}
 /* Page scroll feel */
-.page{overflow-y:auto;height:calc(100vh - var(--nh));position:absolute;left:0;right:0;top:0}
+.page{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 
 .sp-box{}
 
@@ -847,9 +847,9 @@ select.fi option{background:#fff}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
       <!-- Expenses -->
       <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
-        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">💸 कुल खर्च</div>
-        <div class="n" id="fs-exp" style="font-size:20px;font-weight:900;color:var(--r)">—</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:3px">ज्याला + साइट खर्च</div>
+        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">💪 कुल कमाइ</div>
+        <div class="n" id="fs-exp" style="font-size:20px;font-weight:900;color:var(--ind)">—</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:3px">हाजिर × ज्याला दर</div>
       </div>
       <!-- Profit -->
       <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
@@ -1861,31 +1861,30 @@ async function loadHome(){
     document.getElementById('h-my-wage').textContent=myRate>0?Rs(myTotalWage):'Rate सेट छैन';
     document.getElementById('h-wage-detail').textContent=myRate>0?`${myAttDays} दिन × Rs.${myRate}`:'Profile → दैनिक ज्याला सेट गर्नुस्';
 
-    // Personal financial summary
-    // Personal financial summary for pills
-    const myWithdrawals=await dGet('withdrawals',['member','==',ME]);
+    // ── PERSONAL FINANCIAL SUMMARY ──
+    let myWithdrawals=[];
+    try{myWithdrawals=await dGet('withdrawals',['member','==',ME]);}catch(e){}
     const myReceived=myWithdrawals.reduce((a,w)=>a+Number(w.amount||0),0);
-    const myBalance=myTotalWage-myReceived;
+    const myBalance=Math.max(0,myTotalWage-myReceived);
     const profitShare=profit/3;
 
-    // Hero pills — personal view
-    document.getElementById('h-recv').textContent=Rs(myReceived);
+    // Hero pills
+    document.getElementById('h-recv').textContent=myReceived>0?Rs(myReceived):'Rs.0';
     document.getElementById('h-pr').textContent=Rs(Math.abs(profitShare));
     document.getElementById('h-pr').style.color=profitShare>=0?'#6EE7B7':'#FCA5A5';
-    document.getElementById('h-pd').textContent=Rs(Math.abs(myBalance));
+    document.getElementById('h-pd').textContent=Rs(myBalance);
     document.getElementById('h-pd').style.color=myBalance>0?'#FCD34D':'#6EE7B7';
 
-    // Financial summary cards below
-    const fsRecv=document.getElementById('fs-recv');
-    const fsDue=document.getElementById('fs-due');
-    const fsExpEl=document.getElementById('fs-exp');
-    const fsProfit=document.getElementById('fs-profit');
-    const fsShare=document.getElementById('fs-share');
-    if(fsRecv)fsRecv.textContent=Rs(myReceived);
-    if(fsDue){fsDue.textContent=Rs(Math.abs(myBalance));fsDue.style.color=myBalance>=0?'var(--a)':'var(--g)';}
-    if(fsExpEl)fsExpEl.textContent=Rs(myTotalWage);
-    if(fsProfit){fsProfit.textContent=Rs(Math.abs(profitShare));fsProfit.style.color=profitShare>=0?'var(--g)':'var(--r)';}
-    if(fsShare)fsShare.textContent=`हरेकको हिस्सा ÷३`;
+    // Financial summary cards
+    try{
+      document.getElementById('fs-recv').textContent=Rs(myReceived);
+      document.getElementById('fs-due').textContent=Rs(myBalance);
+      document.getElementById('fs-due').style.color=myBalance>0?'var(--a)':'var(--g)';
+      document.getElementById('fs-exp').textContent=Rs(myTotalWage);
+      document.getElementById('fs-profit').textContent=Rs(Math.abs(profitShare));
+      document.getElementById('fs-profit').style.color=profitShare>=0?'var(--g)':'var(--r)';
+      document.getElementById('fs-share').textContent=`प्रति जना ÷३ = ${Rs(Math.abs(profitShare))}`;
+    }catch(e){}
 
     // ── TODAY'S ATTENDANCE for ME ──
     let myTodaySite='';let myTodayStatus='';
@@ -3787,20 +3786,18 @@ let _fromPop=false;
 function pushHistory(p){
   if(!_fromPop)history.pushState({page:p},'',location.pathname);
 }
-window.addEventListener('popstate',e=>{
+window.addEventListener('popstate',()=>{
   _fromPop=true;
   const det=document.getElementById('det');
-  if(det&&det.style.display!=='none'){
-    det.style.display='none';CUR='sites';
-    loadSites&&loadSites();
+  if(det&&det.style.display==='block'){
+    det.style.display='none';
     _fromPop=false;return;
   }
   if(CUR&&CUR!=='home'){
-    const prev=CUR;
+    _fromPop=true;
     go('home');
-    history.pushState({page:'home'},'',location.pathname);
   }
-  _fromPop=false;
+  setTimeout(()=>_fromPop=false,100);
 });
 
 if('serviceWorker' in navigator){
