@@ -764,18 +764,17 @@ select.fi option{background:#fff}
       <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">थिच्नुस् — साइट-वाइज विवरण हेर्नुस् ›</div>
     </div>
 
-    <!-- 3 PILLS -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-      <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:10px;border:1px solid rgba(255,255,255,.08);text-align:center">
-        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">प्राप्त</div>
+      <div onclick="showPillDetail('recv')" style="background:rgba(255,255,255,.06);border-radius:12px;padding:10px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;active:opacity:.7">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">प्राप्त ›</div>
         <div class="n" id="h-recv" style="font-size:13px;font-weight:800;color:#fff">—</div>
       </div>
-      <div style="background:rgba(22,163,74,.15);border-radius:12px;padding:10px;border:1px solid rgba(22,163,74,.25);text-align:center">
-        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">नाफा</div>
+      <div onclick="showPillDetail('profit')" style="background:rgba(22,163,74,.15);border-radius:12px;padding:10px;border:1px solid rgba(22,163,74,.25);text-align:center;cursor:pointer">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">नाफा ›</div>
         <div class="n" id="h-pr" style="font-size:13px;font-weight:800;color:#6EE7B7">—</div>
       </div>
-      <div style="background:rgba(251,191,36,.1);border-radius:12px;padding:10px;border:1px solid rgba(251,191,36,.2);text-align:center">
-        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">बाँकी</div>
+      <div onclick="showPillDetail('due')" style="background:rgba(251,191,36,.1);border-radius:12px;padding:10px;border:1px solid rgba(251,191,36,.2);text-align:center;cursor:pointer">
+        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">बाँकी ›</div>
         <div class="n" id="h-pd" style="font-size:13px;font-weight:800;color:#FCD34D">—</div>
       </div>
     </div>
@@ -792,9 +791,9 @@ select.fi option{background:#fff}
         <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
         <div class="qb-l">नयाँ साइट</div>
       </div>
-      <div class="qb" onclick="go('att')">
+      <div class="qb" onclick="openQuickAtt()">
         <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-        <div class="qb-l">हाजिर</div>
+        <div class="qb-l">⚡ हाजिर</div>
       </div>
       <div class="qb" onclick="openGlobalExp()">
         <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
@@ -889,12 +888,15 @@ select.fi option{background:#fff}
 
 <!-- SITES -->
 <div class="page" id="pg-sites">
-  <div class="plain-top"><div class="pt-t" data-ne="साइटहरू" data-en="Sites">साइटहरू</div><div class="pt-s" id="s-sub">—</div></div>
+  <div class="plain-top"><div class="pt-t">साइटहरू</div><div class="pt-s" id="s-sub">—</div></div>
+  <div style="padding:0 16px 8px">
+    <input class="fi" id="site-search" placeholder="🔍 साइट खोज्नुस्..." oninput="renderSites()" style="background:var(--gr50)">
+  </div>
   <div class="filters">
-    <button class="fil on" onclick="fSite('all',this)" data-ne="सबै" data-en="All">सबै</button>
-    <button class="fil" onclick="fSite('active',this)" data-ne="सक्रिय" data-en="Active">सक्रिय</button>
-    <button class="fil" onclick="fSite('completed',this)" data-ne="सम्पन्न" data-en="Done">सम्पन्न</button>
-    <button class="fil" onclick="fSite('hold',this)" data-ne="रोकिएको" data-en="Hold">रोकिएको</button>
+    <button class="fil on" onclick="fSite('all',this)">सबै</button>
+    <button class="fil" onclick="fSite('active',this)">सक्रिय</button>
+    <button class="fil" onclick="fSite('completed',this)">सम्पन्न</button>
+    <button class="fil" onclick="fSite('hold',this)">रोकिएको</button>
   </div>
   <div style="padding:12px 16px 80px" id="s-list"><div class="ld">लोड हुँदैछ...</div></div>
   <button class="fab" onclick="openSiteModal()">+</button>
@@ -990,6 +992,8 @@ select.fi option{background:#fff}
       <div class="set-item" onclick="openChangePW()"><div class="si-ico" style="background:var(--al)">🔒</div><div><div class="si-t">Password बदल्नुस्</div><div class="si-s">आफ्नै password राख्नुस्</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="openRateModal()"><div class="si-ico" style="background:var(--gl)">💰</div><div><div class="si-t">दैनिक ज्याला सेट गर्नुस्</div><div class="si-s" id="my-rate-lbl">अहिलेसम्म सेट छैन</div></div><div class="si-arr">›</div></div>
       <div class="set-item" onclick="openThemePicker()"><div class="si-ico" style="background:linear-gradient(135deg,#C41E3A,#1A56DB,#7C3AED)">🎨</div><div><div class="si-t">App Theme</div><div class="si-s" id="theme-lbl">Default Blue</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="exportData()"><div class="si-ico" style="background:#EFF6FF">📊</div><div><div class="si-t">Data Export (JSON Backup)</div><div class="si-s">सबै data download गर्नुस्</div></div><div class="si-arr">›</div></div>
+      <div class="set-item" onclick="checkPaymentReminders()"><div class="si-ico" style="background:var(--al)">🔔</div><div><div class="si-t">Payment Reminder Check</div><div class="si-s">बाँकी payment भएका site हेर्नुस्</div></div><div class="si-arr">›</div></div>
       
     </div>
     <div class="set-group">
@@ -1326,6 +1330,13 @@ select.fi option{background:#fff}
   </div>
   <button class="btn bp" onclick="generateEstimate()">📄 Estimate Generate गर्नुस्</button>
   <button class="btn bs" onclick="closeM('mEst')">रद्द</button>
+</div></div>
+
+<!-- MODAL: PILL DETAIL -->
+<div class="mbo" id="mPillDetail"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit" id="pill-detail-title">विवरण</div>
+  <div id="pill-detail-body"></div>
 </div></div>
 
 <!-- MODAL: BILL PHOTOS -->
@@ -2023,7 +2034,12 @@ async function loadSites(){
   renderSites();
 }
 function fSite(f,btn){sFil=f;document.querySelectorAll('#pg-sites .fil').forEach(t=>t.classList.remove('on'));btn.classList.add('on');renderSites();}
-function renderSites(){const list=sFil==='all'?SITES:SITES.filter(s=>s.status===sFil);document.getElementById('s-list').innerHTML=list.length?list.map(mkSC).join(''):emptyS('🏗️','कुनै साइट भेटिएन');}
+function renderSites(){
+  const q=(document.getElementById('site-search')?.value||'').toLowerCase();
+  let list=sFil==='all'?SITES:SITES.filter(s=>s.status===sFil);
+  if(q)list=list.filter(s=>(s.name||'').toLowerCase().includes(q)||(s.client_name||'').toLowerCase().includes(q)||(s.location||'').toLowerCase().includes(q));
+  document.getElementById('s-list').innerHTML=list.length?list.map(mkSC).join(''):emptyS('🔍','साइट भेटिएन');
+}
 function openSiteModal(){
   ['sn','scl','sph','sloc','sa','ssq','srt','snote'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('sct').value='full';document.getElementById('sst').value='active';
@@ -2417,7 +2433,120 @@ async function loadSEx(){
       </div></div>`).join('')}</div>
   </div>`;
 }
-// ══ ESTIMATE GENERATOR ══
+// ══ DATA EXPORT (JSON Backup) ══
+async function exportData(){
+  toast('Data export हुँदैछ...');
+  try{
+    const [sites,payments,expenses,workers,workEntries,withdrawals,attendance]=await Promise.all([
+      dGet('sites'),dGet('payments'),dGet('expenses'),dGet('workers'),
+      dGet('work_entries'),dGet('withdrawals'),dGet('attendance')
+    ]);
+    const data={exported:new Date().toISOString(),sites,payments,expenses,workers,workEntries,withdrawals,attendance};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=`anugraha-backup-${todStr()}.json`;
+    a.click();URL.revokeObjectURL(url);
+    toast('✅ Backup download भयो!');
+  }catch(e){toast('Export गर्न सकिएन',false);}
+}
+
+// ══ PAYMENT REMINDER CHECK ══
+async function checkPaymentReminders(){
+  try{
+    const sites=await dGetC('sites');
+    const pays=await dGetC('payments');
+    const active=sites.filter(s=>s.status==='active');
+    const reminders=[];
+    active.forEach(s=>{
+      const sitePays=pays.filter(p=>p.site_id===s.id);
+      const totR=sitePays.reduce((a,p)=>a+Number(p.amount||0),0);
+      const cv=Number(s.contract_value||s.fixed_price||0);
+      const due=cv-totR;
+      if(due>0&&sitePays.length>0){
+        const lastPay=sitePays.sort((a,b)=>b.date>a.date?1:-1)[0];
+        const daysSince=Math.floor((Date.now()-new Date(lastPay.date).getTime())/86400000);
+        if(daysSince>7)reminders.push({site:s.name,due,days:daysSince});
+      }
+    });
+    if(reminders.length){
+      const msg=reminders.map(r=>`📍 ${r.site}: Rs.${r.due.toLocaleString()} बाँकी (${r.days} दिन भयो)`).join('\n');
+      toast(`⚠️ ${reminders.length} साइटमा payment बाँकी!`);
+      if(confirm(`Payment Reminder:\n\n${msg}\n\nWhatsApp मा remind गर्ने?`)){
+        shareWhatsApp(`🏠 ANUGRAHA - Payment Reminder\n\n${msg}\n\nकृपया payment गरिदिनुहोस् 🙏`);
+      }
+    }else{toast('✅ सबै payments up to date छन्!');}
+  }catch(e){}
+}
+
+// ══ QUICK ATTENDANCE FROM DASHBOARD ══
+async function openQuickAtt(){
+  SITES=await dGetC('sites');
+  const active=SITES.filter(s=>s.status==='active');
+  if(!active.length){toast('कुनै सक्रिय साइट छैन',false);return;}
+  const WKRS_ALL=await dGetC('workers');
+  const activeW=WKRS_ALL.filter(w=>w.active!==false);
+  // Build quick attendance modal
+  const modal=document.getElementById('mQuickAtt')||document.createElement('div');
+  modal.id='mQuickAtt';modal.className='mbo';
+  modal.innerHTML=`<div class="msh"><div class="mhd"></div>
+    <div class="mtit">⚡ छिटो हाजिर — ${fBSD(todStr())}</div>
+    <div class="fg"><label class="fl">साइट</label>
+      <select class="fi" id="qa-site">${active.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select>
+    </div>
+    <div id="qa-workers-list" style="margin-bottom:14px">
+      ${activeW.map(w=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gr100)">
+          <span style="font-weight:700">${w.name}</span>
+          <div style="display:flex;gap:4px">
+            ${['P','M','E','H','A','V'].map(s=>`<button class="qa-btn" data-wid="${w.id}" data-status="${s}" onclick="qaToggle(this)"
+              style="padding:5px 7px;border-radius:8px;border:1.5px solid var(--gr200);background:var(--gr50);font-size:11px;font-weight:700;cursor:pointer">
+              ${{P:'🌞',M:'🌅',E:'☀️',H:'🔶',A:'❌',V:'🏖'}[s]}</button>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>
+    <button class="btn bp" onclick="saveQuickAtt()">💾 सेभ</button>
+    <button class="btn bs" onclick="this.closest('.mbo').classList.remove('open')">रद्द</button>
+  </div>`;
+  if(!document.getElementById('mQuickAtt'))document.body.appendChild(modal);
+  modal.classList.add('open');
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open');});
+}
+function qaToggle(btn){
+  const wid=btn.dataset.wid;
+  document.querySelectorAll(`.qa-btn[data-wid="${wid}"]`).forEach(b=>{
+    b.style.background='var(--gr50)';b.style.borderColor='var(--gr200)';b.style.color='var(--gr700)';
+  });
+  btn.style.background='var(--ind)';btn.style.borderColor='var(--ind)';btn.style.color='#fff';
+}
+async function saveQuickAtt(){
+  const siteId=document.getElementById('qa-site').value;
+  const site=SITES.find(s=>s.id===siteId);
+  const entries=[];
+  document.querySelectorAll('.qa-btn[style*="var(--ind)"]').forEach(btn=>{
+    const wid=btn.dataset.wid;
+    const status=btn.dataset.status;
+    const w=document.querySelector(`.qa-btn[data-wid="${wid}"]`).closest('div').querySelector('span');
+    entries.push({wid,name:w?.textContent||'',status});
+  });
+  if(!entries.length){toast('कम्तीमा एकको हाजिर थप्नुस्',false);return;}
+  await dAdd('attendance',{site_id:siteId,site_name:site?.name||'',date:todStr(),bs_date:bsToday(),entries});
+  document.getElementById('mQuickAtt').classList.remove('open');
+  toast('✅ हाजिर सेभ!');haptic('success');
+  loadHome();
+}
+function shareWhatsApp(text){
+  const url='https://wa.me/?text='+encodeURIComponent(text);
+  window.open(url,'_blank');
+}
+function shareEstimateWA(siteName,client,grand,matTot,labour){
+  const text=`🏠 *ANUGRAHA House Painting Services*\n\n📋 *ESTIMATE*\n📍 Site: ${siteName}\n👤 Client: ${client}\n\n🧱 Material Cost: Rs.${matTot.toLocaleString()}\n👷 Labour Cost: Rs.${labour.toLocaleString()}\n\n💰 *Grand Total: Rs.${grand.toLocaleString()}/-*\n\n_Your Satisfaction, Our Commitment_ ✅`;
+  shareWhatsApp(text);
+}
+function shareSalaryWA(workerName,days,rate,earned,received,balance){
+  const text=`🏠 *ANUGRAHA House Painting Services*\n\n📄 *तलब विवरण*\n👷 कामदार: ${workerName}\n\n📅 काम गरेको: ${days} दिन\n💰 दैनिक दर: Rs.${rate}\n✅ कुल कमाइ: Rs.${earned.toLocaleString()}\n🏦 प्राप्त: Rs.${received.toLocaleString()}\n⏳ बाँकी: Rs.${balance.toLocaleString()}\n\n_ANUGRAHA House Painting Services_`;
+  shareWhatsApp(text);
+}
 function addEstMatRow(d={}){
   const uid='em'+Date.now();
   const div=document.createElement('div');
@@ -2593,6 +2722,12 @@ function generateEstimate(){
   if(w){w.document.write(html);w.document.close();}
   closeM('mEst');
   toast('✅ Estimate तयार! Print गर्नुस्');
+  // Also offer WhatsApp share
+  setTimeout(()=>{
+    if(confirm('WhatsApp मा share गर्ने?')){
+      shareEstimateWA(site.name,client,grand,matTot,labour);
+    }
+  },500);
 }
 let EX_FILTER=null;
 function setExFilter(name){EX_FILTER=name;loadSEx();}
@@ -3751,13 +3886,12 @@ function populateES(def=null){document.getElementById('es').innerHTML=`<option v
 async function saveExp(){
   const amt=+document.getElementById('ea').value;if(!amt){toast('रकम राख्नुस्',false);return;}
   const sid=document.getElementById('es').value;
-  if(!sid){toast('⚠️ पहिले साइट छान्नुस्!',false);haptic('error');document.getElementById('es').focus();return;}
-  const sn=SITES.find(x=>x.id===sid)?.name||'';
+  const sn=sid?SITES.find(x=>x.id===sid)?.name||'':'सामान्य खर्च';
   const d=document.getElementById('ed').value;
-  await dAdd('expenses',{site_id:sid,site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value,claimed:false});
+  await dAdd('expenses',{site_id:sid||'general',site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value,claimed:false});
   closeM('mExp');
   clearCache('expenses');toast('खर्च सेभ ✓');
-  addNotif('expense',`💸 ${ME} — ${Rs(amt)} खर्च · ${sn||'—'} · ${fBS(d)}`);
+  addNotif('expense',`💸 ${ME} — ${Rs(amt)} खर्च · ${sn} · ${fBS(d)}`);
   if(CUR==='exp')loadExp();else if(CDT==='ex')loadSEx();
 }
 
@@ -3876,6 +4010,7 @@ function boot(){
   autoAddMemberAsWorker();
   loadHome();
   initNotifListener();
+  setTimeout(checkPaymentReminders, 5000);
 }
 
 async function autoAddMemberAsWorker(){
