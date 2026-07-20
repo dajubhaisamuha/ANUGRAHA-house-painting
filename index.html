@@ -1932,11 +1932,74 @@ async function loadHome(){
     document.getElementById('h-wage-detail').textContent=myRate>0?`${myAttDays} दिन × Rs.${myRate}`:'Profile → दैनिक ज्याला सेट गर्नुस्';
 
     // ── PERSONAL FINANCIAL SUMMARY ──
-    let myWithdrawals=[];
-    try{myWithdrawals=await dGet('withdrawals',['member','==',ME]);}catch(e){}
-    const myReceived=myWithdrawals.reduce((a,w)=>a+Number(w.amount||0),0);
-    const myBalance=Math.max(0,myTotalWage-myReceived);
+    // work_entries बाट नै कमाइ र प्राप्त दुवै calculate
+    const myWorkEntries=work.filter(w=>{
+      const n=(w.worker_name||'').toUpperCase().trim();
+      const m=(ME||'').toUpperCase().trim();
+      return n===m||w.worker_id===ME;
+    });
+
+    // कुल कमाइ = days × daily_rate (work_entries बाट)
+    const myEarned=myWorkEntries.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
+    // प्राप्त = advance_given (work_entries बाट)
+    const myReceived=myWorkEntries.reduce((a,w)=>a+Number(w.advance_given||0),0);
+    // बाँकी
+    const myBalance=Math.max(0,myEarned-myReceived);
     const profitShare=profit/3;
+
+    // Earning card — use work_entries based total if available, else attendance based
+    const displayWage=myEarned>0?myEarned:myTotalWage;
+    document.getElementById('h-my-wage').textContent=displayWage>0?Rs(displayWage):'Rate सेट छैन';
+    if(myEarned>0){
+      document.getElementById('h-wage-detail').textContent=
+        `${myWorkEntries.reduce((a,w)=>a+Number(w.days||0),0)} दिन × Rs.${myWorkEntries[0]?.daily_rate||myRate}`;
+    }
+
+    // Site-wise breakdown
+    const siteWageMap={};
+    myWorkEntries.forEach(w=>{
+      const sid=w.site_id||'unknown';
+      const sName=SITES.find(s=>s.id===sid)?.name||w.site_name||'—';
+      const sStatus=SITES.find(s=>s.id===sid)?.status||'active';
+      if(!siteWageMap[sid])siteWageMap[sid]={name:sName,status:sStatus,days:0,wage:0,received:0};
+      siteWageMap[sid].days+=Number(w.days||0);
+      siteWageMap[sid].wage+=Number(w.days||0)*Number(w.daily_rate||0);
+      siteWageMap[sid].received+=Number(w.advance_given||0);
+    });
+    const siteWageList=Object.values(siteWageMap).filter(s=>s.days>0);
+
+    // Store for pill detail
+    _myWageData={
+      sites:siteWageList,
+      received:myWorkEntries.filter(w=>Number(w.advance_given||0)>0).map(w=>({
+        note:SITES.find(s=>s.id===w.site_id)?.name||w.site_name||'साइट',
+        amount:w.advance_given,
+        date:w.date_from||'',
+        bs_date:w.bs_from||fBS(w.date_from||'')
+      })),
+      totalWage:displayWage,
+      totalReceived:myReceived,
+      profit,
+      clientRecv:totR,wages:totL,expenses:totE,extraIncome:totX
+    };
+
+    // Update pills with work_entries data
+    document.getElementById('h-recv').textContent=Rs(myReceived);
+    document.getElementById('h-pr').textContent=Rs(Math.abs(profitShare));
+    document.getElementById('h-pr').style.color=profitShare>=0?'#6EE7B7':'#FCA5A5';
+    document.getElementById('h-pd').textContent=Rs(myBalance);
+    document.getElementById('h-pd').style.color=myBalance>0?'#FCD34D':'#6EE7B7';
+
+    // Financial summary cards
+    try{
+      document.getElementById('fs-recv').textContent=Rs(myReceived);
+      document.getElementById('fs-due').textContent=Rs(myBalance);
+      document.getElementById('fs-due').style.color=myBalance>0?'var(--a)':'var(--g)';
+      document.getElementById('fs-exp').textContent=Rs(displayWage);
+      document.getElementById('fs-profit').textContent=Rs(Math.abs(profitShare));
+      document.getElementById('fs-profit').style.color=profitShare>=0?'var(--g)':'var(--r)';
+      document.getElementById('fs-share').textContent=`प्रति जना ÷३ = ${Rs(Math.abs(profitShare))}`;
+    }catch(e){}
 
     // Hero pills
     document.getElementById('h-recv').textContent=myReceived>0?Rs(myReceived):'Rs.0';
@@ -2535,6 +2598,81 @@ async function saveQuickAtt(){
   toast('✅ हाजिर सेभ!');haptic('success');
   loadHome();
 }
+
+// ══ PILL DETAIL BREAKDOWN ══
+let _myWageData={sites:[],received:[],totalWage:0,totalReceived:0,profit:0,clientRecv:0,wages:0,expenses:0,extraIncome:0};
+
+async function showPillDetail(type){
+  haptic('light');
+  const el=document.getElementById('pill-detail-body');
+  const title=document.getElementById('pill-detail-title');
+  openM('mPillDetail');
+  if(type==='recv'){
+    title.textContent='✅ प्राप्त रकम विवरण';
+    const wdraws=_myWageData.received;
+    if(!wdraws.length){el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--gr400)">अहिलेसम्म कुनै रकम प्राप्त भएको छैन</div>`;return;}
+    el.innerHTML=`<div style="background:var(--gl);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-weight:700;color:#065F46">जम्मा प्राप्त</span>
+      <span class="n" style="font-size:20px;font-weight:900;color:var(--g)">${Rs(_myWageData.totalReceived)}</span>
+    </div>
+    ${wdraws.sort((a,b)=>b.date>a.date?1:-1).map(w=>`<div class="li"><div class="li-i" style="background:var(--gl)">💵</div>
+      <div style="flex:1"><div class="li-t">${w.note||w.type||'Withdrawal'}</div><div class="li-s">${w.bs_date||fBS(w.date)||w.date}</div></div>
+      <div class="pos n">+${Rs(w.amount)}</div></div>`).join('')}`;
+  }
+  else if(type==='due'){
+    title.textContent='⏳ बाँकी रकम विवरण';
+    const sites=_myWageData.sites;
+    const totalDue=_myWageData.totalWage-_myWageData.totalReceived;
+    el.innerHTML=`<div style="background:var(--al);border-radius:12px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-weight:700;color:#92400E">जम्मा बाँकी</span>
+      <span class="n" style="font-size:20px;font-weight:900;color:var(--a)">${Rs(Math.max(0,totalDue))}</span>
+    </div>
+    <div style="font-size:11px;color:var(--gr400);margin-bottom:12px">कुल कमाइ ${Rs(_myWageData.totalWage)} − प्राप्त ${Rs(_myWageData.totalReceived)}</div>
+    <div style="font-size:12px;font-weight:800;color:var(--gr500);margin-bottom:10px">📍 साइट-वाइज कमाइ</div>
+    ${sites.map(s=>`<div style="background:var(--w);border-radius:14px;padding:14px;margin-bottom:8px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="font-weight:800">${s.name}</span>
+        <span style="font-size:10px;background:${s.status==='active'?'var(--gl)':'var(--gr100)'};color:${s.status==='active'?'#065F46':'var(--gr500)'};padding:2px 8px;border-radius:20px;font-weight:700">${s.status==='active'?'सक्रिय':'सम्पन्न'}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--ind-l);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:var(--ind-d);font-weight:600;margin-bottom:2px">⏱ दिन</div>
+          <div class="n" style="font-size:18px;font-weight:800;color:var(--ind)">${s.days}</div>
+        </div>
+        <div style="background:var(--gl);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:10px;color:#065F46;font-weight:600;margin-bottom:2px">💰 कमाइ</div>
+          <div class="n" style="font-size:18px;font-weight:800;color:var(--g)">${Rs(s.wage)}</div>
+        </div>
+      </div>
+      ${s.received>0?`<div style="margin-top:6px;display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-top:1px dashed var(--gr200)">
+        <span style="color:var(--gr500)">प्राप्त</span><span class="n" style="color:var(--g);font-weight:700">${Rs(s.received)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800">
+        <span style="color:#92400E">बाँकी</span><span class="n" style="color:var(--a)">${Rs(Math.max(0,s.wage-s.received))}</span>
+      </div>`:''}
+    </div>`).join('')||emptyS('🏗️','साइट डेटा छैन')}`;
+  }
+  else if(type==='profit'){
+    title.textContent='📈 नाफाको विवरण';
+    const profit=_myWageData.profit;const share=profit/3;
+    el.innerHTML=`<div style="background:var(--gl);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">
+      <div style="font-size:11px;color:#065F46;font-weight:700;margin-bottom:6px">तपाईंको हिस्सा (÷ ३)</div>
+      <div class="n" style="font-size:32px;font-weight:900;color:${share>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(share))}</div>
+    </div>
+    <div style="background:var(--w);border-radius:14px;padding:14px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gr100)"><span style="color:var(--gr500)">💰 ग्राहकबाट प्राप्त</span><span class="n" style="font-weight:700;color:var(--g)">${Rs(_myWageData.clientRecv)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gr100)"><span style="color:var(--gr500)">👷 ज्याला</span><span class="n" style="font-weight:700;color:var(--r)">-${Rs(_myWageData.wages)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gr100)"><span style="color:var(--gr500)">💸 खर्च</span><span class="n" style="font-weight:700;color:var(--r)">-${Rs(_myWageData.expenses)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:800"><span>= कुल नाफा</span><span class="n" style="color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
+      <div style="background:var(--gl);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between">
+        <span style="color:#065F46;font-weight:700">तपाईंको हिस्सा ÷ ३</span>
+        <span class="n" style="font-weight:800;color:var(--g)">${Rs(Math.abs(share))}</span>
+      </div>
+    </div>`;
+  }
+}
+
+
 function shareWhatsApp(text){
   const url='https://wa.me/?text='+encodeURIComponent(text);
   window.open(url,'_blank');
