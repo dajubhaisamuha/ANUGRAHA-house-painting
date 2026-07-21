@@ -183,7 +183,7 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 .ni-l{font-size:9.5px;font-weight:700;letter-spacing:.2px}
 
 /* HERO BAR — Dark Navy + Orange premium */
-.hero-bar{background:linear-gradient(160deg,#1C1917 0%,#292524 45%,#431407 100%);padding:54px 20px 22px;position:relative;overflow:hidden}
+.hero-bar{background:linear-gradient(145deg,#0A1628 0%,#0F2044 35%,#1A1042 65%,#2D1810 100%);padding:54px 20px 22px;position:relative;overflow:hidden}
 .hero-bar::before{content:'';position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(234,88,12,.25),transparent 70%)}
 .hero-bar::after{content:'';position:absolute;left:-40px;bottom:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(234,88,12,.12),transparent 70%)}
 .hb-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;position:relative;z-index:1}
@@ -490,9 +490,10 @@ select.fi option{background:#fff}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-.hero-orb{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;animation:orbFloat 10s ease-in-out infinite;opacity:.5}
-.orb-a{width:200px;height:200px;background:rgba(255,255,255,.06);top:-70px;right:-70px}
-.orb-b{width:140px;height:140px;background:rgba(255,255,255,.04);bottom:-40px;left:25%;animation-delay:3s}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;animation:orbFloat 10s ease-in-out infinite}
+.orb-a{width:220px;height:220px;background:rgba(249,115,22,.18);top:-80px;right:-60px}
+.orb-b{width:180px;height:180px;background:rgba(99,102,241,.15);bottom:-60px;left:10%;animation-delay:3s}
+.orb-c{width:120px;height:120px;background:rgba(16,185,129,.1);top:30%;right:20%;animation-delay:6s}
 .orb-c{display:none}
 
 #login{background:linear-gradient(160deg,#1C1917 0%,#292524 45%,#431407 100%);background-size:200% 200%;animation:gradientShift 12s ease infinite}
@@ -734,6 +735,10 @@ select.fi option{background:#fff}
   <div class="hero-bar">
     <div class="hero-orb orb-a"></div>
     <div class="hero-orb orb-b"></div>
+    <div class="hero-orb orb-c"></div>
+
+    <!-- top accent line -->
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F97316,#6366F1,transparent);opacity:.7"></div>
     <div class="hb-top">
       <div class="hb-user" onclick="go('profile')" style="cursor:pointer">
         <div class="hb-avatar" id="hb-av">A</div>
@@ -752,30 +757,33 @@ select.fi option{background:#fff}
     </div>
 
     <!-- EARNING CARD -->
-    <div style="background:rgba(255,255,255,.06);border-radius:20px;padding:18px;border:1px solid rgba(255,255,255,.1);margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden" onclick="openMyActivity()">
-      <div style="font-size:9px;color:rgba(255,255,255,.45);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px"><span id="hb-nm2">AMRIT</span> को व्यक्तिगत कमाइ</div>
-      <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:4px">
-        <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,.5)">Rs.</span>
-        <span class="n" id="h-my-wage" style="font-size:46px;font-weight:900;color:#fff;line-height:1;letter-spacing:-2px">0</span>
+    <div style="background:rgba(255,255,255,.04);backdrop-filter:blur(20px);border-radius:22px;padding:20px;border:1px solid rgba(255,255,255,.1);margin-bottom:14px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3)" onclick="openMyActivity()">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(249,115,22,.6),transparent)"></div>
+      <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px"><span id="hb-nm2">AMRIT</span> को व्यक्तिगत कमाइ</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
+        <span style="font-size:13px;font-weight:700;color:rgba(249,115,22,.7)">रु.</span>
+        <span class="n" id="h-my-wage" style="font-size:48px;font-weight:900;color:#fff;line-height:1;letter-spacing:-3px">0</span>
       </div>
-      <div style="font-size:11px;color:rgba(255,255,255,.4)" id="h-wage-detail">Profile मा Rate सेट गर्नुस्</div>
-      <div style="position:absolute;right:-10px;top:-10px;width:80px;height:80px;background:rgba(255,255,255,.04);border-radius:50%"></div>
-      <div style="position:absolute;right:20px;bottom:-20px;width:60px;height:60px;background:rgba(255,255,255,.03);border-radius:50%"></div>
-      <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,.3)">थिच्नुस् — साइट-वाइज विवरण हेर्नुस् ›</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.35);font-weight:500" id="h-wage-detail">Profile मा Rate सेट गर्नुस्</div>
+      <div style="position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;border-radius:50%;background:rgba(249,115,22,.06)"></div>
+      <div style="margin-top:12px;display:inline-flex;align-items:center;gap:4px;font-size:10px;color:rgba(249,115,22,.6);font-weight:700;letter-spacing:.5px">साइट-वाइज विवरण हेर्नुस् <span style="font-size:12px">›</span></div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-      <div onclick="showPillDetail('recv')" style="background:rgba(255,255,255,.06);border-radius:12px;padding:10px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;active:opacity:.7">
-        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">प्राप्त ›</div>
-        <div class="n" id="h-recv" style="font-size:13px;font-weight:800;color:#fff">—</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+      <div onclick="showPillDetail('recv')" style="background:rgba(255,255,255,.05);border-radius:14px;padding:12px 8px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#16A34A,#6EE7B7)"></div>
+        <div style="font-size:8px;color:rgba(255,255,255,.35);font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">प्राप्त ›</div>
+        <div class="n" id="h-recv" style="font-size:14px;font-weight:900;color:#6EE7B7">—</div>
       </div>
-      <div onclick="showPillDetail('profit')" style="background:rgba(22,163,74,.15);border-radius:12px;padding:10px;border:1px solid rgba(22,163,74,.25);text-align:center;cursor:pointer">
-        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">नाफा ›</div>
-        <div class="n" id="h-pr" style="font-size:13px;font-weight:800;color:#6EE7B7">—</div>
+      <div onclick="showPillDetail('profit')" style="background:rgba(255,255,255,.05);border-radius:14px;padding:12px 8px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#6366F1,#A78BFA)"></div>
+        <div style="font-size:8px;color:rgba(255,255,255,.35);font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">नाफा ›</div>
+        <div class="n" id="h-pr" style="font-size:14px;font-weight:900;color:#A78BFA">—</div>
       </div>
-      <div onclick="showPillDetail('due')" style="background:rgba(251,191,36,.1);border-radius:12px;padding:10px;border:1px solid rgba(251,191,36,.2);text-align:center;cursor:pointer">
-        <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">बाँकी ›</div>
-        <div class="n" id="h-pd" style="font-size:13px;font-weight:800;color:#FCD34D">—</div>
+      <div onclick="showPillDetail('due')" style="background:rgba(255,255,255,.05);border-radius:14px;padding:12px 8px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#F97316,#FBBF24)"></div>
+        <div style="font-size:8px;color:rgba(255,255,255,.35);font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">बाँकी ›</div>
+        <div class="n" id="h-pd" style="font-size:14px;font-weight:900;color:#FCD34D">—</div>
       </div>
     </div>
 
@@ -1330,6 +1338,46 @@ select.fi option{background:#fff}
   </div>
   <button class="btn bp" onclick="generateEstimate()">📄 Estimate Generate गर्नुस्</button>
   <button class="btn bs" onclick="closeM('mEst')">रद्द</button>
+</div></div>
+
+<!-- MODAL: SETTLEMENT -->
+<div class="mbo" id="mSettle"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">🤝 Wage Settlement</div>
+  <div style="background:var(--purl);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--pur)">
+    Site मा भएको ज्याला कम रकममा settle गर्न। जस्तै: Rs.14,400 को ठाउँमा Rs.12,000 मा agree भए।
+  </div>
+  <div class="fg">
+    <label class="fl">कामदार</label>
+    <select class="fi" id="settle-worker" onchange="calcSettlement()"></select>
+  </div>
+  <div id="settle-info" style="background:var(--gr50);border-radius:10px;padding:12px;margin-bottom:12px;display:none">
+    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+      <span style="color:var(--gr500)">कुल कमाइ</span>
+      <span class="n" id="settle-earned" style="font-weight:800;color:var(--ind)">—</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:13px">
+      <span style="color:var(--gr500)">अग्रिम दिइसकेको</span>
+      <span class="n" id="settle-adv" style="font-weight:800;color:var(--a)">—</span>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">Settlement रकम (final agree भएको)</label>
+    <input type="number" class="fi" id="settle-amt" placeholder="जस्तै: 12000" oninput="calcSettlement()">
+  </div>
+  <div id="settle-diff" style="margin-bottom:14px;display:none">
+    <div style="background:var(--gl);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between">
+      <span style="font-size:13px;color:#065F46;font-weight:700">माफ गरिने रकम</span>
+      <span class="n" id="settle-waived" style="font-weight:800;color:var(--r)">—</span>
+    </div>
+  </div>
+  <div class="fg">
+    <label class="fl">कारण (optional)</label>
+    <input class="fi" id="settle-note" placeholder="जस्तै: काम राम्रो भएन, Client ले कम दियो">
+  </div>
+  <input type="hidden" id="settle-site-id">
+  <button class="btn bp" onclick="saveSettlement()">✅ Settlement सेभ</button>
+  <button class="btn bs" onclick="closeM('mSettle')">रद्द</button>
 </div></div>
 
 <!-- MODAL: PILL DETAIL -->
@@ -2370,6 +2418,7 @@ async function loadWages(){
     <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:flex-end">
       <button class="btn bp bsm" onclick="openWageModal()">+ ज्याला</button>
       <button class="btn bsm" style="background:var(--al);color:#92400E;border:1px solid #FCD34D" onclick="openAdvModal('${CS}')">💵 अग्रिम</button>
+      <button class="btn bsm" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSettlementModal('${CS}')">🤝 Settlement</button>
     </div>
 
     ${!entries.length&&!advances.length?emptyS('👷','कुनै रेकर्ड छैन'):`
@@ -2377,16 +2426,18 @@ async function loadWages(){
       <div style="padding:10px 16px;font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;border-bottom:1px solid var(--gr100)">ज्याला रेकर्ड</div>
       ${!entries.length?`<div style="padding:12px 16px;font-size:13px;color:var(--gr400)">कुनै ज्याला रेकर्ड छैन</div>`:entries.map(e=>{
         const earn=Number(e.days||0)*Number(e.daily_rate||0);
-        return`<div class="li">
-          <div class="li-i" style="font-size:18px;background:var(--ind-l)">👷</div>
+        return`<div class="li" style="${e.settled?'opacity:.7':''}">
+          <div class="li-i" style="font-size:18px;background:${e.settled?'var(--gl)':'var(--ind-l)'}">👷</div>
           <div style="flex:1">
-            <div class="li-t">${e.worker_name}</div>
+            <div class="li-t">${e.worker_name} ${e.settled?'<span style="background:var(--gl);color:#065F46;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">✅ Settled</span>':''}</div>
             <div class="li-s">${e.days}दिन × Rs.${e.daily_rate}${e.bs_from?' · '+e.bs_from:''}</div>
-            ${e.advance_given>0?`<div style="font-size:11px;color:var(--a)">अग्रिम: ${Rs(e.advance_given)} · बाँकी: ${Rs(earn-e.advance_given)}</div>`:''}
+            ${e.settled?`<div style="font-size:11px;color:var(--g);font-weight:700">Settlement: ${Rs(e.settlement_amount)} <span style="color:var(--gr400);font-weight:400">(${Rs(earn-e.settlement_amount)} माफ गरियो)</span></div>`:
+            e.advance_given>0?`<div style="font-size:11px;color:var(--a)">अग्रिम: ${Rs(e.advance_given)} · बाँकी: ${Rs(earn-e.advance_given)}</div>`:''}
           </div>
           <div class="li-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <div class="n" style="font-weight:800;font-size:14px">${Rs(earn)}</div>
-            <button onclick="delEntry('work_entries','${e.id}','loadWages')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑 हटाउनुस्</button>
+            <div class="n" style="font-weight:800;font-size:14px;${e.settled?'text-decoration:line-through;color:var(--gr400)':''}">${Rs(earn)}</div>
+            ${e.settled?`<div class="n" style="font-weight:800;font-size:14px;color:var(--g)">${Rs(e.settlement_amount)}</div>`:''}
+            <button onclick="delEntry('work_entries','${e.id}','loadWages')" style="background:var(--rl);border:none;color:var(--r);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer">🗑</button>
           </div>
         </div>`;
       }).join('')}
@@ -2599,7 +2650,68 @@ async function saveQuickAtt(){
   loadHome();
 }
 
-// ══ PILL DETAIL BREAKDOWN ══
+// ══ WAGE SETTLEMENT ══
+let _settleEntries=[];
+async function openSettlementModal(siteId){
+  _settleEntries=await dGet('work_entries',['site_id','==',siteId]);
+  const sel=document.getElementById('settle-worker');
+  // Group by worker
+  const workers={};
+  _settleEntries.forEach(e=>{
+    if(!workers[e.worker_name])workers[e.worker_name]={name:e.worker_name,earned:0,adv:0};
+    workers[e.worker_name].earned+=Number(e.days||0)*Number(e.daily_rate||0);
+    workers[e.worker_name].adv+=Number(e.advance_given||0);
+  });
+  sel.innerHTML='<option value="">कामदार छान्नुस्</option>'+
+    Object.values(workers).map(w=>`<option value="${w.name}">${w.name} — कमाइ: ${Rs(w.earned)}</option>`).join('');
+  document.getElementById('settle-site-id').value=siteId;
+  document.getElementById('settle-amt').value='';
+  document.getElementById('settle-info').style.display='none';
+  document.getElementById('settle-diff').style.display='none';
+  document.getElementById('settle-note').value='';
+  openM('mSettle');
+}
+function calcSettlement(){
+  const wName=document.getElementById('settle-worker').value;
+  if(!wName)return;
+  let earned=0,adv=0;
+  _settleEntries.filter(e=>e.worker_name===wName).forEach(e=>{
+    earned+=Number(e.days||0)*Number(e.daily_rate||0);
+    adv+=Number(e.advance_given||0);
+  });
+  document.getElementById('settle-earned').textContent=Rs(earned);
+  document.getElementById('settle-adv').textContent=Rs(adv);
+  document.getElementById('settle-info').style.display='block';
+  const amt=+document.getElementById('settle-amt').value||0;
+  if(amt>0){
+    const waived=earned-amt;
+    document.getElementById('settle-waived').textContent=Rs(Math.abs(waived))+(waived<0?' (बढी दिइयो)':'');
+    document.getElementById('settle-diff').style.display='block';
+  }
+}
+async function saveSettlement(){
+  const wName=document.getElementById('settle-worker').value;
+  const amt=+document.getElementById('settle-amt').value;
+  const siteId=document.getElementById('settle-site-id').value;
+  const note=document.getElementById('settle-note').value;
+  if(!wName||!amt){toast('कामदार र रकम राख्नुस्',false);return;}
+  // Update all work_entries for this worker on this site
+  const toSettle=_settleEntries.filter(e=>e.worker_name===wName&&e.site_id===siteId);
+  if(!toSettle.length){toast('कुनै entry भेटिएन',false);return;}
+  // Update first entry with settlement, mark others as settled:0
+  const totalEarned=toSettle.reduce((a,e)=>a+Number(e.days||0)*Number(e.daily_rate||0),0);
+  await dUp('work_entries',toSettle[0].id,{
+    settled:true,
+    settlement_amount:amt,
+    settlement_note:note,
+    settlement_date:todStr(),
+    settlement_waived:totalEarned-amt
+  });
+  closeM('mSettle');
+  toast(`✅ Settlement सेभ — ${wName}: ${Rs(amt)}`);
+  addNotif('worker',`🤝 ${ME} ले ${wName} को settlement गरे — ${Rs(amt)} (${Rs(totalEarned-amt)} माफ)`);
+  loadWages();
+}
 let _myWageData={sites:[],received:[],totalWage:0,totalReceived:0,profit:0,clientRecv:0,wages:0,expenses:0,extraIncome:0};
 
 async function showPillDetail(type){
@@ -3612,25 +3724,13 @@ async function loadNotif(){
     const isUnread=!n.read_by?.includes(ME);
     const c=cfg[n.type]||{icon:'📌',bg:'var(--gr100)',color:'var(--gr600)',label:'सूचना'};
     const [main,...rest]=n.msg.split(' · ');
-    return`<div style="animation:fadeSlideUp .3s ease ${i*.04}s both;background:var(--w);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:${isUnread?'0 2px 12px rgba(249,115,22,.12)':'var(--sh)'};border:1px solid ${isUnread?'var(--ind-b)':'var(--gr100)'}">
-      <div style="display:flex;align-items:stretch">
-        <!-- Left color accent -->
-        <div style="width:4px;background:${isUnread?'var(--ind)':'var(--gr200)'};flex-shrink:0"></div>
-        <div style="display:flex;align-items:center;gap:12px;padding:12px 14px 12px 12px;flex:1">
-          <!-- Icon circle -->
-          <div style="width:42px;height:42px;border-radius:14px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${c.icon}</div>
-          <!-- Content -->
-          <div style="flex:1;min-width:0">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
-              <span style="font-size:10px;font-weight:800;color:${c.color};text-transform:uppercase;letter-spacing:.5px">${c.label}</span>
-              ${isUnread?`<span style="background:var(--ind);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:800">NEW</span>`:`<span style="font-size:10px;color:var(--gr400)">${n.bs_date||n.date}</span>`}
-            </div>
-            <div style="font-size:13px;font-weight:${isUnread?700:500};color:var(--gr900);line-height:1.4">${main}</div>
-            ${rest.length?`<div style="font-size:11px;color:var(--gr400);margin-top:2px">${rest.join(' · ')}</div>`:''}
-            ${isUnread?`<div style="font-size:10px;color:var(--gr400);margin-top:3px">${n.by} · ${n.bs_date||n.date}</div>`:''}
-          </div>
-        </div>
+    return`<div style="animation:fadeSlideUp .25s ease ${i*.03}s both;display:flex;align-items:center;gap:10px;padding:10px 12px;background:${isUnread?'var(--w)':'var(--gr50)'};border-radius:14px;margin-bottom:7px;border:1px solid ${isUnread?'var(--gr200)':'var(--gr100)'};${isUnread?'box-shadow:0 1px 6px rgba(0,0,0,.06)':''}">
+      <div style="width:34px;height:34px;border-radius:10px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${c.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:${isUnread?700:500};color:var(--gr900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${main}</div>
+        <div style="font-size:10px;color:var(--gr400);margin-top:1px">${c.label} · ${n.bs_date||n.date||''}</div>
       </div>
+      ${isUnread?`<div style="width:7px;height:7px;border-radius:50%;background:var(--ind);flex-shrink:0"></div>`:''}
     </div>`;
   }).join('');
 }
