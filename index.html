@@ -273,11 +273,11 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 #dial{width:72px;height:72px;cursor:pointer;user-select:none;-webkit-user-select:none}
 #dial-ring{transition:transform .3s cubic-bezier(.34,1.2,.64,1);transform-style:preserve-3d;will-change:transform}
 #dial-label{font-size:8px;font-weight:800;color:var(--ind);text-transform:uppercase;letter-spacing:1px;margin-top:4px;text-align:center;min-width:70px}
-.rfab-wrap{position:fixed;bottom:calc(var(--nh)+14px);right:16px;z-index:200}
+.rfab-wrap{position:fixed;bottom:calc(var(--nh)+14px);right:16px;z-index:200;display:none}
 .rfab-main{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#F97316,#C2410C);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(249,115,22,.45);display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;position:relative;z-index:2}
 .rfab-main:active{transform:scale(.92)}
 .rfab-main.open{transform:rotate(45deg);background:linear-gradient(135deg,#374151,#1F2937)}
-.rfab-items{position:absolute;bottom:64px;right:0;display:flex;flex-direction:column;gap:10px;align-items:flex-end;pointer-events:none}
+.rfab-items{position:fixed;bottom:calc(var(--nh)+80px);right:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-end;pointer-events:none;z-index:201}
 .rfab-item{display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(16px) scale(.85);transition:all .25s cubic-bezier(.34,1.3,.64,1);pointer-events:none}
 .rfab-item.show{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
 .rfab-item:nth-child(1){transition-delay:.05s}
@@ -844,10 +844,10 @@ select.fi option{background:#fff}
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F97316,#6366F1,transparent);opacity:.7"></div>
     <div class="hb-top">
       <div class="hb-user" onclick="go('profile')" style="cursor:pointer">
-        <div class="hb-avatar" id="hb-av">A</div>
+        <div class="hb-avatar" id="hb-av"></div>
         <div>
           <div class="hb-hey" id="hb-hey">शुभबिहानी 🌅</div>
-          <div class="hb-name" id="hb-nm">AMRIT</div>
+          <div class="hb-name" id="hb-nm"></div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -862,7 +862,7 @@ select.fi option{background:#fff}
     <!-- EARNING CARD -->
     <div style="background:rgba(255,255,255,.04);backdrop-filter:blur(20px);border-radius:22px;padding:20px;border:1px solid rgba(255,255,255,.1);margin-bottom:14px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3)" onclick="openMyActivity()">
       <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(249,115,22,.6),transparent)"></div>
-      <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px"><span id="hb-nm2">AMRIT</span> को व्यक्तिगत कमाइ</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px"><span id="hb-nm2"></span> को व्यक्तिगत कमाइ</div>
       <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
         <span style="font-size:13px;font-weight:700;color:rgba(249,115,22,.7)">रु.</span>
         <span class="n" id="h-my-wage" style="font-size:48px;font-weight:900;color:#fff;line-height:1;letter-spacing:-3px">0</span>
@@ -972,10 +972,15 @@ select.fi option{background:#fff}
     <!-- Monthly breakdown -->
     <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100);margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:12px;font-weight:800;color:var(--gr700)">📅 महिना अनुसार प्राप्त</div>
+        <div style="font-size:12px;font-weight:800;color:var(--gr700)">📅 महिना-वाइज सारांश</div>
         <div onclick="showMonthly()" style="font-size:11px;color:var(--ind);font-weight:700;cursor:pointer">पूरा रिपोर्ट →</div>
       </div>
-      <div id="fs-monthly">
+      <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px" id="fs-monthly-tabs">
+        <button onclick="setMonthTab('recv',this)" class="mtab on" style="padding:5px 12px;border-radius:20px;border:none;background:var(--ind);color:#fff;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">💰 प्राप्त</button>
+        <button onclick="setMonthTab('work',this)" class="mtab" style="padding:5px 12px;border-radius:20px;border:none;background:var(--gr100);color:var(--gr600);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">⏱ काम</button>
+        <button onclick="setMonthTab('site',this)" class="mtab" style="padding:5px 12px;border-radius:20px;border:none;background:var(--gr100);color:var(--gr600);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🏗️ साइट</button>
+      </div>
+      <div id="fs-monthly" style="margin-top:10px">
         <div style="font-size:12px;color:var(--gr400);text-align:center;padding:8px">लोड हुँदैछ...</div>
       </div>
     </div>
@@ -1087,10 +1092,10 @@ select.fi option{background:#fff}
 <div class="page" id="pg-profile">
   <div class="prof-top">
     <div class="prof-av" id="prof-av" onclick="openProfilePicModal()">
-      <span id="prof-av-txt">A</span>
+      <span id="prof-av-txt"></span>
       <div class="prof-av-edit">✏️</div>
     </div>
-    <div class="prof-nm" id="prof-nm">AMRIT</div>
+    <div class="prof-nm" id="prof-nm"></div>
     <div class="prof-role">A.N.S. · House Painting · v4.6</div>
   </div>
   <div style="padding:14px 16px 20px">
@@ -1734,6 +1739,7 @@ const NMS=['बै','जे','अ','सा','भ','अ','का','मं','प�
 // Reference: Baisakh 1, 2082 = April 13, 2025 LOCAL
 const REF_Y=2025,REF_M=4,REF_D=13; // Correct: Baisakh 1, 2082 BS
 
+function nowTime(){const n=new Date();return String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");}
 function todStr(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
 function bsMD(y,m){return(BSY[y]||BSY[2082])[m-1];}
 function daysDiff(s1,s2){
@@ -2047,29 +2053,22 @@ async function loadHome(){
 
     let totCV=0;active.forEach(s=>{const v=sCV(s);if(v)totCV+=v});
 
-    // Monthly breakdown (last 4 months)
-    const monthMap={};
-    pays.forEach(p=>{if(!activeIds.has(p.site_id))return;const m=p.date?.slice(0,7);if(m)monthMap[m]=(monthMap[m]||0)+Number(p.amount||0);});
-    const months=Object.keys(monthMap).sort((a,b)=>b>a?1:-1).slice(0,4);
-    const fsM=document.getElementById('fs-monthly');
-    if(fsM){
-      if(!months.length){fsM.innerHTML='<div style="font-size:12px;color:var(--gr400);text-align:center">भुक्तानी रेकर्ड छैन</div>';}
-      else{fsM.innerHTML=months.map(m=>{
-        const bs=adToBS(m+'-15');
-        const label=bs?`${NM[bs.m-1]} ${bs.y}`:m;
-        const amt=monthMap[m];
-        const pct=Math.min(100,(amt/(Math.max(...Object.values(monthMap))))*100);
-        return`<div style="margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-            <span style="font-size:12px;font-weight:700;color:var(--gr700)">${label}</span>
-            <span class="n" style="font-size:12px;font-weight:800;color:var(--g)">${Rs(amt)}</span>
-          </div>
-          <div style="height:6px;background:var(--gr100);border-radius:4px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--ind),var(--g));border-radius:4px;transition:width .6s ease"></div>
-          </div>
-        </div>`;
-      }).join('');}
-    }
+    // Monthly data for 3 tabs
+    const recvByMonth={},workByMonth={},siteByMonth={};
+    pays.forEach(p=>{const m=p.date?.slice(0,7);if(m&&activeIds.has(p.site_id))recvByMonth[m]=(recvByMonth[m]||0)+Number(p.amount||0);});
+    // Work days by month (from work_entries)
+    work.forEach(w=>{
+      const m=w.date_from?.slice(0,7);
+      if(m&&activeIds.has(w.site_id)){
+        const n=(w.worker_name||'').toUpperCase().trim();
+        const me=(ME||'').toUpperCase().trim();
+        if(n===me||w.worker_id===ME)workByMonth[m]=(workByMonth[m]||0)+Number(w.days||0);
+      }
+    });
+    // Sites by month (created)
+    SITES.forEach(s=>{const m=s.start_date?.slice(0,7);if(m)siteByMonth[m]=(siteByMonth[m]||0)+1;});
+    _monthData={recv:recvByMonth,work:workByMonth,site:siteByMonth};
+    renderMonthTab();
 
     // ── PERSONAL WAGE EARNING = attendance days × my rate ──
     const myRate=await getMyRate();
@@ -2227,7 +2226,13 @@ function mkSC(s,idx=0){
   return`<div class="site-card ${statusClass}" onclick="openDet('${s.id}')" style="opacity:0;transform:translateY(16px);transition:opacity .4s ease ${delay}ms,transform .4s ease ${delay}ms" data-anim="1">
     <div class="sc-stripe ${stripe}"></div>
     <div class="sc-body">
-      <div class="sc-r1"><div class="sc-nm">${s.name}</div>${badge}</div>
+      <div class="sc-r1">
+        <div class="sc-nm">${s.name}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${badge}
+          <button onclick="event.stopPropagation();deleteSite('${s.id}','${s.name.replace(/'/g,"\\'")}');" style="background:var(--rl);border:none;color:var(--r);font-size:11px;padding:3px 8px;border-radius:8px;font-weight:700;cursor:pointer">🗑</button>
+        </div>
+      </div>
       <div class="sc-cli" style="display:flex;justify-content:space-between;align-items:center">
         <span>👤 ${s.client_name}${s.location?'  ·  📍'+s.location:''}</span>
         ${s.client_phone?`<a href="tel:${s.client_phone}" onclick="event.stopPropagation()" style="background:var(--gl);color:#065F46;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-decoration:none;flex-shrink:0">📞 Call</a>`:''}
@@ -2239,7 +2244,20 @@ function mkSC(s,idx=0){
   </div>`;
 }
 
-// ══ SITES ══
+// ══ SITE DELETE ══
+async function deleteSite(id,name){
+  if(!confirm(`"${name}" साइट मेटाउने?\n\nसावधान: यो साइटको सबै attendance, खर्च, भुक्तानी record पनि मेटिनेछ!`))return;
+  if(!confirm(`पक्का "${name}" मेटाउने? यो action undo हुँदैन।`))return;
+  haptic('heavy');
+  toast('मेटाइँदैछ...');
+  try{
+    await db.collection('sites').doc(id).delete();
+    clearCache('sites');
+    SITES=SITES.filter(s=>s.id!==id);
+    renderSites();
+    toast(`✅ "${name}" मेटाइयो`);
+  }catch(e){toast('मेटाउन सकिएन',false);}
+}
 async function loadSites(){
   document.getElementById('s-list').innerHTML=[1,2,3].map(()=>`
     <div class="skel-card"><div style="display:flex;justify-content:space-between;margin-bottom:10px"><div class="skel skel-title" style="width:55%"></div><div class="skel" style="height:20px;width:60px;border-radius:20px"></div></div><div class="skel skel-line" style="width:80%"></div><div class="skel skel-sm" style="margin-top:6px"></div></div>`).join('');
@@ -2740,20 +2758,67 @@ async function saveQuickAtt(){
   const siteId=document.getElementById('qa-site').value;
   const site=SITES.find(s=>s.id===siteId);
   const entries=[];
-  document.querySelectorAll('.qa-btn[style*="var(--ind)"]').forEach(btn=>{
-    const wid=btn.dataset.wid;
-    const status=btn.dataset.status;
-    const w=document.querySelector(`.qa-btn[data-wid="${wid}"]`).closest('div').querySelector('span');
-    entries.push({wid,name:w?.textContent||'',status});
+  const now=new Date();
+  const timeStr=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  // Get all workers with selected status
+  const WKRS_ALL=await dGetC('workers');
+  document.querySelectorAll('.qa-btn').forEach(btn=>{
+    if(btn.style.background.includes('var(--ind)')||btn.style.backgroundColor.includes('rgb')){
+      const wid=btn.dataset.wid;
+      const status=btn.dataset.status;
+      const wkr=WKRS_ALL.find(w=>w.id===wid);
+      if(wkr&&status){
+        // Remove duplicates
+        if(!entries.find(e=>e.wid===wid)){
+          entries.push({wid,name:wkr.name||'',status,time:timeStr});
+        }
+      }
+    }
   });
   if(!entries.length){toast('कम्तीमा एकको हाजिर थप्नुस्',false);return;}
-  await dAdd('attendance',{site_id:siteId,site_name:site?.name||'',date:todStr(),bs_date:bsToday(),entries});
+  await dAdd('attendance',{site_id:siteId,site_name:site?.name||'',date:todStr(),bs_date:bsToday(),time:timeStr,entries});
   document.getElementById('mQuickAtt').classList.remove('open');
   toast('✅ हाजिर सेभ!');haptic('success');
+  addNotif('attendance',`✅ ${ME} ले ${site?.name||''} हाजिर सेभ — ${bsToday()} ${timeStr}`);
   loadHome();
 }
 
-// ══ CAMERA DIAL NAV ══
+// ══ MONTHLY TAB ══
+let _monthData={recv:{},work:{},site:{}};
+let _curMonthTab='recv';
+function setMonthTab(tab,btn){
+  _curMonthTab=tab;
+  document.querySelectorAll('.mtab').forEach(b=>{
+    b.style.background='var(--gr100)';b.style.color='var(--gr600)';
+  });
+  btn.style.background='var(--ind)';btn.style.color='#fff';
+  renderMonthTab();
+}
+function renderMonthTab(){
+  const el=document.getElementById('fs-monthly');if(!el)return;
+  const data=_monthData[_curMonthTab]||{};
+  const months=Object.keys(data).sort((a,b)=>b>a?1:-1).slice(0,4);
+  if(!months.length){el.innerHTML='<div style="font-size:12px;color:var(--gr400);text-align:center;padding:8px">डेटा छैन</div>';return;}
+  const maxVal=Math.max(...Object.values(data));
+  el.innerHTML=months.map(m=>{
+    const bs=adToBS(m+'-15');
+    const label=bs?`${NM[bs.m-1].slice(0,3)} ${bs.y}`:m;
+    const val=data[m];
+    const pct=Math.min(100,(val/maxVal)*100);
+    const isRs=_curMonthTab==='recv';
+    const isDay=_curMonthTab==='work';
+    const display=isRs?Rs(val):isDay?`${val} दिन`:`${val} साइट`;
+    return`<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;font-weight:700;color:var(--gr700)">${label}</span>
+        <span class="n" style="font-size:11px;font-weight:800;color:var(--ind)">${display}</span>
+      </div>
+      <div style="height:5px;background:var(--gr100);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--ind),var(--g));border-radius:4px;transition:width .6s ease"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
 const DIAL_PAGES=['home','sites','att','workers','notif','profile'];
 const DIAL_LABELS=['गृह','साइट','हाजिर','कामदार','सूचना','प्रोफाइल'];
 let dialRot=0,dialStartX=0,dialIdx=0,dialDragging=false;
@@ -3263,17 +3328,43 @@ async function saveExtraIncome(){
   closeM('mExtraIncome');toast('अतिरिक्त कमाइ थपियो ✓');loadOv();
 }
 async function doSt(st){
-  const id=document.getElementById('st-id').value;const d={status:st};
+  const id=document.getElementById('st-id').value;
+  const d={status:st};
+
+  // Block completion if unclaimed expenses exist
   if(st==='completed'){
+    const exps=await dGet('expenses',['site_id','==',id]);
+    const unclaimed=exps.filter(e=>!e.claimed);
+    if(unclaimed.length){
+      // Group by payer
+      const byPayer={};
+      unclaimed.forEach(e=>{
+        const p=e.paid_by||'—';
+        if(!byPayer[p])byPayer[p]=0;
+        byPayer[p]+=Number(e.amount||0);
+      });
+      const msg=Object.entries(byPayer).map(([p,a])=>`• ${p}: ${Rs(a)}`).join('\n');
+      toast(`⚠️ ${unclaimed.length} खर्च claim भएको छैन!`,false);
+      // Send notification to each payer
+      Object.keys(byPayer).forEach(payer=>{
+        addNotif('expense',`💸 ${payer} — ${Rs(byPayer[payer])} claim गर्नुस् (site सम्पन्न गर्न बाँकी छ)`);
+      });
+      if(!confirm(`यी खर्चहरू अझै claim भएका छैनन्:\n${msg}\n\nपनि site सम्पन्न गर्ने?`))return;
+    }
+
     const s=SITES.find(x=>x.id===id);
     if(s?.start_date){
       d.days_taken=Math.max(1,daysDiff(s.start_date,todStr()));
       d.bs_completed=bsToday();
-      d.completed_date=todStr(); // freeze tracking at this date
+      d.completed_date=todStr();
     }
   }
-  await dUp('sites',id,d);const idx=SITES.findIndex(s=>s.id===id);if(idx>-1)Object.assign(SITES[idx],d);
-  closeM('mSt');toast('स्थिति अपडेट ✓');loadOv();
+
+  await dUp('sites',id,d);
+  const idx=SITES.findIndex(s=>s.id===id);
+  if(idx>-1)Object.assign(SITES[idx],d);
+  closeM('mSt');toast('स्थिति अपडेट ✓');
+  clearCache('sites');loadOv();
 }
 
 // ══ WORKER ADVANCE (mid-work) ══
@@ -4296,7 +4387,7 @@ async function saveExp(){
   const sid=document.getElementById('es').value;
   const sn=sid?SITES.find(x=>x.id===sid)?.name||'':'सामान्य खर्च';
   const d=document.getElementById('ed').value;
-  await dAdd('expenses',{site_id:sid||'general',site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value,claimed:false});
+  await dAdd('expenses',{site_id:sid||'general',site_name:sn,category:document.getElementById('ec').value,amount:amt,date:d,time:nowTime(),bs_date:fBS(d),paid_by:document.getElementById('eby').value,note:document.getElementById('en').value,claimed:false});
   closeM('mExp');
   clearCache('expenses');toast('खर्च सेभ ✓');
   addNotif('expense',`💸 ${ME} — ${Rs(amt)} खर्च · ${sn} · ${fBS(d)}`);
