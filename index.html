@@ -2004,11 +2004,20 @@ async function loadHome(){
   document.getElementById('hb-nm').textContent=ME||'';
   document.getElementById('hb-nm2').textContent=ME||'';
 
-  // Avatar
+  // Avatar — reload PROFILES fresh to get correct user photo
+  try{
+    const pd=await db.collection('settings').doc('profiles').get();
+    if(pd.exists)PROFILES=pd.data();
+  }catch(e){}
   const avEl=document.getElementById('hb-av');
   const p=PROFILES[ME]||{};
-  if(p.photo){avEl.innerHTML=`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover">`;avEl.style.background='transparent';}
-  else{avEl.textContent=ME?ME[0]:'A';avEl.style.background=AV_GRADS[p.color||'blue'];}
+  if(p.photo){
+    avEl.innerHTML=`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover">`;
+    avEl.style.background='transparent';
+  }else{
+    avEl.textContent=ME?ME[0]:'?';
+    avEl.style.background=AV_GRADS[p.color||'blue'];
+  }
 
   // Show skeleton immediately
   document.getElementById('h-my').innerHTML=`
@@ -4463,11 +4472,21 @@ async function loadTeam(){
 
 // ══ PROFILE ══
 async function loadProfile(){
+  // Always reload fresh from Firebase to ensure correct user data
+  try{
+    const d=await db.collection('settings').doc('profiles').get();
+    if(d.exists)PROFILES=d.data();
+  }catch(e){}
   const p=PROFILES[ME]||{};
   const avEl=document.getElementById('prof-av');
   document.getElementById('prof-nm').textContent=ME||'';
-  if(p.photo){avEl.innerHTML=`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover"><div class="prof-av-edit">✏️</div>`;avEl.style.background='transparent';}
-  else{avEl.innerHTML=`<span id="prof-av-txt">${ME?ME[0]:'?'}</span><div class="prof-av-edit">✏️</div>`;avEl.style.background=AV_GRADS[p.color||'blue'];}
+  if(p.photo){
+    avEl.innerHTML=`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"><div class="prof-av-edit">✏️</div>`;
+    avEl.style.background='transparent';
+  }else{
+    avEl.innerHTML=`<span id="prof-av-txt">${ME?ME[0]:'?'}</span><div class="prof-av-edit">✏️</div>`;
+    avEl.style.background=AV_GRADS[p.color||'blue'];
+  }
   const rate=await getMyRate();
   const rateLbl=document.getElementById('my-rate-lbl');
   if(rateLbl)rateLbl.textContent=rate?`हालको rate: Rs.${rate}/दिन`:'अहिलेसम्म सेट छैन';
