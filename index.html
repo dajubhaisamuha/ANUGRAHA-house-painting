@@ -111,7 +111,9 @@ body.dark-mode .bs{background:var(--gr100);color:var(--gr700);border-color:var(-
 #ptr-spin{width:28px;height:28px;border:3px solid var(--ind-l);border-top-color:var(--ind);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
+html,body{height:100%}
+.page{display:none;background:var(--bg);padding-bottom:calc(var(--nh)+24px);overflow-y:auto;height:calc(100vh - var(--nh));-webkit-overflow-scrolling:touch}
+.page.on{display:block}
 body{font-family:'Noto Sans Devanagari','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased}
 input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-serif}
 .n{font-family:'Inter',sans-serif;font-feature-settings:'tnum';letter-spacing:-.02em}.amt{font-family:'Inter',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.03em}.Rs{font-size:.65em;font-weight:700;opacity:.7;margin-right:1px}
@@ -169,13 +171,11 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 .lang-toggle.dark{background:var(--ind-l);border-color:var(--ind-b);color:var(--ind)}
 
 /* PAGES */
-.page{position:fixed;top:0;left:0;right:0;bottom:var(--nh);overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;background:var(--bg)}
 .page.on{display:block;animation:pgIn .2s ease}
 @keyframes pgIn{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
 /* NAV */
 
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--gr400);padding-bottom:2px;position:relative;transition:color .18s}
 .ni.on{color:var(--ind)}
 .ni.on .ni-svg{background:var(--ind-l);border-radius:10px}
 .ni-i{font-size:22px;line-height:1}
@@ -292,6 +292,10 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 /* ── PREMIUM NAV ── */
 #nav{position:fixed;bottom:0;left:0;right:0;height:var(--nh);background:rgba(255,255,255,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(0,0,0,.06);display:flex;z-index:100;box-shadow:0 -4px 24px rgba(0,0,0,.06);padding-bottom:env(safe-area-inset-bottom)}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--gr400);transition:color .18s;position:relative}
+.ni.on{color:var(--ind)}
+.ni-svg{width:22px;height:22px;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.ni.on .ni-svg{transform:scale(1.15)}
+.ni-l{font-size:9.5px;font-weight:700}
 .ni.on{color:var(--ind)}
 .ni-svg{width:22px;height:22px;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
 .ni.on .ni-svg{transform:scale(1.15)}
@@ -585,7 +589,6 @@ select.fi option{background:#fff}
 .mbo.open .msh{animation:slideUp .22s cubic-bezier(.4,0,.2,1)}
 .page.on{animation:fadeSlideUp .18s ease}
 
-.ni{transition:color .15s}
 .ni:active{opacity:.7}
 
 .btn{transition:opacity .12s,box-shadow .12s}
@@ -608,6 +611,7 @@ select.fi option{background:#fff}
   -webkit-overflow-scrolling:touch;
   overscroll-behavior-y:contain;
 }
+.page{overflow-y:auto;height:calc(100vh - var(--nh))}
 /* All interactive elements — instant press feel */
 .btn:active{transform:scale(.96)!important;transition:transform .08s}
 .stat-card:active{transform:scale(.97)!important;transition:transform .08s}
@@ -626,7 +630,6 @@ select.fi option{background:#fff}
 /* Input feel */
 .fi:focus{border-color:var(--ind);transform:none}
 /* Page scroll feel */
-.page{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 
 .sp-box{}
 
@@ -798,15 +801,23 @@ select.fi option{background:#fff}
         </defs>
         <!-- Outer body -->
         <circle cx="36" cy="36" r="35" fill="url(#outerG)"/>
-        <!-- Knurling lines (grip texture) -->
-        ${Array.from({length:24},(_,i)=>{
-          const a=i*(360/24)*Math.PI/180;
-          const r1=28,r2=34;
-          const x1=(36+r1*Math.cos(a)).toFixed(1),y1=(36+r1*Math.sin(a)).toFixed(1);
-          const x2=(36+r2*Math.cos(a)).toFixed(1),y2=(36+r2*Math.sin(a)).toFixed(1);
-          const bright=i%6===0?'rgba(255,255,255,.35)':'rgba(255,255,255,.1)';
-          return`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${bright}" stroke-width="${i%6===0?1.5:0.8}"/>`;
-        }).join('')}
+        <!-- Knurling lines (grip texture) - 24 static lines -->
+        <line x1="36" y1="2" x2="36" y2="8" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <line x1="51.5" y1="4.8" x2="49" y2="10.2" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="64.2" y1="12.8" x2="60.4" y2="16.4" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="70" y1="25.5" x2="64.5" y2="28" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <line x1="70" y1="36" x2="64" y2="36" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="70" y1="46.5" x2="64.5" y2="44" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="64.2" y1="59.2" x2="60.4" y2="55.6" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <line x1="51.5" y1="67.2" x2="49" y2="61.8" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="36" y1="70" x2="36" y2="64" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="20.5" y1="67.2" x2="23" y2="61.8" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <line x1="7.8" y1="59.2" x2="11.6" y2="55.6" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="2" y1="46.5" x2="7.5" y2="44" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="2" y1="36" x2="8" y2="36" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+        <line x1="2" y1="25.5" x2="7.5" y2="28" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="7.8" y1="12.8" x2="11.6" y2="16.4" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
+        <line x1="20.5" y1="4.8" x2="23" y2="10.2" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
         <!-- Inner ring -->
         <circle cx="36" cy="36" r="26" fill="url(#innerG)" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
         <!-- Highlight arc -->
@@ -1044,8 +1055,12 @@ select.fi option{background:#fff}
 <!-- WORKERS PAGE -->
 <div class="page" id="pg-workers">
   <div class="plain-top" style="display:flex;justify-content:space-between;align-items:center">
-    <div><div class="pt-t">👷 कामदारहरू</div><div class="pt-s">सूची हेर्नुस् / थप्नुस् / edit गर्नुस्</div></div>
-    <button onclick="openNewWModal()" style="background:linear-gradient(135deg,#EA580C,#C2410C);border:none;color:#fff;font-size:14px;font-weight:800;padding:10px 18px;border-radius:12px;cursor:pointer;box-shadow:var(--shm)">+ थप्नुस्</button>
+    <div><div class="pt-t">👷 कामदारहरू</div><div class="pt-s" id="w-sub">सूची</div></div>
+    <button onclick="openNewWModal()" style="background:linear-gradient(135deg,#EA580C,#C2410C);border:none;color:#fff;font-size:13px;font-weight:800;padding:9px 16px;border-radius:12px;cursor:pointer">+ थप्नुस्</button>
+  </div>
+  <div class="filters">
+    <button class="fil on" onclick="wView('list',this)">📋 सूची</button>
+    <button class="fil" onclick="wView('summary',this)">📊 Site-wise</button>
   </div>
   <div style="padding:12px 16px 80px" id="w-list"><div class="ld">लोड हुँदैछ...</div></div>
 </div>
@@ -1446,6 +1461,22 @@ select.fi option{background:#fff}
   </div>
   <button class="btn bp" onclick="generateEstimate()">📄 Estimate Generate गर्नुस्</button>
   <button class="btn bs" onclick="closeM('mEst')">रद्द</button>
+</div></div>
+
+<!-- MODAL: CLOCK IN/OUT -->
+<div class="mbo" id="mClock"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">⏱ Clock-in / Clock-out</div>
+  <div style="font-size:12px;color:var(--gr400);margin-bottom:14px">Workers को entry/exit time रेकर्ड गर्नुस् — hourly wage auto-calculate हुन्छ</div>
+  <div class="fg">
+    <label class="fl">मिति</label>
+    <div class="fbs-top" id="clk-d-b" style="margin-bottom:4px"></div>
+    <input type="date" class="fi" id="clk-d" oninput="bsF('clk-d','clk-d-b')" style="margin-bottom:10px">
+  </div>
+  <div id="clk-worker-list" style="margin-bottom:14px"></div>
+  <button class="btn bp" onclick="saveClockEntry()">💾 सेभ</button>
+  <button class="btn bs" onclick="closeM('mClock')">रद्द</button>
+  <input type="hidden" id="clk-site-id">
 </div></div>
 
 <!-- MODAL: SETTLEMENT -->
@@ -2758,10 +2789,15 @@ async function openQuickAtt(){
 }
 function qaToggle(btn){
   const wid=btn.dataset.wid;
+  // Deselect all buttons for this worker
   document.querySelectorAll(`.qa-btn[data-wid="${wid}"]`).forEach(b=>{
+    b.dataset.selected='0';
     b.style.background='var(--gr50)';b.style.borderColor='var(--gr200)';b.style.color='var(--gr700)';
   });
+  // Select clicked button
+  btn.dataset.selected='1';
   btn.style.background='var(--ind)';btn.style.borderColor='var(--ind)';btn.style.color='#fff';
+  haptic('light');
 }
 async function saveQuickAtt(){
   const siteId=document.getElementById('qa-site').value;
@@ -2769,26 +2805,29 @@ async function saveQuickAtt(){
   const entries=[];
   const now=new Date();
   const timeStr=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  // Get all workers with selected status
   const WKRS_ALL=await dGetC('workers');
-  document.querySelectorAll('.qa-btn').forEach(btn=>{
-    if(btn.style.background.includes('var(--ind)')||btn.style.backgroundColor.includes('rgb')){
-      const wid=btn.dataset.wid;
-      const status=btn.dataset.status;
-      const wkr=WKRS_ALL.find(w=>w.id===wid);
-      if(wkr&&status){
-        // Remove duplicates
-        if(!entries.find(e=>e.wid===wid)){
-          entries.push({wid,name:wkr.name||'',status,time:timeStr});
-        }
-      }
+
+  // Check today already saved for this site
+  const existing=await dGet('attendance',['site_id','==',siteId],['date','==',todStr()]);
+  if(existing.length){
+    if(!confirm(`${site?.name||''} को आजको हाजिर पहिले नै सेभ भएको छ। फेरि सेभ गर्ने?`))return;
+  }
+
+  // Get selected buttons by checking orange border color (data attribute approach)
+  document.querySelectorAll('.qa-btn[data-selected="1"]').forEach(btn=>{
+    const wid=btn.dataset.wid;
+    const status=btn.dataset.status;
+    const wkr=WKRS_ALL.find(w=>w.id===wid);
+    if(wkr&&status&&!entries.find(e=>e.wid===wid)){
+      entries.push({wid,name:wkr.name||'',status,time:timeStr});
     }
   });
-  if(!entries.length){toast('कम्तीमा एकको हाजिर थप्नुस्',false);return;}
-  await dAdd('attendance',{site_id:siteId,site_name:site?.name||'',date:todStr(),bs_date:bsToday(),time:timeStr,entries});
+  if(!entries.length){toast('कम्तीमा एकको हाजिर छान्नुस्',false);return;}
+  const attKey=`${siteId}_${todStr()}`;
+  await dSet('attendance',attKey,{site_id:siteId,site_name:site?.name||'',date:todStr(),bs_date:bsToday(),time:timeStr,entries});
   document.getElementById('mQuickAtt').classList.remove('open');
-  toast('✅ हाजिर सेभ!');haptic('success');
-  addNotif('attendance',`✅ ${ME} ले ${site?.name||''} हाजिर सेभ — ${bsToday()} ${timeStr}`);
+  toast(`✅ ${entries.length} जनाको हाजिर सेभ! (${timeStr})`);haptic('success');
+  addNotif('attendance',`✅ ${ME} ले ${site?.name||''} को हाजिर सेभ — ${bsToday()} ${timeStr}`);
   loadHome();
 }
 
@@ -2877,6 +2916,74 @@ function updateDial(page){
   if(lbl)lbl.textContent=DIAL_LABELS[dialIdx]||'';
 }
 let rfabOpen=false;
+// ══ WORKER VIEW TOGGLE ══
+let _wView='list';
+function wView(v,btn){
+  _wView=v;
+  document.querySelectorAll('#pg-workers .fil').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(v==='list')loadWorkers();
+  else loadWorkerSiteSummary();
+}
+async function loadWorkerSiteSummary(){
+  const el=document.getElementById('w-list');
+  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  const [workers,attRecs,workEntries]=await Promise.all([dGetC('workers'),dGet('attendance'),dGet('work_entries')]);
+  const myRate=await getMyRate();
+  const wMap={};
+  workers.forEach(w=>{wMap[w.id]={name:w.name,sites:{},totalDays:0,totalAdv:0,wage:Number(w.daily_wage||0)};});
+  attRecs.forEach(r=>{
+    (r.entries||[]).forEach(e=>{
+      const w=workers.find(x=>x.id===e.wid||x.name===e.name);if(!w)return;
+      const sid=r.site_id,sName=r.site_name||SITES.find(s=>s.id===sid)?.name||'—';
+      if(!wMap[w.id].sites[sid])wMap[w.id].sites[sid]={name:sName,days:0};
+      const m=e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0;
+      wMap[w.id].sites[sid].days+=m;wMap[w.id].totalDays+=m;
+    });
+  });
+  workEntries.forEach(e=>{
+    const w=workers.find(x=>x.id===e.worker_id||x.name===e.worker_name);
+    if(w&&wMap[w.id])wMap[w.id].totalAdv+=Number(e.advance_given||0);
+  });
+  el.innerHTML='<div style="padding:0 0 16px">'+workers.map(w=>{
+    const d=wMap[w.id];
+    const rate=d.wage||myRate||0;
+    const earned=d.totalDays*rate,bal=earned-d.totalAdv;
+    const sites=Object.values(d.sites);
+    return`<div style="background:var(--w);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--ind-l);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--ind)">${w.name[0]}</div>
+          <div><div style="font-weight:800;font-size:14px">${w.name}</div><div style="font-size:11px;color:var(--gr400)">${w.phone||'—'} · Rs.${rate}/दिन</div></div>
+        </div>
+        <div style="text-align:right">
+          <div class="n" style="font-size:16px;font-weight:900;color:${bal>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(bal))}</div>
+          <div style="font-size:10px;color:var(--gr400)">${bal>=0?'बाँकी':'बढी लिइयो'}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+        <div style="background:var(--ind-l);border-radius:10px;padding:8px;text-align:center">
+          <div class="n" style="font-size:16px;font-weight:900;color:var(--ind)">${d.totalDays}</div>
+          <div style="font-size:9px;color:var(--gr500);font-weight:700">कुल दिन</div>
+        </div>
+        <div style="background:var(--gl);border-radius:10px;padding:8px;text-align:center">
+          <div class="n" style="font-size:14px;font-weight:900;color:var(--g)">${Rs(earned)}</div>
+          <div style="font-size:9px;color:var(--gr500);font-weight:700">कमाइ</div>
+        </div>
+        <div style="background:var(--al);border-radius:10px;padding:8px;text-align:center">
+          <div class="n" style="font-size:14px;font-weight:900;color:var(--a)">${Rs(d.totalAdv)}</div>
+          <div style="font-size:9px;color:var(--gr500);font-weight:700">अग्रिम</div>
+        </div>
+      </div>
+      ${sites.length?`<div style="border-top:1px solid var(--gr100);padding-top:10px">
+        <div style="font-size:10px;font-weight:800;color:var(--gr500);text-transform:uppercase;margin-bottom:8px">📍 साइट-वाइज</div>
+        ${sites.map(s=>{const se=s.days*rate;const pct=d.totalDays>0?Math.min(100,(s.days/d.totalDays)*100):0;return`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:12px;font-weight:700">${s.name}</span><span class="n" style="font-size:12px;font-weight:800;color:var(--ind)">${s.days}दिन · ${Rs(se)}</span></div><div style="height:4px;background:var(--gr100);border-radius:4px"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--ind),var(--g));border-radius:4px"></div></div></div>`;}).join('')}
+      </div>`:'<div style="font-size:12px;color:var(--gr400);text-align:center;padding:4px">हाजिर रेकर्ड छैन</div>'}
+      <button onclick="showWorkerLedger('${w.id}','${w.name.replace(/'/g,"\\'")}')" style="width:100%;margin-top:12px;padding:8px;background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer">📋 पूर्ण हिसाब</button>
+    </div>`;
+  }).join('')+'</div>';
+}
+
 function toggleRFab(){
   rfabOpen=!rfabOpen;
   const main=document.getElementById('rfab-main');
@@ -3240,25 +3347,117 @@ async function toggleClaim(id,current){
 function openSiteExpM(){populateES(CS);document.getElementById('ea').value='';document.getElementById('ed').value=todStr();bsF('ed','ed-b');document.getElementById('en').value='';openM('mExp');}
 
 async function loadSAtt(){
-  const el=document.getElementById('det-body');el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const recs=await dGet('attendance',['site_id','==',CS]);
+  const el=document.getElementById('det-body');
+  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  const [recs,workers,workEntries]=await Promise.all([
+    dGet('attendance',['site_id','==',CS]),
+    dGetC('workers'),
+    dGet('work_entries',['site_id','==',CS])
+  ]);
   recs.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
-  if(!recs.length){el.innerHTML=`<div class="pc">${emptyS('✅','हाजिर रेकर्ड छैन')}</div>`;return;}
-  let html='<div class="pc">';
+
+  // ── Worker summary for this site ──
+  const wSummary={};
   recs.forEach(r=>{
-    const sn={full:'पूरा दिन',morning:'बिहान',afternoon:'दिउँसो'}[r.slot]||r.slot;
-    html+=`<div class="ic" style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--gr100)">
-        <div><div style="font-size:14px;font-weight:800;color:var(--ind)">${fBS(r.date)||r.date}</div><div style="font-size:11px;color:var(--gr500)">${sn}</div></div>
-        <div style="font-size:11px;color:var(--gr400)">${r.saved_by||''}</div>
-      </div>`;
     (r.entries||[]).forEach(e=>{
-      const sc=e.status==='P'?'var(--g)':e.status==='A'?'var(--r)':e.status==='E'?'var(--g)':e.status==='M'?'#854D0E':e.status==='H'?'var(--a)':'var(--ind)';
-      const sn=e.status==='P'?'पूरा दिन':e.status==='A'?'अनुपस्थित':e.status==='E'?'☀️ दिउँसो(पूरा)':e.status==='M'?'🔶 आधा':e.status==='H'?'आधा':'बिदा';
-      html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;font-weight:700">${e.name}</span><div style="display:flex;align-items:center;gap:10px">${e.tin?`<span style="font-size:11px;color:var(--gr400)">${e.tin}${e.tout?'→'+e.tout:''}</span>`:''}<span style="font-weight:700;font-size:12px;color:${sc}">${sn}</span></div></div>`;
+      if(!wSummary[e.name||e.wid])wSummary[e.name||e.wid]={name:e.name||'?',days:0,hours:0,P:0,H:0,A:0};
+      const w=wSummary[e.name||e.wid];
+      const m=e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0;
+      w.days+=m;
+      // Hours from clock in/out
+      if(e.tin&&e.tout){
+        const [ih,im]=(e.tin||'0:0').split(':').map(Number);
+        const [oh,om]=(e.tout||'0:0').split(':').map(Number);
+        const hrs=(oh*60+om-ih*60-im)/60;
+        if(hrs>0)w.hours+=hrs;
+      }
+      if(e.status==='P'||e.status==='E')w.P++;
+      else if(e.status==='H'||e.status==='M')w.H++;
+      else if(e.status==='A')w.A++;
     });
-    html+='</div>';
   });
+
+  // Advances per worker on this site
+  workEntries.forEach(e=>{
+    if(wSummary[e.worker_name])wSummary[e.worker_name].adv=(wSummary[e.worker_name].adv||0)+Number(e.advance_given||0);
+  });
+
+  const myRate=await getMyRate();
+
+  let html='<div class="pc">';
+
+  // Worker summary card
+  const wList=Object.values(wSummary);
+  if(wList.length){
+    html+=`<div class="ic" style="margin-bottom:12px">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--gr100);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800;font-size:14px">👷 Worker Summary</div>
+        <button onclick="openClockModal('${CS}')" style="background:var(--ind);color:#fff;border:none;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">⏱ Clock-in/out</button>
+      </div>
+      ${wList.map(w=>{
+        const wkr=workers.find(x=>x.name===w.name);
+        const rate=Number(wkr?.daily_wage||myRate||0);
+        const earned=w.hours>0?(w.hours/8*rate).toFixed(0):w.days*rate;
+        const adv=w.adv||0;
+        return`<div style="padding:10px 16px;border-bottom:1px solid var(--gr100)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:13px;font-weight:700">${w.name}</div>
+              <div style="font-size:11px;color:var(--gr400)">
+                ${w.days}दिन ${w.hours>0?'· ⏱'+w.hours.toFixed(1)+'hrs':''} · अग्रिम: ${Rs(adv)}
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div class="n" style="font-weight:800;color:var(--g)">${Rs(earned)}</div>
+              <div style="font-size:10px;color:var(--gr400)">बाँकी: ${Rs(Number(earned)-adv)}</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }else{
+    html+=`<div style="text-align:center;margin-bottom:12px">
+      <button onclick="openClockModal('${CS}')" style="background:var(--ind);color:#fff;border:none;border-radius:12px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer">⏱ Clock-in/out थप्नुस्</button>
+    </div>`;
+  }
+
+  // Daily attendance records
+  if(!recs.length){html+=`<div>${emptyS('✅','हाजिर रेकर्ड छैन')}</div>`;
+  }else{
+    recs.forEach(r=>{
+      html+=`<div class="ic" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--gr100)">
+          <div><div style="font-size:13px;font-weight:800;color:var(--ind)">${r.bs_date||fBS(r.date)||r.date}</div>
+          <div style="font-size:11px;color:var(--gr400)">${r.time?'⏰ '+r.time:''} · ${r.saved_by||ME}</div></div>
+          <div style="font-size:11px;color:var(--gr400)">${(r.entries||[]).filter(e=>e.status!=='A').length}/${(r.entries||[]).length} उपस्थित</div>
+        </div>`;
+      (r.entries||[]).forEach(e=>{
+        const icons={'P':'🌞','M':'🌅','E':'☀️','H':'🔶','A':'❌','V':'🏖'};
+        const colors={'P':'var(--g)','E':'var(--g)','M':'var(--a)','H':'var(--a)','A':'var(--r)','V':'var(--ind)'};
+        const labels={'P':'पूरा','M':'बिहान','E':'दिउँसो','H':'आधा','A':'अनुपस्थित','V':'बिदा'};
+        // Hourly wage calc
+        let wageInfo='';
+        if(e.tin&&e.tout){
+          const [ih,im]=(e.tin||'0:0').split(':').map(Number);
+          const [oh,om]=(e.tout||'0:0').split(':').map(Number);
+          const hrs=(oh*60+om-ih*60-im)/60;
+          const wkr=workers.find(x=>x.name===e.name);
+          const rate=Number(wkr?.daily_wage||myRate||0);
+          const earned=Math.round(hrs/8*rate);
+          wageInfo=`<span style="font-size:10px;color:var(--g);font-weight:700">${hrs.toFixed(1)}hrs → Rs.${earned}</span>`;
+        }
+        html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--gr100)">
+          <div>
+            <span style="font-size:13px;font-weight:700">${e.name}</span>
+            ${e.tin?`<div style="font-size:10px;color:var(--gr400)">⏰ ${e.tin||''}${e.tout?' → '+e.tout:' (out नभएको)'}</div>`:''}
+            ${wageInfo?`<div>${wageInfo}</div>`:''}
+          </div>
+          <span style="font-weight:700;font-size:13px;color:${colors[e.status]||'var(--gr500)'}">${icons[e.status]||''} ${labels[e.status]||e.status}</span>
+        </div>`;
+      });
+      html+='</div>';
+    });
+  }
   html+='</div>';el.innerHTML=html;
 }
 
@@ -3886,31 +4085,85 @@ async function printSalarySlip(workerId, workerName){
 
 // ══ WORKER FULL LEDGER ══
 async function showWorkerLedger(workerId, workerName){
-  const [entries,advances]=await Promise.all([
+  const [entries,advances,attRecs]=await Promise.all([
     dGet('work_entries',['worker_id','==',workerId]),
-    dGet('worker_advances',['worker_id','==',workerId])
+    dGet('worker_advances',['worker_id','==',workerId]),
+    dGet('attendance')
   ]);
+  // Build site-wise attendance from attendance collection
+  const siteAttMap={};
+  attRecs.forEach(r=>{
+    (r.entries||[]).forEach(e=>{
+      if(e.wid===workerId||e.name===workerName){
+        const sid=r.site_id;const sName=r.site_name||SITES.find(s=>s.id===sid)?.name||'—';
+        if(!siteAttMap[sid])siteAttMap[sid]={name:sName,days:0,dates:[]};
+        const mult=e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0;
+        siteAttMap[sid].days+=mult;
+        if(mult>0)siteAttMap[sid].dates.push({date:r.bs_date||r.date,status:e.status,time:r.time||''});
+      }
+    });
+  });
+  const myRate=await getMyRate();
   const allTx=[
-    ...entries.map(e=>({date:e.date_from||'',bsDate:e.bs_from||'',type:'ज्याला',site:SITES.find(s=>s.id===e.site_id)?.name||'—',desc:`${e.days}दिन × Rs.${e.daily_rate}`,amount:Number(e.days)*Number(e.daily_rate),isCredit:true})),
-    ...entries.filter(e=>e.advance_given>0).map(e=>({date:e.date_from||'',bsDate:e.bs_from||'',type:'अग्रिम',site:SITES.find(s=>s.id===e.site_id)?.name||'—',desc:'ज्याला अग्रिम',amount:Number(e.advance_given),isCredit:false})),
+    ...entries.map(e=>({date:e.date_from||'',bsDate:e.bs_from||fBS(e.date_from||''),type:'ज्याला',site:SITES.find(s=>s.id===e.site_id)?.name||'—',desc:`${e.days}दिन × Rs.${e.daily_rate}`,amount:Number(e.days)*Number(e.daily_rate),isCredit:true,settled:e.settled,settlement:e.settlement_amount})),
+    ...entries.filter(e=>Number(e.advance_given||0)>0).map(e=>({date:e.date_from||'',bsDate:e.bs_from||'',type:'अग्रिम',site:SITES.find(s=>s.id===e.site_id)?.name||'—',desc:'ज्याला अग्रिम',amount:Number(e.advance_given),isCredit:false})),
     ...advances.map(a=>({date:a.date||'',bsDate:a.bs_date||'',type:'अग्रिम',site:a.site_name||'—',desc:a.note||a.source,amount:Number(a.amount),isCredit:false}))
   ].sort((a,b)=>a.date>b.date?1:-1);
   let bal=0;
-  const html=`<html><head><meta charset="UTF-8"><title>Ledger</title>
-  <style>body{font-family:sans-serif;padding:20px;font-size:12px}h2{color:#4F46E5}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:7px 8px}th{background:#EEF2FF;font-weight:700}.cr{color:green}.db{color:red}.bal{font-weight:700}</style>
-  </head><body>
-  <h2>👷 ${workerName} — पूर्ण हिसाब</h2>
-  <p>मिति: ${bsToday()}</p>
-  <table>
-    <tr><th>मिति</th><th>प्रकार</th><th>साइट</th><th>विवरण</th><th>जम्मा (+)</th><th>खर्च (-)</th><th>ब्यालेन्स</th></tr>
-    ${allTx.map(t=>{
-      if(t.isCredit)bal+=t.amount; else bal-=t.amount;
-      return`<tr><td>${t.bsDate||t.date}</td><td>${t.type}</td><td>${t.site}</td><td>${t.desc}</td><td class="cr">${t.isCredit?'Rs.'+t.amount.toLocaleString():''}</td><td class="db">${!t.isCredit?'Rs.'+t.amount.toLocaleString():''}</td><td class="bal" style="color:${bal>=0?'green':'red'}">Rs.${bal.toLocaleString()}</td></tr>`;
-    }).join('')}
-  </table>
-  <p style="margin-top:12px;font-size:13px;font-weight:700">बाँकी: <span style="color:${bal>=0?'green':'red'}">Rs.${bal.toLocaleString()}</span></p>
+  const totalDays=Object.values(siteAttMap).reduce((a,s)=>a+s.days,0);
+  const html=`<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${workerName} — हिसाब</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}body{font-family:sans-serif;background:#f5f5f5;padding:16px;font-size:13px}
+    .card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    h2{color:#1C1917;font-size:18px;margin-bottom:4px}
+    h3{font-size:13px;font-weight:800;color:#78716C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+    .pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .stat{background:#FFF4ED;border-radius:10px;padding:10px;text-align:center}
+    .sv{font-size:20px;font-weight:900;color:#EA580C}.sl{font-size:10px;color:#78716C;font-weight:600}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th{background:#1C1917;color:#fff;padding:8px;text-align:left}
+    td{padding:7px 8px;border-bottom:1px solid #eee}
+    .cr{color:#16A34A;font-weight:700}.db{color:#DC2626;font-weight:700}
+    .site-row{padding:8px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+    @media print{body{padding:0}}
+  </style></head><body>
+  <div class="card">
+    <h2>👷 ${workerName}</h2>
+    <div style="font-size:11px;color:#78716C;margin-top:4px">मिति: ${bsToday()} · दैनिक दर: Rs.${myRate||'—'}</div>
+    <div class="grid" style="margin-top:14px">
+      <div class="stat"><div class="sv">${totalDays}</div><div class="sl">कुल दिन</div></div>
+      <div class="stat"><div class="sv">Rs.${(totalDays*(myRate||0)).toLocaleString()}</div><div class="sl">कुल कमाइ</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📍 साइट-वाइज हाजिर</h3>
+    ${Object.values(siteAttMap).map(s=>`
+      <div class="site-row">
+        <div><div style="font-weight:700">${s.name}</div>
+        <div style="font-size:11px;color:#78716C">${s.dates.slice(-3).map(d=>d.date+' '+({P:'🌞',M:'🌅',E:'☀️',H:'🔶',A:'❌',V:'🏖'}[d.status]||'')).join(', ')}</div></div>
+        <div style="text-align:right"><div style="font-weight:800;color:#EA580C">${s.days} दिन</div>
+        <div style="font-size:11px;color:#78716C">Rs.${(s.days*(myRate||0)).toLocaleString()}</div></div>
+      </div>`).join('')||'<div style="color:#aaa;padding:8px">हाजिर रेकर्ड छैन</div>'}
+  </div>
+
+  <div class="card">
+    <h3>📋 पूर्ण लेजर</h3>
+    <table>
+      <tr><th>मिति</th><th>साइट</th><th>विवरण</th><th>+</th><th>-</th><th>ब्याल.</th></tr>
+      ${allTx.map(t=>{
+        const amt=t.settled&&!t.isCredit?t.amount:t.settlement||t.amount;
+        if(t.isCredit)bal+=t.settled?t.settlement||t.amount:t.amount; else bal-=t.amount;
+        return`<tr><td>${t.bsDate||t.date}</td><td style="font-size:11px">${t.site}</td><td>${t.desc}${t.settled?'<br><span style="font-size:10px;color:green">✅ Settled</span>':''}</td><td class="cr">${t.isCredit?'Rs.'+t.amount.toLocaleString():''}</td><td class="db">${!t.isCredit?'Rs.'+t.amount.toLocaleString():''}</td><td style="font-weight:700;color:${bal>=0?'#16A34A':'#DC2626'}">Rs.${bal.toLocaleString()}</td></tr>`;
+      }).join('')}
+    </table>
+    <div style="margin-top:12px;font-size:14px;font-weight:800;text-align:right;color:${bal>=0?'#16A34A':'#DC2626'}">बाँकी: Rs.${bal.toLocaleString()}</div>
+  </div>
+  <button onclick="window.print()" style="width:100%;padding:12px;background:#1C1917;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">🖨️ Print</button>
   </body></html>`;
-  const w=window.open('','_blank');w.document.write(html);w.document.close();
+  const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();}
 }
 // ══ FULLSCREEN PHOTO VIEWER ══
 function viewPhoto(src,caption=''){
@@ -3974,11 +4227,8 @@ async function loadNotif(){
   const notifs=await dGet('notifications');
   notifs.sort((a,b)=>(b.created_at||0)-(a.created_at||0));
   if(!notifs.length){el.innerHTML=emptyS('🔔','कुनै सूचना छैन');return;}
-  const unreadIds=notifs.filter(n=>!n.read_by?.includes(ME)).map(n=>n.id);
-  if(unreadIds.length){
-    unreadIds.forEach(id=>db.collection('notifications').doc(id).update({read_by:firebase.firestore.FieldValue.arrayUnion(ME)}).catch(()=>{}));
-    setTimeout(loadNotifBadge,600);
-  }
+
+  // RENDER FIRST with unread status
   const cfg={
     attendance:{icon:'✅',bg:'var(--gl)',color:'#065F46',label:'हाजिर'},
     payment:    {icon:'💰',bg:'#DCFCE7',color:'#166534',label:'भुक्तानी'},
@@ -4003,6 +4253,14 @@ async function loadNotif(){
       ${isUnread?`<div style="width:7px;height:7px;border-radius:50%;background:var(--ind);flex-shrink:0"></div>`:''}
     </div>`;
   }).join('');
+  // Mark all as read AFTER rendering (so unread dots show first)
+  const unreadIds=notifs.filter(n=>!n.read_by?.includes(ME)).map(n=>n.id);
+  if(unreadIds.length){
+    setTimeout(()=>{
+      unreadIds.forEach(id=>db.collection('notifications').doc(id).update({read_by:firebase.firestore.FieldValue.arrayUnion(ME)}).catch(()=>{}));
+      setTimeout(loadNotifBadge,500);
+    },800);
+  }
 }
 async function markAllRead(){
   const notifs=await dGet('notifications');
@@ -4655,7 +4913,7 @@ function go(p){
 
   // Update nav active state
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
-  const nm={home:0,sites:1,att:2,workers:3,notif:4,profile:5};
+  const nm={home:0,sites:1,notif:2,profile:3};
   if(nm[p]!==undefined)document.querySelectorAll('.ni')[nm[p]].classList.add('on');
   CUR=p;
   pushHistory(p);
