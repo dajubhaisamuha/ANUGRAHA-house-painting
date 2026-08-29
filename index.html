@@ -872,9 +872,6 @@ select.fi option{background:#fff}
       </div>
       <div style="display:flex;gap:6px;align-items:center">
         <div id="h-date" style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">—</div>
-        <button onclick="openDateSearch()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer" title="मिति खोज">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </button>
         <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn" style="width:32px;height:32px">
           <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:none;width:18px;height:18px"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
           <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -916,28 +913,12 @@ select.fi option{background:#fff}
     <!-- TODAY ATT -->
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:12px;margin-bottom:14px;border:1px solid rgba(255,255,255,.06)">
       <span style="font-size:11px;color:rgba(255,255,255,.45);font-weight:600">📍 आजको हाजिर</span>
-      <span id="h-today-att" style="font-size:12px;font-weight:700;color:#fff">जाँच हुँदैछ...</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="h-today-att" style="font-size:12px;font-weight:700;color:#fff">जाँच हुँदैछ...</span>
+        <button onclick="openDateSearch()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:11px;color:rgba(255,255,255,.7)">📅</button>
+      </div>
     </div>
 
-    <!-- QUICK ACTIONS -->
-    <div class="qbtns">
-      <div class="qb" onclick="openSiteModal()">
-        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
-        <div class="qb-l">नयाँ साइट</div>
-      </div>
-      <div class="qb" onclick="openQuickAtt()">
-        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-        <div class="qb-l">⚡ हाजिर</div>
-      </div>
-      <div class="qb" onclick="openGlobalExp()">
-        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-        <div class="qb-l">खर्च</div>
-      </div>
-      <div class="qb" onclick="go('team')">
-        <div class="qb-i"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-        <div class="qb-l">टोली</div>
-      </div>
-    </div>
   </div>
 
   <!-- STATS ROW -->
@@ -2479,13 +2460,19 @@ async function loadOv(){
             const earned=Number(w.days||0)*Number(w.daily_rate||0);
             const adv=Number(w.advance_given||0);
             const bal=earned-adv;
-            return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:${bal>0?'var(--al)':'var(--gl)'};border-radius:10px;margin-bottom:6px">
+            if(earned===0)return''; // No work done yet, skip
+            const isPaid=bal<=0;
+            return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:${isPaid?'var(--gl)':'var(--al)'};border-radius:10px;margin-bottom:6px;border:1px solid ${isPaid?'#6EE7B7':'#FCD34D'}">
               <div>
                 <div style="font-size:13px;font-weight:700">${w.worker_name||'—'}</div>
-                <div style="font-size:11px;color:var(--gr500)">${w.days}दिन × Rs.${w.daily_rate} = ${Rs(earned)} · अग्रिम: ${Rs(adv)}</div>
+                <div style="font-size:11px;color:var(--gr500)">${w.days}दिन × Rs.${w.daily_rate} = ${Rs(earned)}</div>
+                <div style="font-size:11px;color:var(--gr500)">अग्रिम: ${Rs(adv)}</div>
               </div>
               <div style="text-align:right">
-                <div class="n" style="font-weight:800;color:${bal>0?'var(--r)':'var(--g)'};">${bal>0?'बाँकी: '+Rs(bal):'✅ Clear'}</div>
+                <div class="n" style="font-weight:900;font-size:15px;color:${isPaid?'var(--g)':'var(--r)'}">
+                  ${isPaid?'✅ Clear':'Rs.'+Rs(bal)}
+                </div>
+                <div style="font-size:10px;color:var(--gr500)">${isPaid?'भुक्तान भयो':'बाँकी'}</div>
               </div>
             </div>`;
           }).join('')}
@@ -4823,11 +4810,11 @@ async function saveWA(){
   const sid=document.getElementById('wa-s').value;if(!sid){toast('साइट',false);return;}
   const sname=SITES.find(x=>x.id===sid)?.name||'';
   const d=document.getElementById('wa-d').value,slot=document.getElementById('wa-sl').value;
-  const docId=`${d}_${sid}_${slot}`;
+  const docId=`${sid}_${d}`;
   let existing=[];try{const snap=await db.collection('attendance').doc(docId).get();if(snap.exists)existing=snap.data().entries||[];}catch{}
   const filtered=existing.filter(e=>e.wid!==wid);
   filtered.push({wid,name:wname,status:document.getElementById('wa-st').value,tin:document.getElementById('wa-in').value,tout:document.getElementById('wa-out').value});
-  await dSet('attendance',docId,{date:d,bs_date:fBS(d),site_id:sid,site_name:sname,slot,entries:filtered,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
+  await dSet('attendance',docId,{date:d,bs_date:fBS(d),site_id:sid,site_name:sname,slot:'full',entries:filtered,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
   closeM('mWA');toast(wname+' हाजिर सेभ ✓');
 }
 
