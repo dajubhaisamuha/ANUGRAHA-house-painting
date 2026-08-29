@@ -67,7 +67,12 @@ body.theme-purple{
   --bg:#FAFAFA;--w:#FFFFFF;
   --gr900:#2D1B69;
 }
-body.theme-purple .hero-bar{background:linear-gradient(135deg,#7C3AED,#5B21B6)!important}
+body.theme-orange .hero-bar{background:linear-gradient(145deg,#1C1917 0%,#292524 40%,#431407 100%)!important}
+body.theme-orange .ni.on{color:#EA580C}
+body.theme-orange .btn.bp,.theme-orange .rfab-main{background:linear-gradient(135deg,#EA580C,#9A3412)!important}
+body.theme-orange :root,.theme-orange{--ind:#EA580C;--ind-d:#9A3412;--ind-l:#FFF7ED;--ind-b:#FED7AA}
+body.theme-orange .team-hero,.theme-orange .att-date-bar{background:linear-gradient(135deg,#292524,#431407)!important}
+body.theme-orange #dial-ring circle:first-child{fill:url(#orangeG)}
 body.theme-purple #splash{background:linear-gradient(150deg,#7C3AED,#5B21B6)!important}
 body.theme-purple .ni.on{color:#7C3AED}
 body.theme-purple .ni.on::before{background:#7C3AED}
@@ -611,7 +616,6 @@ select.fi option{background:#fff}
   -webkit-overflow-scrolling:touch;
   overscroll-behavior-y:contain;
 }
-.page{overflow-y:auto;height:calc(100vh - var(--nh))}
 /* All interactive elements — instant press feel */
 .btn:active{transform:scale(.96)!important;transition:transform .08s}
 .stat-card:active{transform:scale(.97)!important;transition:transform .08s}
@@ -763,6 +767,10 @@ select.fi option{background:#fff}
       <div class="rfab-lbl">Estimate</div>
       <button class="rfab-btn" style="background:linear-gradient(135deg,#5B21B6,#7C3AED)" onclick="closeRFab();openEstModal('')">📋</button>
     </div>
+    <div class="rfab-item" data-idx="4">
+      <div class="rfab-lbl">Checklist</div>
+      <button class="rfab-btn" style="background:linear-gradient(135deg,#065F46,#059669)" onclick="closeRFab();openChecklist()">📦</button>
+    </div>
   </div>
   <button class="rfab-main" id="rfab-main" onclick="toggleRFab()">＋</button>
 </div>
@@ -784,7 +792,8 @@ select.fi option{background:#fff}
     <div id="dial" ontouchstart="dialStart(event)" ontouchmove="dialMove(event)" ontouchend="dialEnd(event)" onclick="toggleRFab()">
       <svg id="dial-ring" viewBox="0 0 72 72" width="72" height="72" style="display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))">
         <defs>
-          <radialGradient id="outerG" cx="40%" cy="30%" r="70%">
+          <radialGradient id="orangeG" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#EA580C"/><stop offset="100%" stop-color="#431407"/></radialGradient>
+        <radialGradient id="outerG" cx="40%" cy="30%" r="70%">
             <stop offset="0%" stop-color="#5A5A5A"/>
             <stop offset="40%" stop-color="#2A2A2A"/>
             <stop offset="100%" stop-color="#111"/>
@@ -861,9 +870,12 @@ select.fi option{background:#fff}
           <div class="hb-name" id="hb-nm"></div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
+      <div style="display:flex;gap:6px;align-items:center">
         <div id="h-date" style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">—</div>
-        <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn">
+        <button onclick="openDateSearch()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer" title="मिति खोज">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </button>
+        <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn" style="width:32px;height:32px">
           <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:none;width:18px;height:18px"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
           <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
@@ -1104,7 +1116,7 @@ select.fi option{background:#fff}
 </div>
 
 <!-- PROFILE -->
-<div class="page" id="pg-profile">
+<div class="page" id="pg-profile" style="overflow-y:auto;height:calc(100vh - var(--nh))">
   <div class="prof-top">
     <div class="prof-av" id="prof-av" onclick="openProfilePicModal()">
       <span id="prof-av-txt"></span>
@@ -1383,7 +1395,11 @@ select.fi option{background:#fff}
   <div style="display:flex;flex-direction:column;gap:10px">
     <div onclick="setTheme('default')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:2px solid var(--ind-b);cursor:pointer;background:var(--ind-l)">
       <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#4F46E5,#0EA5E9)"></div>
-      <div><div style="font-size:15px;font-weight:800">Default Blue</div><div style="font-size:12px;color:var(--gr500)">Indigo + Blue (हालको)</div></div>
+      <div><div style="font-size:15px;font-weight:800">Default Blue</div><div style="font-size:12px;color:var(--gr500)">Indigo + Blue</div></div>
+    </div>
+    <div onclick="setTheme('orange')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:2px solid #FED7AA;cursor:pointer;background:#FFF7ED">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#EA580C,#1C1917)"></div>
+      <div><div style="font-size:15px;font-weight:800;color:#EA580C">🔶 Professional Orange</div><div style="font-size:12px;color:var(--gr500)">Bold Orange + Dark — Premium</div></div>
     </div>
     <div onclick="setTheme('red')" style="display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:2px solid #FFC0CB;cursor:pointer;background:#FFF0F0">
       <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#C41E3A,#9B0000)"></div>
@@ -1461,6 +1477,37 @@ select.fi option{background:#fff}
   </div>
   <button class="btn bp" onclick="generateEstimate()">📄 Estimate Generate गर्नुस्</button>
   <button class="btn bs" onclick="closeM('mEst')">रद्द</button>
+</div></div>
+
+<!-- MODAL: DATE SEARCH -->
+<div class="mbo" id="mDateSearch"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">📅 मिति खोज</div>
+  <div style="font-size:12px;color:var(--gr400);margin-bottom:14px">कुनै पनि मिति छान्नुस् — त्यस दिनको पूरा विवरण देखिन्छ</div>
+  <div class="fg">
+    <label class="fl">मिति छान्नुस्</label>
+    <div class="fbs-top" id="ds-d-b" style="margin-bottom:4px"></div>
+    <input type="date" class="fi" id="ds-date" oninput="bsF('ds-date','ds-d-b');searchByDate()" max="">
+  </div>
+  <div id="ds-result" style="margin-top:4px"></div>
+</div></div>
+
+<!-- MODAL: MATERIALS CHECKLIST -->
+<div class="mbo" id="mChecklist"><div class="msh">
+  <div class="mhd"></div>
+  <div class="mtit">📦 Materials Checklist</div>
+  <div class="fg">
+    <label class="fl">साइट छान्नुस्</label>
+    <select class="fi" id="cl-site"></select>
+  </div>
+  <div style="font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">सामग्री छान्नुस् (qty थप्नुस्)</div>
+  <div id="cl-items" style="max-height:45vh;overflow-y:auto;margin-bottom:12px"></div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input class="fi" id="cl-custom" placeholder="थप सामग्री थप्नुस्..." style="flex:1">
+    <button onclick="addCustomClItem()" style="background:var(--ind);border:none;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer">+</button>
+  </div>
+  <button class="btn bp" onclick="saveChecklist()">💾 Save to Site</button>
+  <button class="btn bs" onclick="closeM('mChecklist')">रद्द</button>
 </div></div>
 
 <!-- MODAL: CLOCK IN/OUT -->
@@ -1676,7 +1723,7 @@ function setTheme(t,silent){
   document.body.className=document.body.className.replace(/theme-\w+/g,'').trim();
   if(t!=='default')document.body.classList.add('theme-'+t);
   localStorage.setItem('app-theme',t);
-  const labels={default:'Default Blue',red:'Red / White',blue:'Blue / Yellow',purple:'White / Purple'};
+  const labels={default:'Default Blue',orange:'Professional Orange',red:'Red / White',blue:'Blue / Yellow',purple:'White / Purple'};
   const lbl=document.getElementById('theme-lbl');if(lbl)lbl.textContent=labels[t]||t;
   if(!silent){closeM('mTheme');toast('Theme बदलियो ✓');}
 }
@@ -2360,6 +2407,7 @@ async function loadOv(){
   const totR=pays.reduce((a,p)=>a+Number(p.amount||0),0);
   const totL=work.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
   const totA=work.reduce((a,w)=>a+Number(w.advance_given||0),0);
+  const totASite=work.filter(w=>!w.is_personal).reduce((a,w)=>a+Number(w.advance_given||0),0);
   const totE=exps.reduce((a,e)=>a+Number(e.amount||0),0);
   const totExtra=extraIncome.reduce((a,x)=>a+Number(x.amount||0),0);
   // Personal advances (not from site budget — to be returned)
@@ -2408,19 +2456,40 @@ async function loadOv(){
           <span class="coll-arrow open" id="arr-c-fin">▼</span>
         </div>
       </div>
-      <div class="coll-body" id="c-fin" style="max-height:600px">
+      <div class="coll-body" id="c-fin" style="max-height:800px">
         <div class="pbox" style="margin:12px;border-radius:12px">
           <div style="display:flex;justify-content:flex-end;margin-bottom:8px">${sv!=null?`<button onclick="openEditContractModal('${CS}')" style="background:rgba(234,88,12,.1);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;cursor:pointer">✏️ Edit</button>`:''}</div>
           ${sv!=null?`<div class="pr"><span class="pl">📋 ठेक्का</span><span style="color:var(--ind);font-weight:800">${Rs(sv)}</span></div>`:''}
           <div class="pr"><span class="pl">💰 प्राप्त</span><span style="color:var(--g);font-weight:800">${Rs(totR)}</span></div>
-          ${sv!=null?`<div class="pr"><span class="pl">⏳ बाँकी</span><span style="color:${(sv-totR)>=0?'var(--a)':'var(--g)'};font-weight:800">${(sv-totR)>=0?Rs(sv-totR):'अतिरिक्त '+Rs(Math.abs(sv-totR))}</span></div>`:''}
-          <div class="pr"><span class="pl">👷 ज्याला</span><span style="color:var(--r);font-weight:800">−${Rs(totL)}</span></div>
-          <div class="pr"><span class="pl">💸 खर्च</span><span style="color:var(--r);font-weight:800">−${Rs(totE)}</span></div>
+          ${sv!=null?`<div class="pr"><span class="pl">⏳ client बाँकी</span><span style="color:${(sv-totR)>=0?'var(--a)':'var(--g)'};font-weight:800">${(sv-totR)>=0?Rs(sv-totR):'अतिरिक्त '+Rs(Math.abs(sv-totR))}</span></div>`:''}
+          <div class="pdiv"></div>
+          <div class="pr"><span class="pl">👷 ज्याला (earned)</span><span style="color:var(--r);font-weight:800">−${Rs(totL)}</span></div>
+          <div class="pr"><span class="pl">💵 साइट advance</span><span style="color:var(--a);font-weight:800">−${Rs(totASite)}</span></div>
+          <div class="pr"><span class="pl">💸 साइट खर्च</span><span style="color:var(--r);font-weight:800">−${Rs(totE)}</span></div>
           ${totExtra>0?`<div class="pr"><span class="pl">✨ अतिरिक्त</span><span style="color:var(--g);font-weight:800">+${Rs(totExtra)}</span></div>`:''}
           <div class="pdiv"></div>
           <div class="pr"><span style="font-weight:800">📈 नाफा</span><span style="font-size:22px;font-weight:800;color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
           <div class="pr"><span style="font-size:12px;color:var(--gr500)">÷ ३ हरेकको</span><span style="font-size:16px;font-weight:800;color:var(--ind)">${Rs(Math.abs(profit/3))}</span></div>
         </div>
+
+        <!-- Worker-wise payment summary for this site -->
+        ${work.length?`<div style="padding:0 12px 12px">
+          <div style="font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">👷 कामदार भुक्तानी स्थिति</div>
+          ${work.map(w=>{
+            const earned=Number(w.days||0)*Number(w.daily_rate||0);
+            const adv=Number(w.advance_given||0);
+            const bal=earned-adv;
+            return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:${bal>0?'var(--al)':'var(--gl)'};border-radius:10px;margin-bottom:6px">
+              <div>
+                <div style="font-size:13px;font-weight:700">${w.worker_name||'—'}</div>
+                <div style="font-size:11px;color:var(--gr500)">${w.days}दिन × Rs.${w.daily_rate} = ${Rs(earned)} · अग्रिम: ${Rs(adv)}</div>
+              </div>
+              <div style="text-align:right">
+                <div class="n" style="font-weight:800;color:${bal>0?'var(--r)':'var(--g)'};">${bal>0?'बाँकी: '+Rs(bal):'✅ Clear'}</div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`:''}
       </div>
     </div>
 
@@ -2936,6 +3005,167 @@ async function saveClockEntry(){
   const site=SITES.find(s=>s.id===siteId);
   await dSet('attendance',`${siteId}_${d}`,{site_id:siteId,site_name:site?.name||'',date:d,bs_date:fBS(d),time:nowTime(),entries,clock_mode:true});
   closeM('mClock');toast(`✅ ${entries.length} जनाको time entry सेभ!`);haptic('success');loadSAtt();
+}
+
+// ══ DATE SEARCH ══
+function openDateSearch(){
+  const today=todStr();
+  document.getElementById('ds-date').value=today;
+  document.getElementById('ds-date').max=today;
+  bsF('ds-date','ds-d-b');
+  document.getElementById('ds-result').innerHTML='<div style="color:var(--gr400);text-align:center;padding:12px;font-size:13px">मिति छान्नुस्...</div>';
+  openM('mDateSearch');
+  setTimeout(searchByDate,100);
+}
+async function searchByDate(){
+  const d=document.getElementById('ds-date').value;
+  if(!d)return;
+  const el=document.getElementById('ds-result');
+  el.innerHTML='<div class="ld">खोजिँदैछ...</div>';
+  const [sites,attRecs,pays,exps,workEntries]=await Promise.all([
+    dGetC('sites'),
+    dGet('attendance',['date','==',d]),
+    dGet('payments',['date','==',d]),
+    dGet('expenses',['date','==',d]),
+    dGet('work_entries',['date_from','==',d])
+  ]);
+  if(!attRecs.length&&!pays.length&&!exps.length){
+    el.innerHTML=emptyS('📅',fBS(d)+' को कुनै रेकर्ड छैन');return;
+  }
+  let html=`<div style="font-size:12px;font-weight:800;color:var(--ind);margin-bottom:12px;text-align:center">📅 ${fBS(d)||d} को विवरण</div>`;
+  // Active sites that day
+  const activeSiteIds=[...new Set(attRecs.map(r=>r.site_id))];
+  if(activeSiteIds.length){
+    html+=`<div style="background:var(--ind-l);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;color:var(--ind-d);margin-bottom:8px">🏗️ ${activeSiteIds.length} साइटमा काम भयो</div>`;
+    attRecs.forEach(r=>{
+      const present=(r.entries||[]).filter(e=>e.status!=='A'&&e.status!=='V');
+      html+=`<div style="padding:6px 0;border-bottom:1px solid rgba(249,115,22,.1)">
+        <div style="font-size:13px;font-weight:700">${r.site_name||'—'}</div>
+        <div style="font-size:11px;color:var(--gr500)">${present.length} जना: ${present.map(e=>e.name).join(', ')}</div>
+        ${r.time?`<div style="font-size:10px;color:var(--gr400)">⏰ ${r.time}</div>`:''}
+      </div>`;
+    });
+    html+='</div>';
+  }
+  // Payments
+  if(pays.length){
+    const totPay=pays.reduce((a,p)=>a+Number(p.amount||0),0);
+    html+=`<div style="background:var(--gl);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;color:#065F46;margin-bottom:6px">💰 भुक्तानी — ${Rs(totPay)}</div>
+      ${pays.map(p=>`<div style="font-size:12px;padding:3px 0">${p.site_name||'—'} → <b>${Rs(p.amount)}</b></div>`).join('')}
+    </div>`;
+  }
+  // Expenses
+  if(exps.length){
+    const totExp=exps.reduce((a,e)=>a+Number(e.amount||0),0);
+    html+=`<div style="background:var(--rl);border-radius:12px;padding:12px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;color:#9F1239;margin-bottom:6px">💸 खर्च — ${Rs(totExp)}</div>
+      ${exps.map(e=>`<div style="font-size:12px;padding:3px 0">${e.site_name||'सामान्य'}: ${e.category||'—'} — <b>${Rs(e.amount)}</b> (${e.paid_by})</div>`).join('')}
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+
+// ══ MATERIALS CHECKLIST ══
+const CHECKLIST_ITEMS=[
+  'Putty Blade','Roll Khaksi','Paper Khaksi','Neer','Xanne Kapada',
+  'Pen Brush','1" Hand Brush','2" Hand Brush','3" Hand Brush',
+  '4" Roller','7" Roller','Wall Putty','Interior Cement Primer',
+  'Ceiling White','Border Colour','Slope Colour','Butta Colour',
+  'Royal Play','Black Enamel','36 37 38','Tarpin','Khat Banne Dori',
+  'Bas','Chapra','Wood Stin','Spread','Coton Kapada','Panja'
+];
+let _clItems=[...CHECKLIST_ITEMS.map(n=>({name:n,checked:false,qty:''}))];
+
+async function openChecklist(){
+  SITES=await dGetC('sites');
+  const sel=document.getElementById('cl-site');
+  sel.innerHTML='<option value="">साइट छान्नुस्</option>'+SITES.filter(s=>s.status==='active').map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  _clItems=[...CHECKLIST_ITEMS.map(n=>({name:n,checked:false,qty:''}))];
+  renderClItems();
+  openM('mChecklist');
+}
+function renderClItems(){
+  document.getElementById('cl-items').innerHTML=_clItems.map((item,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px;border-bottom:1px solid var(--gr100);${item.checked?'background:var(--gl);border-radius:8px;margin-bottom:3px':''}">
+      <div onclick="toggleClItem(${i})" style="width:22px;height:22px;border-radius:6px;border:2px solid ${item.checked?'var(--g)':'var(--gr300)'};background:${item.checked?'var(--g)':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        ${item.checked?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}
+      </div>
+      <span style="flex:1;font-size:13px;font-weight:${item.checked?700:500};color:${item.checked?'var(--g)':'var(--gr700)'}">${item.name}</span>
+      ${item.checked?`<input type="number" placeholder="qty" value="${item.qty}" onchange="_clItems[${i}].qty=this.value" style="width:60px;padding:4px 6px;border:1px solid var(--gr200);border-radius:6px;font-size:12px;text-align:center">
+        <span style="font-size:11px;color:var(--gr400)">वटा/L</span>`:''}
+    </div>`).join('');
+}
+function toggleClItem(i){_clItems[i].checked=!_clItems[i].checked;renderClItems();}
+function addCustomClItem(){
+  const inp=document.getElementById('cl-custom');
+  const v=inp.value.trim();if(!v)return;
+  _clItems.push({name:v,checked:true,qty:''});
+  inp.value='';renderClItems();
+}
+async function saveChecklist(){
+  const sid=document.getElementById('cl-site').value;
+  if(!sid){toast('साइट छान्नुस्',false);return;}
+  const checked=_clItems.filter(i=>i.checked);
+  if(!checked.length){toast('कम्तीमा एउटा item छान्नुस्',false);return;}
+  const site=SITES.find(s=>s.id===sid);
+  // Save to site's material needs
+  const key=`checklist_${sid}_${todStr()}`;
+  await db.collection('checklists').doc(key).set({
+    site_id:sid,site_name:site?.name||'',date:todStr(),bs_date:bsToday(),
+    items:checked,saved_by:ME,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  closeM('mChecklist');
+  toast(`✅ ${checked.length} items सेभ — ${site?.name||''}`);
+  addNotif('material',`📦 ${ME} ले ${site?.name||''} को checklist सेभ — ${checked.length} items`);
+}
+
+// ══ FIX PAYMENT REMINDER ══
+async function checkPaymentReminders(){
+  try{
+    const sites=await dGetC('sites');
+    const pays=await dGetC('payments');
+    const active=sites.filter(s=>s.status==='active');
+    const reminders=[];
+    active.forEach(s=>{
+      const cv=sCV(s);if(!cv)return;
+      const sitePays=pays.filter(p=>p.site_id===s.id);
+      const totR=sitePays.reduce((a,p)=>a+Number(p.amount||0),0);
+      const due=cv-totR;
+      if(due>0){
+        const lastPay=sitePays.sort((a,b)=>b.date>a.date?1:-1)[0];
+        const daysSince=lastPay?Math.floor((Date.now()-new Date(lastPay.date).getTime())/86400000):999;
+        if(daysSince>7)reminders.push({site:s.name,due,days:daysSince,cv,totR});
+      }
+    });
+    if(reminders.length){
+      const msg=reminders.map(r=>`📍 ${r.site}: ${Rs(r.r.due)} बाँकी (${r.days} दिनदेखि)`).join('\n');
+      toast(`⚠️ ${reminders.length} साइटको payment बाँकी!`);
+      if(confirm(`Payment Reminder:\n\n${reminders.map(r=>`• ${r.site}: ${Rs(r.due)} बाँकी (${r.days} दिन भयो)`).join('\n')}\n\nWhatsApp मा remind गर्ने?`)){
+        shareWhatsApp(`🏠 ANUGRAHA - Payment Reminder\n\n${reminders.map(r=>`• ${r.site}: ${Rs(r.due)} बाँकी`).join('\n')}\n\nकृपया payment गरिदिनुहोस् 🙏`);
+      }
+    }else{toast('✅ सबै payments up to date!');}
+  }catch(e){toast('Check गर्न सकिएन',false);}
+}
+
+// ══ ATTENDANCE REMINDER ══
+async function checkAttendanceReminder(){
+  try{
+    const sites=await dGetC('sites');
+    const active=sites.filter(s=>s.status==='active');
+    const todayStr=todStr();
+    const missing=[];
+    for(const s of active){
+      const att=await dGet('attendance',['site_id','==',s.id],['date','==',todayStr]);
+      if(!att.length)missing.push(s.name);
+    }
+    if(missing.length){
+      const msg=`⚠️ आजको हाजिर भरिएको छैन:\n${missing.map(n=>'• '+n).join('\n')}`;
+      toast(`⚠️ ${missing.length} साइटको हाजिर बाँकी!`);
+      addNotif('attendance',`⚠️ हाजिर reminder: ${missing.join(', ')} — आज भर्नुस्`);
+    }
+  }catch(e){}
 }
 
 function dialStart(e){
@@ -4311,13 +4541,54 @@ async function loadNotif(){
     const isUnread=!n.read_by?.includes(ME);
     const c=cfg[n.type]||{icon:'📌',bg:'var(--gr100)',color:'var(--gr600)',label:'सूचना'};
     const [main,...rest]=n.msg.split(' · ');
-    return`<div style="animation:fadeSlideUp .25s ease ${i*.03}s both;display:flex;align-items:center;gap:10px;padding:10px 12px;background:${isUnread?'var(--w)':'var(--gr50)'};border-radius:14px;margin-bottom:7px;border:1px solid ${isUnread?'var(--gr200)':'var(--gr100)'};${isUnread?'box-shadow:0 1px 6px rgba(0,0,0,.06)':''}">
-      <div style="width:34px;height:34px;border-radius:10px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${c.icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:${isUnread?700:500};color:var(--gr900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${main}</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:1px">${c.label} · ${n.bs_date||n.date||''}</div>
+    // Type-based glass colors
+    const glassMap={
+      attendance:'rgba(22,163,74,.08)',
+      payment:'rgba(22,163,74,.1)',
+      expense:'rgba(225,29,72,.08)',
+      advance:'rgba(245,158,11,.08)',
+      withdrawal:'rgba(124,58,237,.08)',
+      worker:'rgba(251,191,36,.08)',
+      material:'rgba(59,130,246,.08)',
+      site:'rgba(249,115,22,.08)',
+      extra_income:'rgba(249,115,22,.1)',
+    };
+    const borderMap={
+      attendance:'rgba(22,163,74,.2)',
+      payment:'rgba(22,163,74,.25)',
+      expense:'rgba(225,29,72,.2)',
+      advance:'rgba(245,158,11,.2)',
+      withdrawal:'rgba(124,58,237,.2)',
+      worker:'rgba(251,191,36,.2)',
+      material:'rgba(59,130,246,.2)',
+      site:'rgba(249,115,22,.2)',
+      extra_income:'rgba(249,115,22,.25)',
+    };
+    const glassBg=isUnread?(glassMap[n.type]||'rgba(249,115,22,.06)'):'transparent';
+    const glassBorder=isUnread?(borderMap[n.type]||'rgba(249,115,22,.15)'):'var(--gr100)';
+    const accentColor={attendance:'#16A34A',payment:'#16A34A',expense:'#E11D48',advance:'#D97706',withdrawal:'#7C3AED',worker:'#B45309',material:'#1D4ED8',site:'#EA580C',extra_income:'#EA580C'}[n.type]||'var(--ind)';
+    return`<div style="animation:fadeSlideUp .2s ease ${i*.04}s both;position:relative;overflow:hidden;
+      background:${isUnread?'var(--w)':'var(--gr50)'};
+      border-radius:18px;margin-bottom:10px;
+      border:1px solid ${glassBorder};
+      ${isUnread?'box-shadow:0 4px 20px rgba(0,0,0,.07)':''}">
+      <!-- Left accent bar -->
+      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${accentColor};border-radius:3px 0 0 3px"></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px 12px 16px">
+        <!-- Icon -->
+        <div style="width:40px;height:40px;border-radius:13px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.08)">${c.icon}</div>
+        <!-- Content -->
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+            <span style="font-size:10px;font-weight:800;color:${accentColor};text-transform:uppercase;letter-spacing:.6px">${c.label}</span>
+            <span style="font-size:10px;color:var(--gr400);font-weight:600">${n.bs_date||n.date||''}</span>
+          </div>
+          <div style="font-size:13px;font-weight:${isUnread?700:500};color:var(--gr900);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${main}</div>
+          ${rest.length?`<div style="font-size:11px;color:var(--gr400);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${rest.join(' · ')}</div>`:''}
+        </div>
+        <!-- Unread dot -->
+        ${isUnread?`<div style="width:9px;height:9px;border-radius:50%;background:${accentColor};flex-shrink:0;box-shadow:0 0 8px ${accentColor}60"></div>`:''}
       </div>
-      ${isUnread?`<div style="width:7px;height:7px;border-radius:50%;background:var(--ind);flex-shrink:0"></div>`:''}
     </div>`;
   }).join('');
   // Mark all as read AFTER rendering (so unread dots show first)
@@ -4854,6 +5125,7 @@ function boot(){
   loadHome();
   initNotifListener();
   setTimeout(checkPaymentReminders, 5000);
+  setTimeout(checkAttendanceReminder, 8000);
 }
 
 async function autoAddMemberAsWorker(){
