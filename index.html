@@ -2394,7 +2394,7 @@ async function loadOv(){
   // Personal advances (not from site budget — to be returned)
   const personalAdv=advances.filter(a=>a.is_personal);
   const siteAdv=advances.filter(a=>!a.is_personal);
-  const sv=sCV(s);const profit=totR-totL-totE+totExtra;
+  const sv=sCV(s);const profit=totR-totL-totE-totA+totExtra;
   const tp=getTimeProgress(s);
   const score=calcScore(s,totR,sv||0,profit,tp?.elapsed||0,tp?.estimated||0);
   const sl=scoreLabel(score);
@@ -2565,12 +2565,18 @@ async function loadOv(){
       ${s.status!=='completed'?`<button class="btn" style="background:var(--gl);color:#065F46;border:1px solid #6EE7B7" onclick="if(confirm('सम्पन्न गर्ने?')){document.getElementById('st-id').value='${CS}';doSt('completed')}">✅ सम्पन्न</button>`:''}
       ${!matDoc?`<button class="btn" style="background:var(--gr100);color:var(--gr600);border:1px solid var(--gr200)" onclick="openMatModal('${CS}')">📦 सामग्री थप्नुस्</button>`:''}
       ${!photoDoc?`<button class="btn" style="background:var(--purl);color:var(--pur);border:1px solid #C4B5FD" onclick="openSitePhotoModal('${CS}')">📸 Before/After थप्नुस्</button>`:''}
-      <button class="btn" style="background:linear-gradient(135deg,#1E3A5F,#1E40AF);color:#fff" onclick="openEstModal('${CS}')">📋 Estimate बनाउनुस्</button>    </div>
+      <button class="btn" style="background:linear-gradient(135deg,#1E3A5F,#1E40AF);color:#fff" onclick="openEstModal('${CS}')">📋 Estimate बनाउनुस्</button>
+      <button class="btn" style="background:linear-gradient(135deg,#065F46,#059669);color:#fff" onclick="openChecklist();document.getElementById('cl-site').value='${CS}'">📦 Checklist बनाउनुस्</button>
+    </div>
+    <!-- CHECKLISTS for this site -->
+    <div id="site-checklists-${CS}"></div>
     ${s.notes?`<div style="background:var(--blue-l);padding:12px;border-radius:12px;font-size:13px;color:#0369A1;border:1px solid #BAE6FD">📝 ${s.notes}</div>`:''}
     ${personalAdv.length?`<div style="background:var(--al);padding:12px 14px;border-radius:12px;font-size:13px;color:#92400E;border:1px solid #FCD34D;margin-top:8px">⚠️ व्यक्तिगत अग्रिम (return गर्नुपर्ने): ${personalAdv.map(a=>`${a.worker_name}: ${Rs(a.amount)}`).join(', ')}</div>`:''}
   </div>`;
   // Load worker payment status async (attendance based)
   setTimeout(()=>loadWorkerPaymentStatus(CS),100);
+  // Load site checklists
+  setTimeout(()=>loadSiteChecklists(CS),200);
 }
 
 async function loadPays(){
@@ -3154,7 +3160,9 @@ async function saveChecklist(){
   closeM('mChecklist');
 }
 
-function generateChecklistImage(items, siteName){
+function generateChecklistImage(items, siteName, fromSite=false){
+  if(typeof items==='string')try{items=JSON.parse(items);}catch{items=[];}
+  if(!items||!items.length){toast('Items छैन',false);return;}
   const canvas=document.createElement('canvas');
   const dpr=window.devicePixelRatio||2;
   const W=800,ROW=44,HEADER=180,FOOTER=60;
@@ -3262,7 +3270,39 @@ function generateChecklistImage(items, siteName){
   toast('📸 Image download भयो!');
 }
 
-// ══ FIX PAYMENT REMINDER ══
+// ══ SITE CHECKLISTS VIEW ══
+async function loadSiteChecklists(siteId){
+  const el=document.getElementById(`site-checklists-${siteId}`);
+  if(!el)return;
+  try{
+    const snap=await db.collection('checklists').where('site_id','==',siteId).orderBy('createdAt','desc').limit(5).get();
+    if(snap.empty)return;
+    const lists=snap.docs.map(d=>({id:d.id,...d.data()}));
+    el.innerHTML=`<div class="ic" style="margin-bottom:10px">
+      <div class="coll-hd" onclick="toggleColl('c-cl-${siteId}')">
+        <span style="font-size:13px;font-weight:800">📦 Checklists</span>
+        <span class="coll-arrow" id="arr-c-cl-${siteId}">▼</span>
+      </div>
+      <div class="coll-body closed" id="c-cl-${siteId}" style="max-height:0">
+        ${lists.map(l=>`
+          <div style="padding:10px 14px;border-bottom:1px solid var(--gr100)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <div style="font-size:12px;font-weight:800;color:var(--gr600)">${l.bs_date||l.date} · ${l.saved_by||'—'}</div>
+              <button onclick="generateChecklistImage(${JSON.stringify(l.items||[])
+                .replace(/"/g,'&quot;')},'${(l.site_name||'').replace(/'/g,"\\'")}',true)" 
+                style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;font-weight:700;padding:3px 8px;border-radius:8px;cursor:pointer">📸 Image</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px">
+              ${(l.items||[]).map(item=>`
+                <span style="background:var(--gl);color:#065F46;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px">
+                  ✅ ${item.name}${item.qty?' ×'+item.qty:''}
+                </span>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }catch(e){}
+}
 async function checkPaymentReminders(){
   try{
     const sites=await dGetC('sites');
@@ -3792,11 +3832,30 @@ async function loadSAtt(){
     dGetC('workers'),
     dGet('work_entries',['site_id','==',CS])
   ]);
-  recs.sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
+
+  // ── MERGE duplicate records for same date ──
+  const dateMap={};
+  mergedRecs.forEach(r=>{
+    const d=r.date||'';
+    if(!dateMap[d]){
+      dateMap[d]={...r,entries:[...(r.entries||[])]};
+    }else{
+      // Merge entries - keep latest per worker
+      const existing=dateMap[d].entries;
+      (r.entries||[]).forEach(e=>{
+        const idx=existing.findIndex(x=>x.wid===e.wid||x.name===e.name);
+        if(idx>=0)existing[idx]=e; // overwrite with newer
+        else existing.push(e);
+      });
+      // Keep latest time
+      if(r.time>dateMap[d].time)dateMap[d].time=r.time;
+    }
+  });
+  const mergedRecs=Object.values(dateMap).sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
 
   // ── Worker summary for this site ──
   const wSummary={};
-  recs.forEach(r=>{
+  mergedRecs.forEach(r=>{
     (r.entries||[]).forEach(e=>{
       if(!wSummary[e.name||e.wid])wSummary[e.name||e.wid]={name:e.name||'?',days:0,hours:0,P:0,H:0,A:0};
       const w=wSummary[e.name||e.wid];
@@ -3860,9 +3919,9 @@ async function loadSAtt(){
   }
 
   // Daily attendance records
-  if(!recs.length){html+=`<div>${emptyS('✅','हाजिर रेकर्ड छैन')}</div>`;
+  if(!mergedRecs.length){html+=`<div>${emptyS('✅','हाजिर रेकर्ड छैन')}</div>`;
   }else{
-    recs.forEach(r=>{
+    mergedRecs.forEach(r=>{
       html+=`<div class="ic" style="margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--gr100)">
           <div><div style="font-size:13px;font-weight:800;color:var(--ind)">${r.bs_date||fBS(r.date)||r.date}</div>
