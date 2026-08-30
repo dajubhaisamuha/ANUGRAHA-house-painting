@@ -2454,31 +2454,12 @@ async function loadOv(){
         </div>
 
         <!-- Worker-wise payment summary for this site -->
-        ${work.length?`<div style="padding:0 12px 12px">
+        <!-- Worker-wise payment from ATTENDANCE -->
+        ${(async()=>'')()}
+        <div id="wkr-pay-${CS}" style="padding:0 12px 12px">
           <div style="font-size:11px;font-weight:800;color:var(--gr500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">👷 कामदार भुक्तानी स्थिति</div>
-          ${work.map(w=>{
-            const earned=Number(w.days||0)*Number(w.daily_rate||0);
-            const adv=Number(w.advance_given||0);
-            const bal=earned-adv;
-            if(earned===0)return''; // No work done yet, skip
-            const isPaid=bal<=0;
-            return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:${isPaid?'var(--gl)':'var(--al)'};border-radius:10px;margin-bottom:6px;border:1px solid ${isPaid?'#6EE7B7':'#FCD34D'}">
-              <div>
-                <div style="font-size:13px;font-weight:700">${w.worker_name||'—'}</div>
-                <div style="font-size:11px;color:var(--gr500)">${w.days}दिन × Rs.${w.daily_rate} = ${Rs(earned)}</div>
-                <div style="font-size:11px;color:var(--gr500)">अग्रिम: ${Rs(adv)}</div>
-              </div>
-              <div style="text-align:right">
-                <div class="n" style="font-weight:900;font-size:15px;color:${isPaid?'var(--g)':'var(--r)'}">
-                  ${isPaid?'✅ Clear':'Rs.'+Rs(bal)}
-                </div>
-                <div style="font-size:10px;color:var(--gr500)">${isPaid?'भुक्तान भयो':'बाँकी'}</div>
-              </div>
-            </div>`;
-          }).join('')}
-        </div>`:''}
-      </div>
-    </div>
+          <div id="wkr-pay-body-${CS}"><div class="ld" style="font-size:12px">लोड हुँदैछ...</div></div>
+        </div>
 
     <!-- EXTRA INCOME -->
     <div class="ic" style="margin-bottom:10px">
@@ -2588,6 +2569,8 @@ async function loadOv(){
     ${s.notes?`<div style="background:var(--blue-l);padding:12px;border-radius:12px;font-size:13px;color:#0369A1;border:1px solid #BAE6FD">📝 ${s.notes}</div>`:''}
     ${personalAdv.length?`<div style="background:var(--al);padding:12px 14px;border-radius:12px;font-size:13px;color:#92400E;border:1px solid #FCD34D;margin-top:8px">⚠️ व्यक्तिगत अग्रिम (return गर्नुपर्ने): ${personalAdv.map(a=>`${a.worker_name}: ${Rs(a.amount)}`).join(', ')}</div>`:''}
   </div>`;
+  // Load worker payment status async (attendance based)
+  setTimeout(()=>loadWorkerPaymentStatus(CS),100);
 }
 
 async function loadPays(){
@@ -2927,7 +2910,67 @@ const DIAL_PAGES=['home','sites','att','workers','notif','profile'];
 const DIAL_LABELS=['गृह','साइट','हाजिर','कामदार','सूचना','प्रोफाइल'];
 let dialRot=0,dialStartX=0,dialIdx=0,dialDragging=false;
 
-// ══ CLOCK IN/OUT ══
+// ══ WORKER PAYMENT STATUS FROM ATTENDANCE ══
+async function loadWorkerPaymentStatus(siteId){
+  const el=document.getElementById(`wkr-pay-body-${siteId}`);
+  if(!el)return;
+  try{
+    const [attRecs,workers,workEntries]=await Promise.all([
+      dGet('attendance',['site_id','==',siteId]),
+      dGetC('workers'),
+      dGet('work_entries',['site_id','==',siteId])
+    ]);
+    const myRate=await getMyRate();
+
+    // Build worker map from attendance
+    const wMap={};
+    attRecs.forEach(r=>{
+      (r.entries||[]).forEach(e=>{
+        const key=e.wid||e.name;
+        if(!key)return;
+        if(!wMap[key])wMap[key]={name:e.name||'?',days:0,hourlyWage:0};
+        const mult=e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0;
+        wMap[key].days+=mult;
+        if(e.hourly_wage)wMap[key].hourlyWage+=Number(e.hourly_wage||0);
+      });
+    });
+
+    // Advance from work_entries
+    const advMap={};
+    workEntries.forEach(w=>{
+      const key=w.worker_id||w.worker_name;
+      advMap[key]=(advMap[key]||0)+Number(w.advance_given||0);
+    });
+
+    const entries=Object.entries(wMap).filter(([k,v])=>v.days>0);
+    if(!entries.length){el.innerHTML='<div style="font-size:12px;color:var(--gr400);text-align:center;padding:8px">हाजिर रेकर्ड छैन</div>';return;}
+
+    el.innerHTML=entries.map(([key,w])=>{
+      const wkr=workers.find(x=>x.id===key||x.name===w.name);
+      const rate=Number(wkr?.daily_wage||myRate||0);
+      const earned=w.hourlyWage>0?w.hourlyWage:w.days*rate;
+      const adv=advMap[key]||advMap[w.name]||0;
+      const bal=earned-adv;
+      if(earned===0)return'';
+      const isPaid=bal<=0;
+      return`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:${isPaid?'var(--gl)':'var(--al)'};border-radius:10px;margin-bottom:6px;border:1px solid ${isPaid?'#6EE7B7':'#FCD34D'}">
+        <div>
+          <div style="font-size:13px;font-weight:700">${w.name}</div>
+          <div style="font-size:11px;color:var(--gr500)">${w.days}दिन · Rs.${rate}/दिन = ${Rs(earned)}</div>
+          <div style="font-size:11px;color:var(--a)">अग्रिम: ${Rs(adv)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="n" style="font-weight:900;font-size:16px;color:${isPaid?'var(--g)':'var(--r)'}">
+            ${isPaid?'✅ Clear':Rs(bal)}
+          </div>
+          <div style="font-size:10px;color:var(--gr500)">${isPaid?'भुक्तान भयो':'बाँकी'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    if(el)el.innerHTML='<div style="color:var(--r);font-size:12px">Error: '+e.message+'</div>';
+  }
+}
 async function openClockModal(siteId){
   const workers=await dGetC('workers');
   const activeW=workers.filter(w=>w.active!==false);
@@ -3097,15 +3140,126 @@ async function saveChecklist(){
   const checked=_clItems.filter(i=>i.checked);
   if(!checked.length){toast('कम्तीमा एउटा item छान्नुस्',false);return;}
   const site=SITES.find(s=>s.id===sid);
-  // Save to site's material needs
+
+  // Save to Firebase
   const key=`checklist_${sid}_${todStr()}`;
   await db.collection('checklists').doc(key).set({
     site_id:sid,site_name:site?.name||'',date:todStr(),bs_date:bsToday(),
     items:checked,saved_by:ME,createdAt:firebase.firestore.FieldValue.serverTimestamp()
   });
+  toast(`✅ ${checked.length} items सेभ!`);
+
+  // Generate image via canvas
+  generateChecklistImage(checked, site?.name||'—');
   closeM('mChecklist');
-  toast(`✅ ${checked.length} items सेभ — ${site?.name||''}`);
-  addNotif('material',`📦 ${ME} ले ${site?.name||''} को checklist सेभ — ${checked.length} items`);
+}
+
+function generateChecklistImage(items, siteName){
+  const canvas=document.createElement('canvas');
+  const dpr=window.devicePixelRatio||2;
+  const W=800,ROW=44,HEADER=180,FOOTER=60;
+  const H=HEADER+items.length*ROW+FOOTER+20;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  // Background
+  ctx.fillStyle='#FFFFFF';
+  ctx.fillRect(0,0,W,H);
+
+  // Header gradient
+  const grad=ctx.createLinearGradient(0,0,W,HEADER);
+  grad.addColorStop(0,'#1C1917');
+  grad.addColorStop(1,'#431407');
+  ctx.fillStyle=grad;
+  ctx.beginPath();
+  ctx.roundRect(0,0,W,HEADER,0);
+  ctx.fill();
+
+  // Logo circle
+  ctx.fillStyle='rgba(249,115,22,0.3)';
+  ctx.beginPath();ctx.arc(64,64,44,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(249,115,22,0.5)';
+  ctx.beginPath();ctx.arc(64,64,32,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#F97316';
+  ctx.beginPath();ctx.arc(64,64,22,0,Math.PI*2);ctx.fill();
+
+  // House icon (simple)
+  ctx.fillStyle='#fff';
+  ctx.font='bold 22px Arial';
+  ctx.textAlign='center';
+  ctx.fillText('🏠',64,72);
+
+  // Company name
+  ctx.fillStyle='#FFFFFF';
+  ctx.font='bold 28px Arial';
+  ctx.textAlign='left';
+  ctx.fillText('ANUGRAHA', 120, 52);
+  ctx.font='14px Arial';
+  ctx.fillStyle='rgba(255,255,255,0.6)';
+  ctx.fillText('House Painting Services', 120, 74);
+
+  // Checklist title
+  ctx.fillStyle='#F97316';
+  ctx.font='bold 18px Arial';
+  ctx.fillText('📦 MATERIALS CHECKLIST', 120, 105);
+  ctx.fillStyle='rgba(255,255,255,0.5)';
+  ctx.font='13px Arial';
+  ctx.fillText(`📍 ${siteName}   •   📅 ${bsToday()}   •   ✍️ ${ME}`, 120, 128);
+  ctx.fillText(`${items.length} items`, 120, 150);
+
+  // Items area
+  let y=HEADER+10;
+  items.forEach((item,i)=>{
+    // Alternating rows
+    ctx.fillStyle=i%2===0?'#F9FAFB':'#FFFFFF';
+    ctx.fillRect(0,y,W,ROW);
+
+    // Checkbox (checked)
+    ctx.fillStyle='#16A34A';
+    ctx.beginPath();
+    ctx.roundRect(24,y+10,22,22,4);
+    ctx.fill();
+    // Checkmark
+    ctx.strokeStyle='#fff';
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(30,y+22);ctx.lineTo(35,y+28);ctx.lineTo(43,y+16);
+    ctx.stroke();
+
+    // Item name
+    ctx.fillStyle='#1C1917';
+    ctx.font='bold 16px Arial';
+    ctx.textAlign='left';
+    ctx.fillText(item.name, 60, y+25);
+
+    // Quantity
+    if(item.qty){
+      ctx.fillStyle='#F97316';
+      ctx.font='bold 14px Arial';
+      ctx.textAlign='right';
+      ctx.fillText(`× ${item.qty}`, W-24, y+25);
+    }
+    y+=ROW;
+  });
+
+  // Footer
+  ctx.fillStyle='#1C1917';
+  ctx.fillRect(0,H-FOOTER,W,FOOTER);
+  ctx.fillStyle='rgba(255,255,255,0.6)';
+  ctx.font='13px Arial';
+  ctx.textAlign='center';
+  ctx.fillText('ANUGRAHA House Painting Services  •  Your Satisfaction, Our Commitment', W/2, H-FOOTER+25);
+  ctx.fillStyle='#F97316';
+  ctx.fillText('✅ ' + items.length + ' Materials Selected', W/2, H-FOOTER+44);
+
+  // Download
+  const link=document.createElement('a');
+  link.download=`checklist_${siteName}_${todStr()}.png`;
+  link.href=canvas.toDataURL('image/png');
+  link.click();
+  toast('📸 Image download भयो!');
 }
 
 // ══ FIX PAYMENT REMINDER ══
@@ -4939,7 +5093,7 @@ function setA(sid,wid,st,btn){
 async function saveAttS(sid,sname){
   const entries=WKRS.map(w=>{const d=ATT_DATA[sid]?.[w.id]||{};return{wid:w.id,name:w.name,status:d.status||''};}).filter(e=>e.status);
   if(!entries.length){toast('कम्तीमा एकजना',false);return;}
-  const docId=`${AD}_${sid}`;
+  const docId=`${sid}_${AD}`;
   await dSet('attendance',docId,{date:AD,bs_date:fBS(AD),site_id:sid,site_name:sname,slot:'full',entries,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
   toast(sname+' हाजिर सेभ ✓');addNotif('attendance',`${ME} ले ${sname} को हाजिर सेभ गरे — ${fBS(AD)}`);loadAtt();
 }
