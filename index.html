@@ -1090,8 +1090,12 @@ select.fi option{background:#fff}
 <!-- NOTIFICATIONS -->
 <div class="page" id="pg-notif">
   <div class="plain-top" style="display:flex;justify-content:space-between;align-items:center">
-    <div style="font-size:17px;font-weight:800">🔔 सूचनाहरू</div>
-    <button onclick="markAllRead()" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:12px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer">सबै पढियो ✓</button>
+    <div style="font-size:17px;font-weight:800">🔔 सूचना</div>
+    <button onclick="markAllRead()" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:12px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer">✓ सबै पढियो</button>
+  </div>
+  <div class="filters">
+    <button class="fil on" onclick="switchNotifTab('notifs',this)">📬 सूचना</button>
+    <button class="fil" onclick="switchNotifTab('reminders',this)">⚠️ Reminder</button>
   </div>
   <div style="padding:12px 16px 80px" id="notif-body"><div class="ld">लोड हुँदैछ...</div></div>
 </div>
@@ -1492,7 +1496,7 @@ select.fi option{background:#fff}
 </div></div>
 
 <!-- MODAL: CLOCK IN/OUT -->
-<div class="mbo" id="mClock"><div class="msh">
+<div class="mbo" id="mClock"><div class="msh" style="max-height:90vh;overflow-y:auto">
   <div class="mhd"></div>
   <div class="mtit">⏱ Clock-in / Clock-out</div>
   <div style="font-size:12px;color:var(--gr400);margin-bottom:14px">Workers को entry/exit time रेकर्ड गर्नुस् — hourly wage auto-calculate हुन्छ</div>
@@ -2773,6 +2777,42 @@ async function exportData(){
   }catch(e){toast('Export गर्न सकिएन',false);}
 }
 
+// ══ NOTIFICATION TABS ══
+let _notifTab='notifs';
+function switchNotifTab(tab,btn){
+  _notifTab=tab;
+  document.querySelectorAll('#pg-notif .fil').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  if(tab==='notifs')loadNotif();
+  else loadReminders();
+}
+async function loadReminders(){
+  const el=document.getElementById('notif-body');
+  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  const items=[];
+  const sites=await dGetC('sites');
+  const active=sites.filter(s=>s.status==='active');
+  const today=todStr();
+  for(const s of active){
+    const att=await dGet('attendance',['site_id','==',s.id],['date','==',today]);
+    if(!att.length)items.push({type:'att',msg:`${s.name} — आजको हाजिर भरिएको छैन`,sub:'हाजिर tab मा गएर भर्नुस्'});
+  }
+  const pays=await dGetC('payments');
+  active.forEach(s=>{
+    const cv=sCV(s);if(!cv)return;
+    const totR=pays.filter(p=>p.site_id===s.id).reduce((a,p)=>a+Number(p.amount||0),0);
+    const due=cv-totR;if(due<=0)return;
+    const lastPay=pays.filter(p=>p.site_id===s.id).sort((a,b)=>b.date>a.date?1:-1)[0];
+    const days=lastPay?Math.floor((Date.now()-new Date(lastPay.date).getTime())/86400000):999;
+    if(days>7)items.push({type:'pay',msg:`${s.name} — ${Rs(due)} payment बाँकी`,sub:`${days} दिनदेखि payment नभएको`});
+  });
+  if(!items.length){el.innerHTML=emptyS('✅','कुनै reminder छैन — सबै ठीकठाक!');return;}
+  el.innerHTML=items.map(r=>`<div style="display:flex;gap:12px;align-items:flex-start;background:${r.type==='att'?'var(--al)':'var(--rl)'};border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid ${r.type==='att'?'#FCD34D':'#FCA5A5'}">
+    <div style="font-size:22px;flex-shrink:0">${r.type==='att'?'📋':'💰'}</div>
+    <div><div style="font-size:13px;font-weight:700">${r.msg}</div><div style="font-size:11px;color:var(--gr600);margin-top:3px">${r.sub}</div></div>
+  </div>`).join('');
+}
+
 // ══ PAYMENT REMINDER CHECK ══
 async function checkPaymentReminders(){
   try{
@@ -3891,10 +3931,7 @@ async function loadSAtt(){
     html+=`<div class="ic" style="margin-bottom:12px">
       <div style="padding:12px 16px;border-bottom:1px solid var(--gr100);display:flex;justify-content:space-between;align-items:center">
         <div style="font-weight:800;font-size:14px">👷 Worker Summary</div>
-        <div style="display:flex;gap:6px">
-          <button onclick="openWAM('','__ALL__')" style="background:var(--gl);border:1px solid #6EE7B7;color:#065F46;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">+ हाजिर</button>
-          <button onclick="openClockModal('${CS}')" style="background:var(--ind);color:#fff;border:none;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">⏱ Clock</button>
-        </div>
+        <button onclick="openClockModal('${CS}')" style="background:var(--ind);color:#fff;border:none;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">⏱ Clock in/out</button>
       </div>
       ${wList.map(w=>{
         const wkr=workers.find(x=>x.name===w.name);
@@ -3951,13 +3988,9 @@ async function loadSAtt(){
         html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--gr100)">
           <div>
             <span style="font-size:13px;font-weight:700">${e.name}</span>
-            ${e.tin?`<div style="font-size:10px;color:var(--gr400)">⏰ ${e.tin||''}${e.tout?' → '+e.tout:' (out नभएको)'}</div>`:''}
-            ${wageInfo?`<div>${wageInfo}</div>`:''}
+            ${e.tin&&e.tout?`<div style="font-size:10px;color:var(--gr400)">⏰ ${e.tin} → ${e.tout}${wageInfo?' · '+wageInfo.replace(/<[^>]*>/g,''):''}</div>`:''}
           </div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-weight:700;font-size:13px;color:${colors[e.status]||'var(--gr500)'}">${icons[e.status]||''} ${labels[e.status]||e.status}</span>
-            <button onclick="openWAM('${e.wid||''}','${(e.name||'').replace(/'/g,"\\'")}')" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:11px;padding:3px 8px;border-radius:8px;font-weight:700;cursor:pointer">✏️</button>
-          </div>
+          <span style="font-weight:700;font-size:13px;color:${colors[e.status]||'var(--gr500)'}">${icons[e.status]||''} ${labels[e.status]||e.status}</span>
         </div>`;
       });
       html+='</div>';
@@ -4775,27 +4808,22 @@ async function loadNotif(){
     const glassBg=isUnread?(glassMap[n.type]||'rgba(249,115,22,.06)'):'transparent';
     const glassBorder=isUnread?(borderMap[n.type]||'rgba(249,115,22,.15)'):'var(--gr100)';
     const accentColor={attendance:'#16A34A',payment:'#16A34A',expense:'#E11D48',advance:'#D97706',withdrawal:'#7C3AED',worker:'#B45309',material:'#1D4ED8',site:'#EA580C',extra_income:'#EA580C'}[n.type]||'var(--ind)';
-    return`<div style="animation:fadeSlideUp .2s ease ${i*.04}s both;position:relative;overflow:hidden;
-      background:${isUnread?'var(--w)':'var(--gr50)'};
-      border-radius:18px;margin-bottom:10px;
-      border:1px solid ${glassBorder};
-      ${isUnread?'box-shadow:0 4px 20px rgba(0,0,0,.07)':''}">
-      <!-- Left accent bar -->
-      <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:${accentColor};border-radius:3px 0 0 3px"></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px 12px 16px">
-        <!-- Icon -->
-        <div style="width:40px;height:40px;border-radius:13px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.08)">${c.icon}</div>
-        <!-- Content -->
+    return`<div style="animation:fadeSlideUp .2s ease ${i*.04}s both;
+      background:var(--w);border-radius:16px;margin-bottom:10px;
+      box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden;
+      border:1px solid ${isUnread?'var(--gr200)':'var(--gr100)'}">
+      <div style="height:3px;background:${accentColor}"></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px">
+        <div style="width:38px;height:38px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${c.icon}</div>
         <div style="flex:1;min-width:0">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
-            <span style="font-size:10px;font-weight:800;color:${accentColor};text-transform:uppercase;letter-spacing:.6px">${c.label}</span>
-            <span style="font-size:10px;color:var(--gr400);font-weight:600">${n.bs_date||n.date||''}</span>
+          <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+            <span style="font-size:10px;font-weight:800;color:${accentColor};text-transform:uppercase;letter-spacing:.5px">${c.label}</span>
+            <span style="font-size:10px;color:var(--gr400)">${n.bs_date||n.date||''}</span>
           </div>
-          <div style="font-size:13px;font-weight:${isUnread?700:500};color:var(--gr900);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${main}</div>
-          ${rest.length?`<div style="font-size:11px;color:var(--gr400);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${rest.join(' · ')}</div>`:''}
+          <div style="font-size:13px;font-weight:${isUnread?700:500};color:var(--gr900);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${main}</div>
+          ${rest.length?`<div style="font-size:11px;color:var(--gr400);margin-top:1px">${rest.join(' · ')}</div>`:''}
         </div>
-        <!-- Unread dot -->
-        ${isUnread?`<div style="width:9px;height:9px;border-radius:50%;background:${accentColor};flex-shrink:0;box-shadow:0 0 8px ${accentColor}60"></div>`:''}
+        ${isUnread?`<div style="width:8px;height:8px;border-radius:50%;background:${accentColor};flex-shrink:0"></div>`:''}
       </div>
     </div>`;
   }).join('');
