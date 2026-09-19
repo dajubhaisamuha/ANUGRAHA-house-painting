@@ -119,7 +119,7 @@ body.dark-mode .bs{background:var(--gr100);color:var(--gr700);border-color:var(-
 html,body{height:100%}
 .page{display:none;background:var(--bg);padding-bottom:calc(var(--nh)+24px);overflow-y:auto;height:calc(100vh - var(--nh));-webkit-overflow-scrolling:touch}
 .page.on{display:block}
-body{font-family:'Noto Sans Devanagari','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased}
+body{font-family:'Noto Sans Devanagari','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.5}
 input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-serif}
 .n{font-family:'Inter',sans-serif;font-feature-settings:'tnum';letter-spacing:-.02em}.amt{font-family:'Inter',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.03em}.Rs{font-size:.65em;font-weight:700;opacity:.7;margin-right:1px}
 
@@ -1674,10 +1674,8 @@ select.fi option{background:#fff}
 
 <script>
 // ══ FIREBASE ══
-firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});
-const db = firebase.firestore();
-try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{});}catch(e){}
-
+try{firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});}catch(e){}
+const db=firebase.firestore();
 // ══ AUTH ══
 const DEF_PW = {AMRIT:'amrit@2082',NIRAN:'niran@2082',SUBEIN:'subein@2082'};
 let PW = {...DEF_PW};
@@ -1796,7 +1794,7 @@ async function savePW(){
 }
 
 // ══ BS DATE (Bulletproof local date fix) ══
-const BSY={2080:[31,32,31,32,31,30,30,30,29,29,30,31],2081:[31,31,32,32,31,30,30,29,30,29,30,30],2082:[31,31,32,32,31,30,30,30,29,30,30,30],2083:[31,31,32,31,32,30,30,30,29,30,30,30],2084:[31,31,32,32,31,30,30,29,30,30,29,31],2085:[30,32,31,32,31,30,30,30,29,30,30,30]};
+const BSY={2080:[31,32,31,32,31,30,30,30,29,29,30,31],2081:[31,31,32,32,31,30,30,29,30,29,30,30],2082:[31,31,32,32,31,30,30,30,29,30,30,30],2083:[31,31,32,31,31,31,30,30,29,30,30,30],2084:[31,31,32,32,31,30,30,29,30,30,29,31],2085:[30,32,31,32,31,30,30,30,29,30,30,30]};
 const NM=['बैशाख','जेठ','असार','साउन','भदौ','असोज','कार्तिक','मंसिर','पुष','माघ','फागुन','चैत'];
 const NMS=['बै','जे','अ','सा','भ','अ','का','मं','पु','मा','फा','चै'];
 // Reference: Baisakh 1, 2082 = April 13, 2025 LOCAL
@@ -5396,7 +5394,7 @@ function animateSplashBrush(){
   setTimeout(typeChar,200);
 }
 
-window.addEventListener('load',async()=>{
+window.addEventListener('load',()=>{
   LANG=localStorage.getItem('lang')||'ne';
   applyStoredTheme();
   applyStoredDarkMode();
@@ -5408,13 +5406,21 @@ window.addEventListener('load',async()=>{
   animateSplashBrush();
 
   // Run data loading + splash animation in PARALLEL (not sequential) for faster perceived load
-  const minSplash=new Promise(r=>setTimeout(r,2000));
-  await Promise.all([loadProfiles(), minSplash]);
-  document.getElementById('splash').style.opacity='0';document.getElementById('splash').style.transition='opacity .35s';
-  setTimeout(()=>document.getElementById('splash').style.display='none',380);
-  if(ME){boot();}
-  else if(!localStorage.getItem('ob_done')){document.getElementById('onboard').style.display='flex';}
-  else{document.getElementById('login').style.display='flex';}
+  try{loadProfiles();}catch(e){}
+  setTimeout(()=>{
+    try{
+      const sp=document.getElementById('splash');
+      if(sp){sp.style.transition='opacity .3s';sp.style.opacity='0';}
+      setTimeout(()=>{
+        try{const sp=document.getElementById('splash');if(sp)sp.style.display='none';}catch(e){}
+        try{
+          if(ME)boot();
+          else if(!localStorage.getItem('ob_done')){const ob=document.getElementById('onboard');if(ob)ob.style.display='flex';}
+          else{const lg=document.getElementById('login');if(lg)lg.style.display='flex';}
+        }catch(e){}
+      },350);
+    }catch(e){}
+  },2000);
 });
 
 // ══ ANIMATIONS ══
