@@ -667,6 +667,33 @@ select.fi option{background:#fff}
 /* ── PAGE TRANSITIONS ── */
 .page.on{animation:fadeSlideUp .2s ease}
 .det-tab{transition:color .15s,border-color .15s}
+
+/* ══ REAL APP FEEL ══ */
+.li-t{font-size:15px!important;font-weight:700!important}
+.li-s{font-size:13px!important}
+.li-i{font-size:20px!important}
+.sc-nm{font-size:17px!important;font-weight:800!important}
+.sc-cli{font-size:13px!important}
+.pt-t{font-size:24px!important;font-weight:900!important}
+.pt-s{font-size:13px!important}
+.wc-nm{font-size:16px!important;font-weight:800!important}
+.set-item .si-t{font-size:15px!important;font-weight:700!important}
+.set-item .si-s{font-size:13px!important}
+.mtit{font-size:22px!important;font-weight:900!important}
+.fl{font-size:13px!important;font-weight:700!important}
+.fi{font-size:16px!important;padding:14px 16px!important;border-radius:14px!important}
+.btn{font-size:15px!important;font-weight:700!important;padding:15px!important;border-radius:14px!important}
+.fil{font-size:13px!important;font-weight:700!important;padding:8px 16px!important}
+.ic{border-radius:18px!important}
+.msh{border-radius:26px 26px 0 0!important}
+.hb-name{font-size:22px!important;font-weight:900!important}
+.hb-hey{font-size:14px!important}
+.ni-l{font-size:11px!important;font-weight:700!important}
+.n{font-feature-settings:'tnum';letter-spacing:-.02em}
+.ic .pr{font-size:14px!important}
+.ws-v{font-size:18px!important}
+.ws-l{font-size:11px!important}
+
 </style>
 </head>
 <body>
@@ -3947,7 +3974,7 @@ async function loadSAtt(){
   const myRate=await getMyRate();
 
   let html='<div class="pc">';
-  html+=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onclick="downloadAttPDF(''" style="background:var(--ind);color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">📄 PDF</button></div>`;
+  html+=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onclick="downloadAttPDF('${CS}')" style="background:var(--ind);color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">📄 PDF</button></div>`;
 
   // Worker summary card
   const wList=Object.values(wSummary);
