@@ -1017,13 +1017,19 @@ select.fi option{background:#fff}
     </div>
   </div>
 
-  <!-- MY SITES -->
-  <div style="padding:16px 16px 0">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div style="font-size:13px;font-weight:800;color:var(--gr800)">मेरा सक्रिय साइट</div>
+  <!-- MY SITES SLIDER -->
+  <div style="padding:16px 0 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:10px">
+      <div style="font-size:14px;font-weight:800;color:var(--gr800)">📍 साइट स्थिति</div>
       <div onclick="go('sites')" style="font-size:12px;color:var(--ind);font-weight:700;cursor:pointer">सबै →</div>
     </div>
-    <div id="h-my"></div>
+    <!-- Tab buttons -->
+    <div style="display:flex;gap:8px;padding:0 16px;margin-bottom:10px">
+      <button id="st-btn-active" onclick="showSiteSlide('active')" style="flex:1;padding:8px;border-radius:20px;background:var(--ind);color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer">🔨 चलिरहेको</button>
+      <button id="st-btn-upcoming" onclick="showSiteSlide('upcoming')" style="flex:1;padding:8px;border-radius:20px;background:var(--gr100);color:var(--gr600);border:none;font-size:12px;font-weight:800;cursor:pointer">📅 आगामी</button>
+      <button id="st-btn-completed" onclick="showSiteSlide('completed')" style="flex:1;padding:8px;border-radius:20px;background:var(--gr100);color:var(--gr600);border:none;font-size:12px;font-weight:800;cursor:pointer">✅ सम्पन्न</button>
+    </div>
+    <div id="h-my" style="overflow:hidden;padding:0 16px"></div>
   </div>
 
   <!-- RECENT TXN -->
@@ -2126,6 +2132,8 @@ async function loadHome(){
     ]);
     SITES=sites;WKRS=wkrs;
     const active=sites.filter(s=>s.status==='active');
+    // Show animated site slider
+    showSiteSlide('active');
     const activeIds=new Set(active.map(s=>s.id));
     document.getElementById('h-act').textContent=active.length;
     // Count-up for number (no Rs prefix)
@@ -3418,28 +3426,89 @@ async function checkAttendanceReminder(){
 
 async function downloadAttPDF(siteId){
   const site=SITES.find(s=>s.id===siteId)||{name:'साइट'};
-  const recs=await dGet('attendance',['site_id','==',siteId]);
+  const [recs,workers,workEntries]=await Promise.all([
+    dGet('attendance',['site_id','==',siteId]),
+    dGetC('workers'),
+    dGet('work_entries',['site_id','==',siteId])
+  ]);
   recs.sort((a,b)=>a.date>b.date?1:-1);
   const icons={P:'🌞',M:'🌅',E:'☀️',H:'🔶',A:'❌',V:'🏖'};
   const labels={P:'पूरा',M:'बिहान',E:'दिउँसो',H:'आधा',A:'अनुपस्थित',V:'बिदा'};
+  const mult={P:1.5,E:1,M:0.5,H:0.5,A:0,V:0};
+  // Worker summary
+  const wMap={};
+  recs.forEach(r=>(r.entries||[]).forEach(e=>{
+    if(!wMap[e.name])wMap[e.name]={name:e.name,days:0};
+    wMap[e.name].days+=mult[e.status]||0;
+  }));
+  const wList=Object.values(wMap);
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>हाजिर — ${site.name}</title>
-  <style>body{font-family:sans-serif;padding:20px;font-size:14px}h2{color:#1C1917}table{width:100%;border-collapse:collapse;margin-top:16px}th{background:#1C1917;color:#fff;padding:8px}td{padding:7px 8px;border-bottom:1px solid #eee}tr:nth-child(even){background:#f9f9f9}.footer{margin-top:20px;text-align:center;font-size:12px;color:#999}@media print{.no-print{display:none}}</style>
+  <style>body{font-family:'Noto Sans Devanagari',sans-serif;padding:20px;font-size:14px}
+  h2{color:#1C1917;margin-bottom:4px}
+  .summary{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0 20px}
+  .sw{background:#FFF4ED;border-radius:8px;padding:10px 16px;text-align:center;border:1px solid #FED7AA}
+  .sw b{display:block;font-size:20px;color:#EA580C}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+  th{background:#1C1917;color:#fff;padding:8px;text-align:left}
+  td{padding:7px 8px;border-bottom:1px solid #eee}
+  tr:nth-child(even) td{background:#f9f9f9}
+  .day-hd{background:#f0f0f0;padding:8px 12px;font-weight:700;margin-top:16px;border-radius:6px}
+  .footer{margin-top:24px;text-align:center;font-size:12px;color:#999;border-top:1px solid #eee;padding-top:12px}
+  @media print{.no-print{display:none}}</style>
   </head><body>
-  <button class="no-print" onclick="window.print()" style="padding:10px 20px;background:#EA580C;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-bottom:16px;font-size:14px">🖨️ Print / PDF</button>
-  <h2>🏗️ ${site.name} — हाजिर रिपोर्ट</h2>
-  <p style="color:#666">जम्मा: ${recs.length} दिन · मिति: ${bsToday()}</p>
-  ${recs.map(r=>`<div style="margin-bottom:20px;border:1px solid #eee;border-radius:8px;overflow:hidden">
-    <div style="background:#f5f5f5;padding:8px 12px;font-weight:bold">${r.bs_date||r.date} ${r.time?'· ⏰'+r.time:''}</div>
-    <table>
-      <tr><th>कामदार</th><th>स्थिति</th><th>समय</th></tr>
-      ${(r.entries||[]).map(e=>`<tr><td>${e.name}</td><td>${icons[e.status]||''} ${labels[e.status]||e.status}</td><td>${e.tin?e.tin+(e.tout?'→'+e.tout:''):'—'}</td></tr>`).join('')}
-    </table>
-  </div>`).join('')}
-  <div class="footer">ANUGRAHA House Painting Services</div>
+  <button class="no-print" onclick="window.print()" style="padding:10px 20px;background:#EA580C;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-bottom:16px;font-size:14px;font-weight:700">🖨️ Print / PDF Save</button>
+  <h2>🏗️ ${site.name}</h2>
+  <p style="color:#666;margin:0">हाजिर रिपोर्ट · ${bsToday()} · जम्मा ${recs.length} दिन</p>
+  <div class="summary">
+    ${wList.map(w=>`<div class="sw"><b>${w.days}</b>${w.name}</div>`).join('')}
+  </div>
+  ${recs.map(r=>`
+  <div class="day-hd">${r.bs_date||r.date}${r.time?' · ⏰'+r.time:''} — ${(r.entries||[]).filter(e=>e.status!=='A').length} जना उपस्थित</div>
+  <table>
+    <tr><th>कामदार</th><th>स्थिति</th><th>समय</th></tr>
+    ${(r.entries||[]).map(e=>`<tr><td><b>${e.name}</b></td><td>${icons[e.status]||''} ${labels[e.status]||e.status}</td><td>${e.tin?e.tin+(e.tout?' → '+e.tout:''):'—'}</td></tr>`).join('')}
+  </table>`).join('')}
+  <div class="footer">ANUGRAHA House Painting Services · Your Satisfaction, Our Commitment</div>
   </body></html>`;
   const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();}
 }
+function showSiteSlide(type){
+  const el=document.getElementById('h-my');
+  if(!el)return;
+  // Update buttons
+  ['active','upcoming','completed'].forEach(t=>{
+    const btn=document.getElementById('st-btn-'+t);
+    if(!btn)return;
+    btn.style.background=t===type?'var(--ind)':'var(--gr100)';
+    btn.style.color=t===type?'#fff':'var(--gr600)';
+  });
+  const list=t=>{
+    if(t==='active')return SITES.filter(s=>s.status==='active');
+    if(t==='upcoming')return SITES.filter(s=>s.status==='hold');
+    if(t==='completed')return SITES.filter(s=>s.status==='completed');
+    return[];
+  };
+  const sites=list(type);
+  if(!sites.length){el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--gr400);font-size:13px">${type==='active'?'सक्रिय':'upcoming'==='upcoming'?'आगामी':'सम्पन्न'} साइट छैन</div>`;return;}
+  el.style.opacity='0';el.style.transform='translateX(20px)';el.style.transition='opacity .25s,transform .25s';
+  el.innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'+sites.map(s=>{
+    const cv=sCV(s)||0;
+    const statusColor=s.status==='active'?'#EA580C':s.status==='completed'?'#16A34A':'#F59E0B';
+    return`<div onclick="openSite('${s.id}')" style="background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid var(--gr100);cursor:pointer;border-left:4px solid ${statusColor}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:800;color:var(--gr900)">${s.name}</div>
+          <div style="font-size:12px;color:var(--gr400);margin-top:2px">${s.client_name||'—'} · ${s.location||'—'}</div>
+        </div>
+        ${cv?`<div class="n" style="font-size:14px;font-weight:800;color:${statusColor}">${Rs(cv)}</div>`:''}
+      </div>
+      ${s.bs_start?`<div style="font-size:11px;color:var(--gr400);margin-top:6px">📅 ${s.bs_start}</div>`:''}
+    </div>`;
+  }).join('')+'</div>';
+  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateX(0)';},50);
+}
+
 function dialStart(e){
   dialStartX=e.touches[0].clientX;
   dialDragging=false;
