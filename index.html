@@ -319,9 +319,9 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 
 
 /* FILTERS */
-.filters{display:flex;gap:8px;padding:14px 16px 0;overflow-x:auto;scrollbar-width:none}
+.filters{display:flex;gap:6px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
-.fil{padding:7px 16px;border-radius:22px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;border:1.5px solid var(--gr200);color:var(--gr500);background:var(--w)}
+.fil{padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;border:1.5px solid var(--gr200);color:var(--gr500);background:var(--w);letter-spacing:-.2px}
 .fil.on{background:var(--ind);color:#fff;border-color:var(--ind)}
 
 /* MODALS */
@@ -1127,8 +1127,7 @@ select.fi option{background:#fff}
     <button onclick="markAllRead()" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:12px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer">✓ सबै पढियो</button>
   </div>
   <div class="filters">
-    <button class="fil on" onclick="switchNotifTab('notifs',this)">📬 सूचना</button>
-    <button class="fil" onclick="switchNotifTab('reminders',this)">⚠️ Reminder</button>
+    <button class="fil on" onclick="loadNotif()">📬 सूचना</button>
   </div>
   <div style="padding:12px 16px 80px" id="notif-body"><div class="ld">लोड हुँदैछ...</div></div>
 </div>
@@ -2313,38 +2312,52 @@ async function loadHome(){
 
 // ══ SITE CARD ══
 function mkSC(s,idx=0){
-  const stripe=s.status==='hold'?'ho':s.status==='completed'?'co':'ac';
-  const badge=s.status==='active'?'<span class="spill sp-a">सक्रिय</span>':s.status==='completed'?'<span class="spill sp-c">सम्पन्न</span>':'<span class="spill sp-h">रोकिएको</span>';
   const v=sCV(s);
   const tp=getTimeProgress(s);
+  const statusColor=s.status==='active'?'#EA580C':s.status==='completed'?'#16A34A':'#F59E0B';
+  const statusBg=s.status==='active'?'#FFF4ED':s.status==='completed'?'#F0FDF4':'#FFFBEB';
+  const statusLabel=s.status==='active'?'🔨 सक्रिय':s.status==='completed'?'✅ सम्पन्न':'⏸ रोकिएको';
+  const delay=idx*60;
   let timeHtml='';
   if(tp&&s.start_date){
     const color=tp.overdue?'var(--r)':tp.pct>80?'var(--a)':'var(--g)';
-    const label=s.status==='completed'?`सम्पन्न: ${tp.elapsed} दिन`:tp.overdue?`⚠️ अनुमानभन्दा ${tp.elapsed-tp.estimated} दिन बढी!`:`${tp.elapsed} / ${tp.estimated||'?'} दिन`;
-    timeHtml=`<div class="time-progress">
-      <div class="tp-row"><span class="tp-lbl">⏱ समय</span><span class="tp-val" style="color:${color}">${label}</span></div>
-      <div class="tp-bar"><div class="tp-fill" style="width:${tp.pct}%;background:${color}"></div></div>
+    const label=s.status==='completed'?`${tp.elapsed} दिनमा सम्पन्न`:tp.overdue?`⚠️ ${tp.elapsed-tp.estimated} दिन ढिलो`:`${tp.elapsed}/${tp.estimated||'?'} दिन`;
+    timeHtml=`<div style="margin-top:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--gr400)">⏱ प्रगति</span>
+        <span style="font-size:11px;font-weight:700;color:${color}">${label}</span>
+      </div>
+      <div style="height:4px;background:var(--gr100);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${Math.min(100,tp.pct)}%;background:${color};border-radius:4px;transition:width .8s"></div>
+      </div>
     </div>`;
   }
-  const statusClass=s.status==='active'?'s-active':s.status==='completed'?'s-completed':'s-hold';
-  const delay=idx*80;
-  return`<div class="site-card ${statusClass}" onclick="openDet('${s.id}')" style="opacity:0;transform:translateY(16px);transition:opacity .4s ease ${delay}ms,transform .4s ease ${delay}ms" data-anim="1">
-    <div class="sc-stripe ${stripe}"></div>
-    <div class="sc-body">
-      <div class="sc-r1">
-        <div class="sc-nm">${s.name}</div>
-        <div style="display:flex;align-items:center;gap:6px">
-          ${badge}
-          <button onclick="event.stopPropagation();deleteSite('${s.id}','${s.name.replace(/'/g,"\\'")}');" style="background:var(--rl);border:none;color:var(--r);font-size:11px;padding:3px 8px;border-radius:8px;font-weight:700;cursor:pointer">🗑</button>
+  return`<div onclick="openDet('${s.id}')" 
+    style="background:#fff;border-radius:16px;margin-bottom:8px;overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.04);
+    cursor:pointer">
+    <!-- Top color bar -->
+    <div style="height:3px;background:${statusColor}"></div>
+    <div style="padding:12px 14px">
+      <!-- Header row -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:800;color:#1C1917;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+          <div style="font-size:12px;color:var(--gr400)">👤 ${s.client_name||'—'}${s.location?' · 📍'+s.location:''}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;margin-left:10px;flex-shrink:0">
+          <span style="font-size:11px;font-weight:800;color:${statusColor};background:${statusBg};padding:4px 10px;border-radius:20px;white-space:nowrap">${statusLabel}</span>
+          ${v!=null?`<span style="font-size:16px;font-weight:900;color:#1C1917">${Rs(v)}</span>`:''}
         </div>
       </div>
-      <div class="sc-cli" style="display:flex;justify-content:space-between;align-items:center">
-        <span>👤 ${s.client_name}${s.location?'  ·  📍'+s.location:''}</span>
-        ${s.client_phone?`<a href="tel:${s.client_phone}" onclick="event.stopPropagation()" style="background:var(--gl);color:#065F46;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-decoration:none;flex-shrink:0">📞 Call</a>`:''}
+      <!-- Meta row -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--gr400);background:var(--gr50);padding:3px 8px;border-radius:8px">${SN[s.contract_type]||s.contract_type||'—'}</span>
+        <span style="font-size:11px;color:var(--ind);font-weight:700">${s.brought_by||''}</span>
+        ${s.start_date?`<span style="font-size:11px;color:var(--gr400)">📅 ${fBSS(s.start_date)}</span>`:''}
+        ${s.client_phone?`<a href="tel:${s.client_phone}" onclick="event.stopPropagation()" style="margin-left:auto;background:var(--gl);color:#065F46;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;text-decoration:none">📞</a>`:''}
       </div>
-      <div style="font-size:11px;color:var(--gr500);margin-bottom:8px">ल्याउने: <b style="color:var(--ind)">${s.brought_by}</b>${s.start_date?'  ·  '+fBSS(s.start_date):''}${s.days_taken?'  ·  ⏱'+s.days_taken+'दिन':''}</div>
       ${timeHtml}
-      <div class="sc-foot"><span class="sc-tag">${SN[s.contract_type]||s.contract_type}</span>${v!=null?`<span class="sc-amt">${Rs(v)}</span>`:'<span style="font-size:12px;color:var(--gr400)">दैनिक</span>'}</div>
     </div>
   </div>`;
 }
@@ -4928,23 +4941,17 @@ async function loadNotif(){
     const glassBg=isUnread?(glassMap[n.type]||'rgba(249,115,22,.06)'):'transparent';
     const glassBorder=isUnread?(borderMap[n.type]||'rgba(249,115,22,.15)'):'var(--gr100)';
     const accentColor={attendance:'#16A34A',payment:'#16A34A',expense:'#E11D48',advance:'#D97706',withdrawal:'#7C3AED',worker:'#B45309',material:'#1D4ED8',site:'#EA580C',extra_income:'#EA580C'}[n.type]||'var(--ind)';
-    return`<div style="animation:fadeSlideUp .2s ease ${i*.04}s both;
-      background:var(--w);border-radius:16px;margin-bottom:10px;
-      box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden;
-      border:1px solid ${isUnread?'var(--gr200)':'var(--gr100)'}">
-      <div style="height:3px;background:${accentColor}"></div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px">
-        <div style="width:38px;height:38px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${c.icon}</div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;justify-content:space-between;margin-bottom:2px">
-            <span style="font-size:10px;font-weight:800;color:${accentColor};text-transform:uppercase;letter-spacing:.5px">${c.label}</span>
-            <span style="font-size:10px;color:var(--gr400)">${n.bs_date||n.date||''}</span>
-          </div>
-          <div style="font-size:13px;font-weight:${isUnread?700:500};color:var(--gr900);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${main}</div>
-          ${rest.length?`<div style="font-size:11px;color:var(--gr400);margin-top:1px">${rest.join(' · ')}</div>`:''}
+    return`<div style="animation:fadeSlideUp .2s ease ${i*.04}s both;display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;background:${isUnread?'var(--w)':'transparent'};border-radius:14px;border:1px solid ${isUnread?'var(--gr100)':'transparent'};box-shadow:${isUnread?'0 1px 6px rgba(0,0,0,.05)':'none'}">
+      <div style="width:36px;height:36px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">${c.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12.5px;font-weight:${isUnread?600:400};color:var(--gr900);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${main}</div>
+        <div style="font-size:11px;color:var(--gr400);margin-top:1px;display:flex;gap:6px">
+          <span style="color:${accentColor};font-weight:600">${c.label}</span>
+          <span>·</span>
+          <span>${n.bs_date||n.date||''}</span>
         </div>
-        ${isUnread?`<div style="width:8px;height:8px;border-radius:50%;background:${accentColor};flex-shrink:0"></div>`:''}
       </div>
+      ${isUnread?`<div style="width:7px;height:7px;border-radius:50%;background:${accentColor};flex-shrink:0"></div>`:''}
     </div>`;
   }).join('');
   // Mark all as read AFTER rendering (so unread dots show first)
