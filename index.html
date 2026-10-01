@@ -1706,7 +1706,7 @@ select.fi option{background:#fff}
 
 <script>
 // ══ FIREBASE ══
-firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});
+try{firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});}catch(e){}
 const db=firebase.firestore();
 // ══ AUTH ══
 const DEF_PW = {AMRIT:'amrit@2082',NIRAN:'niran@2082',SUBEIN:'subein@2082'};
@@ -4000,13 +4000,10 @@ function openSiteExpM(){populateES(CS);document.getElementById('ea').value='';do
 async function loadSAtt(){
   const el=document.getElementById('det-body');
   el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
-  const [recs,workers,workEntries,pays,exps,myRate]=await Promise.all([
+  const [recs,workers,workEntries]=await Promise.all([
     dGet('attendance',['site_id','==',CS]),
     dGetC('workers'),
-    dGet('work_entries',['site_id','==',CS]),
-    dGet('payments',['site_id','==',CS]),
-    dGet('expenses',['site_id','==',CS]),
-    getMyRate()
+    dGet('work_entries',['site_id','==',CS])
   ]);
 
   // ── MERGE duplicate records for same date ──
@@ -4121,10 +4118,9 @@ async function loadSAtt(){
           const earned=Math.round(hrs/8*rate);
           wageInfo=`<span style="font-size:10px;color:var(--g);font-weight:700">${hrs.toFixed(1)}hrs → Rs.${earned}</span>`;
         }
-        const wkrName=(workers.find(w=>w.id===e.wid)?.name)||e.name||'?';
         html+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-bottom:1px solid var(--gr100)">
           <div>
-            <span style="font-size:13px;font-weight:700">${wkrName}</span>
+            <span style="font-size:13px;font-weight:700">${e.name}</span>
             ${e.tin&&e.tout?`<div style="font-size:10px;color:var(--gr400)">⏰ ${e.tin} → ${e.tout}${wageInfo?' · '+wageInfo.replace(/<[^>]*>/g,''):''}</div>`:''}
           </div>
           <span style="font-weight:700;font-size:13px;color:${colors[e.status]||'var(--gr500)'}">${icons[e.status]||''} ${labels[e.status]||e.status}</span>
@@ -4133,26 +4129,7 @@ async function loadSAtt(){
       html+='</div>';
     });
   }
-  html+='</div>';
-
-  // ── FINANCIAL SUMMARY ──
-  const site=SITES.find(s=>s.id===CS)||{};
-  const cv=sCV(site)||0;
-  const totalDays=Object.values(wSummary).reduce((a,w)=>a+w.days,0);
-  const totalWage=Math.round(totalDays*(myRate||0));
-  const totalExp=exps.reduce((a,e)=>a+Number(e.amount||0),0);
-  const totalRecv=pays.reduce((a,p)=>a+Number(p.amount||0),0);
-  const balance=cv-(totalWage+totalExp);
-  html+=`<div style="background:#fff;border-radius:16px;padding:16px;margin-top:12px;border:1px solid var(--gr100);box-shadow:0 2px 8px rgba(0,0,0,.06)">
-    <div style="font-size:13px;font-weight:800;color:var(--gr700);margin-bottom:10px">📊 आर्थिक सारांश</div>
-    ${cv?`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;color:var(--gr500)">📋 ठेक्का</span><span class="n" style="font-weight:800;color:var(--ind)">${Rs(cv)}</span></div>`:''}
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;color:var(--gr500)">👷 ज्याला (${totalDays}दिन×Rs.${myRate||0})</span><span class="n" style="font-weight:700;color:var(--r)">−${Rs(totalWage)}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;color:var(--gr500)">💸 खर्च</span><span class="n" style="font-weight:700;color:var(--r)">−${Rs(totalExp)}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--gr100)"><span style="font-size:13px;color:var(--gr500)">💰 प्राप्त</span><span class="n" style="font-weight:700;color:var(--g)">+${Rs(totalRecv)}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:10px 0 0"><span style="font-size:14px;font-weight:800">💰 बाँकी</span><span class="n" style="font-size:20px;font-weight:900;color:${balance>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(balance))}</span></div>
-    <div style="font-size:11px;color:var(--gr400);text-align:right;margin-top:2px">${balance>=0?'नाफामा 🎉':'घाटामा ⚠️'}</div>
-  </div>`;
-  el.innerHTML=html;
+  html+='</div>';el.innerHTML=html;
 }
 
 // ══ EDIT CONTRACT AMOUNT ══
@@ -5546,25 +5523,33 @@ function animateSplashBrush(){
   setTimeout(typeChar,200);
 }
 
-window.addEventListener('load',async()=>{
+window.addEventListener('load',()=>{
   LANG=localStorage.getItem('lang')||'ne';
   applyStoredTheme();
   applyStoredDarkMode();
   initPullToRefresh();
-  setTimeout(loadNotifBadge,2000);
+  setTimeout(loadNotifBadge, 2000);
   document.getElementById('ssd').value=todStr();bsF('ssd','ssd-b');
+
+  // ── ANIMATE BRUSH PAINTING SPLASH ──
   animateSplashBrush();
-  await new Promise(r=>setTimeout(r,2000));
-  try{await loadProfiles();}catch(e){}
-  try{document.getElementById('splash').style.opacity='0';document.getElementById('splash').style.transition='opacity .35s';}catch(e){}
+
+  // Run data loading + splash animation in PARALLEL (not sequential) for faster perceived load
+  try{loadProfiles();}catch(e){}
   setTimeout(()=>{
-    try{document.getElementById('splash').style.display='none';}catch(e){}
     try{
-      if(ME){boot();}
-      else if(!localStorage.getItem('ob_done')){document.getElementById('onboard').style.display='flex';}
-      else{document.getElementById('login').style.display='flex';}
+      const sp=document.getElementById('splash');
+      if(sp){sp.style.transition='opacity .3s';sp.style.opacity='0';}
+      setTimeout(()=>{
+        try{const sp=document.getElementById('splash');if(sp)sp.style.display='none';}catch(e){}
+        try{
+          if(ME)boot();
+          else if(!localStorage.getItem('ob_done')){const ob=document.getElementById('onboard');if(ob)ob.style.display='flex';}
+          else{const lg=document.getElementById('login');if(lg)lg.style.display='flex';}
+        }catch(e){}
+      },350);
     }catch(e){}
-  },380);
+  },2000);
 });
 
 // ══ ANIMATIONS ══
