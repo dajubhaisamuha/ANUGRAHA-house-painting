@@ -119,8 +119,8 @@ body.dark-mode .bs{background:var(--gr100);color:var(--gr700);border-color:var(-
 html,body{height:100%}
 .page{display:none;background:var(--bg);padding-bottom:calc(var(--nh)+24px);overflow-y:auto;height:calc(100vh - var(--nh));-webkit-overflow-scrolling:touch}
 .page.on{display:block}
-body{font-family:'Noto Sans Devanagari','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.6}
-input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-serif;font-size:15px}
+body{font-family:'Noto Sans Devanagari','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased;font-size:16px}
+input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-serif}
 .n{font-family:'Inter',sans-serif;font-feature-settings:'tnum';letter-spacing:-.02em}.amt{font-family:'Inter',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.03em}.Rs{font-size:.65em;font-weight:700;opacity:.7;margin-right:1px}
 
 /* SPLASH */
@@ -319,9 +319,9 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 
 
 /* FILTERS */
-.filters{display:flex;gap:6px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none}
+.filters{display:flex;gap:8px;padding:14px 16px 0;overflow-x:auto;scrollbar-width:none}
 .filters::-webkit-scrollbar{display:none}
-.fil{padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;border:1.5px solid var(--gr200);color:var(--gr500);background:var(--w);letter-spacing:-.2px}
+.fil{padding:7px 16px;border-radius:22px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer;border:1.5px solid var(--gr200);color:var(--gr500);background:var(--w)}
 .fil.on{background:var(--ind);color:#fff;border-color:var(--ind)}
 
 /* MODALS */
@@ -667,33 +667,6 @@ select.fi option{background:#fff}
 /* ── PAGE TRANSITIONS ── */
 .page.on{animation:fadeSlideUp .2s ease}
 .det-tab{transition:color .15s,border-color .15s}
-
-/* ══ REAL APP FEEL ══ */
-.li-t{font-size:15px!important;font-weight:700!important}
-.li-s{font-size:13px!important}
-.li-i{font-size:20px!important}
-.sc-nm{font-size:17px!important;font-weight:800!important}
-.sc-cli{font-size:13px!important}
-.pt-t{font-size:24px!important;font-weight:900!important}
-.pt-s{font-size:13px!important}
-.wc-nm{font-size:16px!important;font-weight:800!important}
-.set-item .si-t{font-size:15px!important;font-weight:700!important}
-.set-item .si-s{font-size:13px!important}
-.mtit{font-size:22px!important;font-weight:900!important}
-.fl{font-size:13px!important;font-weight:700!important}
-.fi{font-size:16px!important;padding:14px 16px!important;border-radius:14px!important}
-.btn{font-size:15px!important;font-weight:700!important;padding:15px!important;border-radius:14px!important}
-.fil{font-size:13px!important;font-weight:700!important;padding:8px 16px!important}
-.ic{border-radius:18px!important}
-.msh{border-radius:26px 26px 0 0!important}
-.hb-name{font-size:22px!important;font-weight:900!important}
-.hb-hey{font-size:14px!important}
-.ni-l{font-size:11px!important;font-weight:700!important}
-.n{font-feature-settings:'tnum';letter-spacing:-.02em}
-.ic .pr{font-size:14px!important}
-.ws-v{font-size:18px!important}
-.ws-l{font-size:11px!important}
-
 </style>
 </head>
 <body>
@@ -1017,19 +990,13 @@ select.fi option{background:#fff}
     </div>
   </div>
 
-  <!-- MY SITES SLIDER -->
-  <div style="padding:16px 0 0">
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:10px">
-      <div style="font-size:14px;font-weight:800;color:var(--gr800)">📍 साइट स्थिति</div>
+  <!-- MY SITES -->
+  <div style="padding:16px 16px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--gr800)">मेरा सक्रिय साइट</div>
       <div onclick="go('sites')" style="font-size:12px;color:var(--ind);font-weight:700;cursor:pointer">सबै →</div>
     </div>
-    <!-- Tab buttons -->
-    <div style="display:flex;gap:8px;padding:0 16px;margin-bottom:10px">
-      <button id="st-btn-active" onclick="showSiteSlide('active')" style="flex:1;padding:8px;border-radius:20px;background:var(--ind);color:#fff;border:none;font-size:12px;font-weight:800;cursor:pointer">🔨 चलिरहेको</button>
-      <button id="st-btn-upcoming" onclick="showSiteSlide('upcoming')" style="flex:1;padding:8px;border-radius:20px;background:var(--gr100);color:var(--gr600);border:none;font-size:12px;font-weight:800;cursor:pointer">📅 आगामी</button>
-      <button id="st-btn-completed" onclick="showSiteSlide('completed')" style="flex:1;padding:8px;border-radius:20px;background:var(--gr100);color:var(--gr600);border:none;font-size:12px;font-weight:800;cursor:pointer">✅ सम्पन्न</button>
-    </div>
-    <div id="h-my" style="overflow:hidden;padding:0 16px"></div>
+    <div id="h-my"></div>
   </div>
 
   <!-- RECENT TXN -->
@@ -1127,7 +1094,8 @@ select.fi option{background:#fff}
     <button onclick="markAllRead()" style="background:var(--ind-l);border:1px solid var(--ind-b);color:var(--ind);font-size:12px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer">✓ सबै पढियो</button>
   </div>
   <div class="filters">
-    <button class="fil on" onclick="loadNotif()">📬 सूचना</button>
+    <button class="fil on" onclick="switchNotifTab('notifs',this)">📬 सूचना</button>
+    <button class="fil" onclick="switchNotifTab('reminders',this)">⚠️ Reminder</button>
   </div>
   <div style="padding:12px 16px 80px" id="notif-body"><div class="ld">लोड हुँदैछ...</div></div>
 </div>
@@ -1706,8 +1674,10 @@ select.fi option{background:#fff}
 
 <script>
 // ══ FIREBASE ══
-try{firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});}catch(e){}
-const db=firebase.firestore();
+firebase.initializeApp({apiKey:"AIzaSyDTNExpZJTrMPv1JWXhkZgTSnuAuecTexk",authDomain:"anugraha-house-painting.firebaseapp.com",projectId:"anugraha-house-painting",storageBucket:"anugraha-house-painting.firebasestorage.app",messagingSenderId:"1030796634963",appId:"1:1030796634963:web:cdd56c66f2d02249b1cfa6"});
+const db = firebase.firestore();
+try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{});}catch(e){}
+
 // ══ AUTH ══
 const DEF_PW = {AMRIT:'amrit@2082',NIRAN:'niran@2082',SUBEIN:'subein@2082'};
 let PW = {...DEF_PW};
@@ -2131,8 +2101,6 @@ async function loadHome(){
     ]);
     SITES=sites;WKRS=wkrs;
     const active=sites.filter(s=>s.status==='active');
-    // Show animated site slider
-    showSiteSlide('active');
     const activeIds=new Set(active.map(s=>s.id));
     document.getElementById('h-act').textContent=active.length;
     // Count-up for number (no Rs prefix)
@@ -2312,52 +2280,38 @@ async function loadHome(){
 
 // ══ SITE CARD ══
 function mkSC(s,idx=0){
+  const stripe=s.status==='hold'?'ho':s.status==='completed'?'co':'ac';
+  const badge=s.status==='active'?'<span class="spill sp-a">सक्रिय</span>':s.status==='completed'?'<span class="spill sp-c">सम्पन्न</span>':'<span class="spill sp-h">रोकिएको</span>';
   const v=sCV(s);
   const tp=getTimeProgress(s);
-  const statusColor=s.status==='active'?'#EA580C':s.status==='completed'?'#16A34A':'#F59E0B';
-  const statusBg=s.status==='active'?'#FFF4ED':s.status==='completed'?'#F0FDF4':'#FFFBEB';
-  const statusLabel=s.status==='active'?'🔨 सक्रिय':s.status==='completed'?'✅ सम्पन्न':'⏸ रोकिएको';
-  const delay=idx*60;
   let timeHtml='';
   if(tp&&s.start_date){
     const color=tp.overdue?'var(--r)':tp.pct>80?'var(--a)':'var(--g)';
-    const label=s.status==='completed'?`${tp.elapsed} दिनमा सम्पन्न`:tp.overdue?`⚠️ ${tp.elapsed-tp.estimated} दिन ढिलो`:`${tp.elapsed}/${tp.estimated||'?'} दिन`;
-    timeHtml=`<div style="margin-top:10px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:11px;color:var(--gr400)">⏱ प्रगति</span>
-        <span style="font-size:11px;font-weight:700;color:${color}">${label}</span>
-      </div>
-      <div style="height:4px;background:var(--gr100);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${Math.min(100,tp.pct)}%;background:${color};border-radius:4px;transition:width .8s"></div>
-      </div>
+    const label=s.status==='completed'?`सम्पन्न: ${tp.elapsed} दिन`:tp.overdue?`⚠️ अनुमानभन्दा ${tp.elapsed-tp.estimated} दिन बढी!`:`${tp.elapsed} / ${tp.estimated||'?'} दिन`;
+    timeHtml=`<div class="time-progress">
+      <div class="tp-row"><span class="tp-lbl">⏱ समय</span><span class="tp-val" style="color:${color}">${label}</span></div>
+      <div class="tp-bar"><div class="tp-fill" style="width:${tp.pct}%;background:${color}"></div></div>
     </div>`;
   }
-  return`<div onclick="openDet('${s.id}')" 
-    style="background:#fff;border-radius:16px;margin-bottom:8px;overflow:hidden;
-    box-shadow:0 2px 8px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.04);
-    cursor:pointer">
-    <!-- Top color bar -->
-    <div style="height:3px;background:${statusColor}"></div>
-    <div style="padding:12px 14px">
-      <!-- Header row -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:15px;font-weight:800;color:#1C1917;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
-          <div style="font-size:12px;color:var(--gr400)">👤 ${s.client_name||'—'}${s.location?' · 📍'+s.location:''}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;margin-left:10px;flex-shrink:0">
-          <span style="font-size:11px;font-weight:800;color:${statusColor};background:${statusBg};padding:4px 10px;border-radius:20px;white-space:nowrap">${statusLabel}</span>
-          ${v!=null?`<span style="font-size:16px;font-weight:900;color:#1C1917">${Rs(v)}</span>`:''}
+  const statusClass=s.status==='active'?'s-active':s.status==='completed'?'s-completed':'s-hold';
+  const delay=idx*80;
+  return`<div class="site-card ${statusClass}" onclick="openDet('${s.id}')" style="opacity:0;transform:translateY(16px);transition:opacity .4s ease ${delay}ms,transform .4s ease ${delay}ms" data-anim="1">
+    <div class="sc-stripe ${stripe}"></div>
+    <div class="sc-body">
+      <div class="sc-r1">
+        <div class="sc-nm">${s.name}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${badge}
+          <button onclick="event.stopPropagation();deleteSite('${s.id}','${s.name.replace(/'/g,"\\'")}');" style="background:var(--rl);border:none;color:var(--r);font-size:11px;padding:3px 8px;border-radius:8px;font-weight:700;cursor:pointer">🗑</button>
         </div>
       </div>
-      <!-- Meta row -->
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span style="font-size:11px;color:var(--gr400);background:var(--gr50);padding:3px 8px;border-radius:8px">${SN[s.contract_type]||s.contract_type||'—'}</span>
-        <span style="font-size:11px;color:var(--ind);font-weight:700">${s.brought_by||''}</span>
-        ${s.start_date?`<span style="font-size:11px;color:var(--gr400)">📅 ${fBSS(s.start_date)}</span>`:''}
-        ${s.client_phone?`<a href="tel:${s.client_phone}" onclick="event.stopPropagation()" style="margin-left:auto;background:var(--gl);color:#065F46;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;text-decoration:none">📞</a>`:''}
+      <div class="sc-cli" style="display:flex;justify-content:space-between;align-items:center">
+        <span>👤 ${s.client_name}${s.location?'  ·  📍'+s.location:''}</span>
+        ${s.client_phone?`<a href="tel:${s.client_phone}" onclick="event.stopPropagation()" style="background:var(--gl);color:#065F46;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;text-decoration:none;flex-shrink:0">📞 Call</a>`:''}
       </div>
+      <div style="font-size:11px;color:var(--gr500);margin-bottom:8px">ल्याउने: <b style="color:var(--ind)">${s.brought_by}</b>${s.start_date?'  ·  '+fBSS(s.start_date):''}${s.days_taken?'  ·  ⏱'+s.days_taken+'दिन':''}</div>
       ${timeHtml}
+      <div class="sc-foot"><span class="sc-tag">${SN[s.contract_type]||s.contract_type}</span>${v!=null?`<span class="sc-amt">${Rs(v)}</span>`:'<span style="font-size:12px;color:var(--gr400)">दैनिक</span>'}</div>
     </div>
   </div>`;
 }
@@ -2503,6 +2457,17 @@ async function loadOv(){
           <div class="pdiv"></div>
           <div class="pr"><span style="font-weight:800">📈 नाफा</span><span style="font-size:22px;font-weight:800;color:${profit>=0?'var(--g)':'var(--r)'}">${Rs(Math.abs(profit))}</span></div>
           <div class="pr"><span style="font-size:12px;color:var(--gr500)">÷ ३ हरेकको</span><span style="font-size:16px;font-weight:800;color:var(--ind)">${Rs(Math.abs(profit/3))}</span></div>
+          ${sv!=null?`<div class="pdiv"></div>
+          <div style="background:${(sv-totL-totE-totA)>=0?'var(--gl)':'var(--rl)'};border-radius:12px;padding:12px 14px;margin-top:4px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font-size:12px;font-weight:800;color:var(--gr600)">💰 ठेक्काबाट बाँकी</div>
+              <div style="font-size:11px;color:var(--gr400)">ठेक्का − ज्याला − खर्च − अग्रिम</div></div>
+              <div style="font-size:22px;font-weight:900;color:${(sv-totL-totE-totA)>=0?'var(--g)':'var(--r)'}">
+                ${Rs(Math.abs(sv-totL-totE-totA))}
+              </div>
+            </div>
+          </div>`:''}
+          
         </div>
 
         <!-- Worker-wise payment summary for this site -->
@@ -3437,91 +3402,6 @@ async function checkAttendanceReminder(){
   }catch(e){}
 }
 
-async function downloadAttPDF(siteId){
-  const site=SITES.find(s=>s.id===siteId)||{name:'साइट'};
-  const [recs,workers,workEntries]=await Promise.all([
-    dGet('attendance',['site_id','==',siteId]),
-    dGetC('workers'),
-    dGet('work_entries',['site_id','==',siteId])
-  ]);
-  recs.sort((a,b)=>a.date>b.date?1:-1);
-  const icons={P:'🌞',M:'🌅',E:'☀️',H:'🔶',A:'❌',V:'🏖'};
-  const labels={P:'पूरा',M:'बिहान',E:'दिउँसो',H:'आधा',A:'अनुपस्थित',V:'बिदा'};
-  const mult={P:1.5,E:1,M:0.5,H:0.5,A:0,V:0};
-  // Worker summary
-  const wMap={};
-  recs.forEach(r=>(r.entries||[]).forEach(e=>{
-    if(!wMap[e.name])wMap[e.name]={name:e.name,days:0};
-    wMap[e.name].days+=mult[e.status]||0;
-  }));
-  const wList=Object.values(wMap);
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>हाजिर — ${site.name}</title>
-  <style>body{font-family:'Noto Sans Devanagari',sans-serif;padding:20px;font-size:14px}
-  h2{color:#1C1917;margin-bottom:4px}
-  .summary{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0 20px}
-  .sw{background:#FFF4ED;border-radius:8px;padding:10px 16px;text-align:center;border:1px solid #FED7AA}
-  .sw b{display:block;font-size:20px;color:#EA580C}
-  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
-  th{background:#1C1917;color:#fff;padding:8px;text-align:left}
-  td{padding:7px 8px;border-bottom:1px solid #eee}
-  tr:nth-child(even) td{background:#f9f9f9}
-  .day-hd{background:#f0f0f0;padding:8px 12px;font-weight:700;margin-top:16px;border-radius:6px}
-  .footer{margin-top:24px;text-align:center;font-size:12px;color:#999;border-top:1px solid #eee;padding-top:12px}
-  @media print{.no-print{display:none}}</style>
-  </head><body>
-  <button class="no-print" onclick="window.print()" style="padding:10px 20px;background:#EA580C;color:#fff;border:none;border-radius:8px;cursor:pointer;margin-bottom:16px;font-size:14px;font-weight:700">🖨️ Print / PDF Save</button>
-  <h2>🏗️ ${site.name}</h2>
-  <p style="color:#666;margin:0">हाजिर रिपोर्ट · ${bsToday()} · जम्मा ${recs.length} दिन</p>
-  <div class="summary">
-    ${wList.map(w=>`<div class="sw"><b>${w.days}</b>${w.name}</div>`).join('')}
-  </div>
-  ${recs.map(r=>`
-  <div class="day-hd">${r.bs_date||r.date}${r.time?' · ⏰'+r.time:''} — ${(r.entries||[]).filter(e=>e.status!=='A').length} जना उपस्थित</div>
-  <table>
-    <tr><th>कामदार</th><th>स्थिति</th><th>समय</th></tr>
-    ${(r.entries||[]).map(e=>`<tr><td><b>${e.name}</b></td><td>${icons[e.status]||''} ${labels[e.status]||e.status}</td><td>${e.tin?e.tin+(e.tout?' → '+e.tout:''):'—'}</td></tr>`).join('')}
-  </table>`).join('')}
-  <div class="footer">ANUGRAHA House Painting Services · Your Satisfaction, Our Commitment</div>
-  </body></html>`;
-  const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();}
-}
-function showSiteSlide(type){
-  const el=document.getElementById('h-my');
-  if(!el)return;
-  // Update buttons
-  ['active','upcoming','completed'].forEach(t=>{
-    const btn=document.getElementById('st-btn-'+t);
-    if(!btn)return;
-    btn.style.background=t===type?'var(--ind)':'var(--gr100)';
-    btn.style.color=t===type?'#fff':'var(--gr600)';
-  });
-  const list=t=>{
-    if(t==='active')return SITES.filter(s=>s.status==='active');
-    if(t==='upcoming')return SITES.filter(s=>s.status==='hold');
-    if(t==='completed')return SITES.filter(s=>s.status==='completed');
-    return[];
-  };
-  const sites=list(type);
-  if(!sites.length){el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--gr400);font-size:13px">${type==='active'?'सक्रिय':'upcoming'==='upcoming'?'आगामी':'सम्पन्न'} साइट छैन</div>`;return;}
-  el.style.opacity='0';el.style.transform='translateX(20px)';el.style.transition='opacity .25s,transform .25s';
-  el.innerHTML='<div style="display:flex;flex-direction:column;gap:10px">'+sites.map(s=>{
-    const cv=sCV(s)||0;
-    const statusColor=s.status==='active'?'#EA580C':s.status==='completed'?'#16A34A':'#F59E0B';
-    return`<div onclick="openSite('${s.id}')" style="background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid var(--gr100);cursor:pointer;border-left:4px solid ${statusColor}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div style="flex:1">
-          <div style="font-size:15px;font-weight:800;color:var(--gr900)">${s.name}</div>
-          <div style="font-size:12px;color:var(--gr400);margin-top:2px">${s.client_name||'—'} · ${s.location||'—'}</div>
-        </div>
-        ${cv?`<div class="n" style="font-size:14px;font-weight:800;color:${statusColor}">${Rs(cv)}</div>`:''}
-      </div>
-      ${s.bs_start?`<div style="font-size:11px;color:var(--gr400);margin-top:6px">📅 ${s.bs_start}</div>`:''}
-    </div>`;
-  }).join('')+'</div>';
-  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateX(0)';},50);
-}
-
 function dialStart(e){
   dialStartX=e.touches[0].clientX;
   dialDragging=false;
@@ -4025,7 +3905,6 @@ async function loadSAtt(){
     }
   });
   const mergedRecs=Object.values(dateMap).sort((a,b)=>((b.date||'')>(a.date||'')?1:-1));
-  const site=SITES.find(s=>s.id===CS);
 
   // ── Worker summary for this site ──
   const wSummary={};
@@ -4056,7 +3935,6 @@ async function loadSAtt(){
   const myRate=await getMyRate();
 
   let html='<div class="pc">';
-  html+=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onclick="downloadAttPDF('${CS}')" style="background:var(--ind);color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">📄 PDF</button></div>`;
 
   // Worker summary card
   const wList=Object.values(wSummary);
@@ -4066,26 +3944,41 @@ async function loadSAtt(){
         <div style="font-weight:800;font-size:14px">👷 Worker Summary</div>
         <button onclick="openClockModal('${CS}')" style="background:var(--ind);color:#fff;border:none;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer">⏱ Clock in/out</button>
       </div>
-      ${wList.map(w=>{
-        const wkr=workers.find(x=>x.name===w.name);
-        const rate=Number(wkr?.daily_wage||myRate||0);
-        const earned=w.hours>0?(w.hours/8*rate).toFixed(0):w.days*rate;
-        const adv=w.adv||0;
-        return`<div style="padding:10px 16px;border-bottom:1px solid var(--gr100)">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-size:13px;font-weight:700">${w.name}</div>
-              <div style="font-size:11px;color:var(--gr400)">
-                ${w.days}दिन ${w.hours>0?'· ⏱'+w.hours.toFixed(1)+'hrs':''} · अग्रिम: ${Rs(adv)}
+      ${(()=>{
+        let totalEarned=0,totalAdv=0;
+        const rows=wList.map(w=>{
+          const wkr=workers.find(x=>x.name===w.name||x.id===w.wid);
+          const rate=Number(wkr?.daily_wage||myRate||0);
+          const earned=Number(w.hours>0?(w.hours/8*rate).toFixed(0):w.days*rate);
+          const adv=w.adv||0;
+          totalEarned+=earned;totalAdv+=adv;
+          return`<div style="padding:10px 16px;border-bottom:1px solid var(--gr100)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:13px;font-weight:700">${w.name}</div>
+                <div style="font-size:11px;color:var(--gr400)">${w.days}दिन × Rs.${rate} ${w.hours>0?'· ⏱'+w.hours.toFixed(1)+'hrs':''}</div>
+                <div style="font-size:11px;color:var(--a)">अग्रिम: ${Rs(adv)}</div>
+              </div>
+              <div style="text-align:right">
+                <div class="n" style="font-weight:800;color:var(--g);font-size:15px">${Rs(earned)}</div>
+                <div style="font-size:11px;color:${(earned-adv)>0?'var(--r)':'var(--g)'}">बाँकी: ${Rs(Math.abs(earned-adv))}</div>
               </div>
             </div>
+          </div>`;
+        }).join('');
+        return rows+`<div style="padding:12px 16px;background:var(--ind-l);border-top:2px solid var(--ind-b)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:12px;font-weight:800;color:var(--ind)">👷 जम्मा ज्याला खर्च</div>
+              <div style="font-size:11px;color:var(--gr400)">दिइएको अग्रिम: ${Rs(totalAdv)}</div>
+            </div>
             <div style="text-align:right">
-              <div class="n" style="font-weight:800;color:var(--g)">${Rs(earned)}</div>
-              <div style="font-size:10px;color:var(--gr400)">बाँकी: ${Rs(Number(earned)-adv)}</div>
+              <div class="n" style="font-size:20px;font-weight:900;color:var(--ind)">${Rs(totalEarned)}</div>
+              <div style="font-size:11px;color:var(--gr500)">बाँकी: ${Rs(totalEarned-totalAdv)}</div>
             </div>
           </div>
         </div>`;
-      }).join('')}
+      })()}
     </div>`;
   }else{
     html+=`<div style="text-align:center;margin-bottom:12px">
@@ -4941,17 +4834,23 @@ async function loadNotif(){
     const glassBg=isUnread?(glassMap[n.type]||'rgba(249,115,22,.06)'):'transparent';
     const glassBorder=isUnread?(borderMap[n.type]||'rgba(249,115,22,.15)'):'var(--gr100)';
     const accentColor={attendance:'#16A34A',payment:'#16A34A',expense:'#E11D48',advance:'#D97706',withdrawal:'#7C3AED',worker:'#B45309',material:'#1D4ED8',site:'#EA580C',extra_income:'#EA580C'}[n.type]||'var(--ind)';
-    return`<div style="animation:fadeSlideUp .2s ease ${i*.04}s both;display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;background:${isUnread?'var(--w)':'transparent'};border-radius:14px;border:1px solid ${isUnread?'var(--gr100)':'transparent'};box-shadow:${isUnread?'0 1px 6px rgba(0,0,0,.05)':'none'}">
-      <div style="width:36px;height:36px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">${c.icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12.5px;font-weight:${isUnread?600:400};color:var(--gr900);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${main}</div>
-        <div style="font-size:11px;color:var(--gr400);margin-top:1px;display:flex;gap:6px">
-          <span style="color:${accentColor};font-weight:600">${c.label}</span>
-          <span>·</span>
-          <span>${n.bs_date||n.date||''}</span>
+    return`<div style="animation:fadeSlideUp .2s ease ${i*.04}s both;
+      background:var(--w);border-radius:16px;margin-bottom:10px;
+      box-shadow:0 2px 12px rgba(0,0,0,.06);overflow:hidden;
+      border:1px solid ${isUnread?'var(--gr200)':'var(--gr100)'}">
+      <div style="height:3px;background:${accentColor}"></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px">
+        <div style="width:38px;height:38px;border-radius:12px;background:${c.bg};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${c.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+            <span style="font-size:10px;font-weight:800;color:${accentColor};text-transform:uppercase;letter-spacing:.5px">${c.label}</span>
+            <span style="font-size:10px;color:var(--gr400)">${n.bs_date||n.date||''}</span>
+          </div>
+          <div style="font-size:13px;font-weight:${isUnread?700:500};color:var(--gr900);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${main}</div>
+          ${rest.length?`<div style="font-size:11px;color:var(--gr400);margin-top:1px">${rest.join(' · ')}</div>`:''}
         </div>
+        ${isUnread?`<div style="width:8px;height:8px;border-radius:50%;background:${accentColor};flex-shrink:0"></div>`:''}
       </div>
-      ${isUnread?`<div style="width:7px;height:7px;border-radius:50%;background:${accentColor};flex-shrink:0"></div>`:''}
     </div>`;
   }).join('');
   // Mark all as read AFTER rendering (so unread dots show first)
@@ -5190,8 +5089,9 @@ async function saveWA(){
   let existing=[];try{const snap=await db.collection('attendance').doc(docId).get();if(snap.exists)existing=snap.data().entries||[];}catch{}
   const filtered=existing.filter(e=>e.wid!==wid);
   filtered.push({wid,name:wname,status:document.getElementById('wa-st').value,tin:document.getElementById('wa-in').value,tout:document.getElementById('wa-out').value});
-  await dSet('attendance',docId,{date:d,bs_date:fBS(d),site_id:sid,site_name:sname,slot:'full',entries:filtered,saved_by:ME,saved_at:firebase.firestore.FieldValue.serverTimestamp()});
-  closeM('mWA');toast(wname+' हाजिर सेभ ✓');
+  await dSet('attendance',docId,{date:d,bs_date:fBS(d),site_id:sid,site_name:sname,slot:'full',entries:filtered,saved_by:ME,saved_at:Date.now()});
+  closeM('mWA');toast(wname+' हाजिर अपडेट ✓');haptic('success');
+  if(typeof loadSAtt==='function')loadSAtt();
 }
 
 // ══ ATTENDANCE ══
@@ -5487,8 +5387,7 @@ function boot(){
   autoAddMemberAsWorker();
   loadHome();
   initNotifListener();
-  setTimeout(checkPaymentReminders, 5000);
-  setTimeout(checkAttendanceReminder, 8000);
+  // Reminders disabled - manual check only from Profile
 }
 
 async function autoAddMemberAsWorker(){
@@ -5523,7 +5422,7 @@ function animateSplashBrush(){
   setTimeout(typeChar,200);
 }
 
-window.addEventListener('load',()=>{
+window.addEventListener('load',async()=>{
   LANG=localStorage.getItem('lang')||'ne';
   applyStoredTheme();
   applyStoredDarkMode();
@@ -5535,21 +5434,13 @@ window.addEventListener('load',()=>{
   animateSplashBrush();
 
   // Run data loading + splash animation in PARALLEL (not sequential) for faster perceived load
-  try{loadProfiles();}catch(e){}
+  const minSplash=new Promise(r=>setTimeout(r,2000));
+  try{await Promise.all([loadProfiles(), minSplash]);}catch(e){await minSplash;}
+  try{document.getElementById('splash').style.opacity='0';document.getElementById('splash').style.transition='opacity .35s';}catch(e){}
   setTimeout(()=>{
-    try{
-      const sp=document.getElementById('splash');
-      if(sp){sp.style.transition='opacity .3s';sp.style.opacity='0';}
-      setTimeout(()=>{
-        try{const sp=document.getElementById('splash');if(sp)sp.style.display='none';}catch(e){}
-        try{
-          if(ME)boot();
-          else if(!localStorage.getItem('ob_done')){const ob=document.getElementById('onboard');if(ob)ob.style.display='flex';}
-          else{const lg=document.getElementById('login');if(lg)lg.style.display='flex';}
-        }catch(e){}
-      },350);
-    }catch(e){}
-  },2000);
+    try{document.getElementById('splash').style.display='none';}catch(e){}
+    try{if(ME){boot();}else if(!localStorage.getItem('ob_done')){document.getElementById('onboard').style.display='flex';}else{document.getElementById('login').style.display='flex';}}catch(e){}
+  },380);
 });
 
 // ══ ANIMATIONS ══
