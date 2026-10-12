@@ -184,8 +184,8 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 .ni.on{color:var(--ind)}
 .ni.on .ni-svg{background:var(--ind-l);border-radius:10px}
 .ni-i{font-size:22px;line-height:1}
-.ni-svg{width:24px;height:24px;display:block;padding:5px;box-sizing:content-box;border-radius:10px;transition:background .2s}
-.ni-l{font-size:9.5px;font-weight:700;letter-spacing:.2px}
+.ni-svg{width:26px;height:26px;display:block;padding:5px;box-sizing:content-box;border-radius:10px;transition:background .2s}
+.ni-l{font-size:11px;font-weight:700;letter-spacing:.1px}
 
 /* HERO BAR — Dark Navy + Orange premium */
 .hero-bar{background:linear-gradient(145deg,#0A1628 0%,#0F2044 35%,#1A1042 65%,#2D1810 100%);padding:54px 20px 22px;position:relative;overflow:hidden}
@@ -855,154 +855,131 @@ select.fi option{background:#fff}
 
 <!-- HOME -->
 <div class="page on" id="pg-home">
-  <div class="hero-bar">
-    <div class="hero-orb orb-a"></div>
-    <div class="hero-orb orb-b"></div>
-    <div class="hero-orb orb-c"></div>
+  <div class="hero-bar" style="padding:16px 16px 20px">
+    <div class="hero-orb orb-a"></div><div class="hero-orb orb-b"></div>
 
-    <!-- top accent line -->
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#F97316,#6366F1,transparent);opacity:.7"></div>
-    <div class="hb-top">
-      <div class="hb-user" onclick="go('profile')" style="cursor:pointer">
+    <!-- Top row: avatar + name + dark toggle -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div onclick="go('profile')" style="display:flex;align-items:center;gap:10px;cursor:pointer">
         <div class="hb-avatar" id="hb-av"></div>
         <div>
-          <div class="hb-hey" id="hb-hey">शुभबिहानी 🌅</div>
-          <div class="hb-name" id="hb-nm"></div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600" id="hb-hey">शुभबिहानी 🌅</div>
+          <div style="font-size:16px;font-weight:900;color:#fff;letter-spacing:-.3px" id="hb-nm"></div>
         </div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <div id="h-date" style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">—</div>
-        <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn" style="width:32px;height:32px">
-          <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:none;width:18px;height:18px"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-          <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div id="h-date" style="font-size:11px;color:rgba(255,255,255,.45);font-weight:600">—</div>
+        <button class="theme-toggle" onclick="toggleDarkMode()" id="theme-toggle-btn" style="width:30px;height:30px">
+          <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" style="display:none;width:16px;height:16px"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+          <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- EARNING CARD -->
-    <div style="background:rgba(255,255,255,.04);backdrop-filter:blur(20px);border-radius:22px;padding:20px;border:1px solid rgba(255,255,255,.1);margin-bottom:14px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3)" onclick="openMyActivity()">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(249,115,22,.6),transparent)"></div>
-      <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px"><span id="hb-nm2"></span> को व्यक्तिगत कमाइ</div>
-      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px">
-        <span style="font-size:13px;font-weight:700;color:rgba(249,115,22,.7)">रु.</span>
-        <span class="n" id="h-my-wage" style="font-size:48px;font-weight:900;color:#fff;line-height:1;letter-spacing:-3px">0</span>
+    <!-- Compact earning + stats row -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.06);border-radius:16px;padding:12px 16px;border:1px solid rgba(255,255,255,.08);cursor:pointer" onclick="openMyActivity()">
+      <div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px">मेरो कमाइ</div>
+        <div style="display:flex;align-items:baseline;gap:4px">
+          <span style="font-size:12px;color:rgba(249,115,22,.7);font-weight:700">रु.</span>
+          <span class="n" id="h-my-wage" style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1">0</span>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px" id="h-wage-detail">—</div>
       </div>
-      <div style="font-size:11px;color:rgba(255,255,255,.35);font-weight:500" id="h-wage-detail">Profile मा Rate सेट गर्नुस्</div>
-      <div style="position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;border-radius:50%;background:rgba(249,115,22,.06)"></div>
-      <div style="margin-top:12px;display:inline-flex;align-items:center;gap:4px;font-size:10px;color:rgba(249,115,22,.6);font-weight:700;letter-spacing:.5px">साइट-वाइज विवरण हेर्नुस् <span style="font-size:12px">›</span></div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-      <div onclick="showPillDetail('recv')" style="background:rgba(255,255,255,.05);border-radius:14px;padding:12px 8px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#16A34A,#6EE7B7)"></div>
-        <div style="font-size:8px;color:rgba(255,255,255,.35);font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">प्राप्त ›</div>
-        <div class="n" id="h-recv" style="font-size:14px;font-weight:900;color:#6EE7B7">—</div>
-      </div>
-      <div onclick="showPillDetail('profit')" style="background:rgba(255,255,255,.05);border-radius:14px;padding:12px 8px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#6366F1,#A78BFA)"></div>
-        <div style="font-size:8px;color:rgba(255,255,255,.35);font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">नाफा ›</div>
-        <div class="n" id="h-pr" style="font-size:14px;font-weight:900;color:#A78BFA">—</div>
-      </div>
-      <div onclick="showPillDetail('due')" style="background:rgba(255,255,255,.05);border-radius:14px;padding:12px 8px;border:1px solid rgba(255,255,255,.08);text-align:center;cursor:pointer;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#F97316,#FBBF24)"></div>
-        <div style="font-size:8px;color:rgba(255,255,255,.35);font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:5px">बाँकी ›</div>
-        <div class="n" id="h-pd" style="font-size:14px;font-weight:900;color:#FCD34D">—</div>
+      <div style="display:flex;flex-direction:column;gap:6px;text-align:right">
+        <div><div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700">प्राप्त</div><div class="n" id="h-recv" style="font-size:13px;font-weight:800;color:#6EE7B7">—</div></div>
+        <div><div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700">नाफा</div><div class="n" id="h-pr" style="font-size:13px;font-weight:800;color:#A78BFA">—</div></div>
+        <div><div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700">बाँकी</div><div class="n" id="h-pd" style="font-size:13px;font-weight:800;color:#FCD34D">—</div></div>
       </div>
     </div>
 
-    <!-- TODAY ATT -->
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:12px;margin-bottom:14px;border:1px solid rgba(255,255,255,.06)">
-      <span style="font-size:11px;color:rgba(255,255,255,.45);font-weight:600">📍 आजको हाजिर</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span id="h-today-att" style="font-size:12px;font-weight:700;color:#fff">जाँच हुँदैछ...</span>
-        <button onclick="openDateSearch()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:11px;color:rgba(255,255,255,.7)">📅</button>
-      </div>
+    <!-- Today attendance + date search -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+      <span id="h-today-att" style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">जाँच हुँदैछ...</span>
+      <button onclick="openDateSearch()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:rgba(255,255,255,.6)">📅 खोज</button>
     </div>
 
+    <!-- Hidden compat IDs -->
+    <span id="hb-nm2" style="display:none"></span>
   </div>
 
-  <!-- STATS ROW -->
-  <div style="display:flex;gap:10px;padding:16px 16px 0;overflow-x:auto;scrollbar-width:none">
-    <div style="flex-shrink:0;background:var(--w);border-radius:14px;padding:14px 16px;border:1px solid var(--gr100);border-left:3px solid var(--ind);box-shadow:var(--sh);min-width:100px;cursor:pointer" onclick="go('sites')">
-      <div style="font-size:10px;color:var(--gr400);font-weight:700;margin-bottom:6px">🏗️ साइट</div>
-      <div class="n" id="h-act" style="font-size:22px;font-weight:900;color:var(--ind)">—</div>
-    </div>
-    <div style="flex-shrink:0;background:var(--w);border-radius:14px;padding:14px 16px;border:1px solid var(--gr100);border-left:3px solid var(--r);box-shadow:var(--sh);min-width:100px;cursor:pointer" onclick="go('exp')">
-      <div style="font-size:10px;color:var(--gr400);font-weight:700;margin-bottom:6px">💸 खर्च</div>
-      <div class="n" id="h-exp" style="font-size:22px;font-weight:900;color:var(--r)">—</div>
-    </div>
-    <div style="flex-shrink:0;background:var(--w);border-radius:14px;padding:14px 16px;border:1px solid var(--gr100);border-left:3px solid var(--g);box-shadow:var(--sh);min-width:100px;cursor:pointer" onclick="go('team')">
-      <div style="font-size:10px;color:var(--gr400);font-weight:700;margin-bottom:6px" id="h-prl">📈 नाफा</div>
-      <div class="n" id="h-pr2" style="font-size:22px;font-weight:900;color:var(--g)">—</div>
-    </div>
-  </div>
+  <!-- WIDGETS -->
+  <div style="padding:14px 16px 80px;display:flex;flex-direction:column;gap:12px">
 
-  <!-- FINANCIAL SUMMARY -->
-  <div style="padding:16px 16px 0">
-    <div style="font-size:13px;font-weight:800;color:var(--gr800);margin-bottom:12px">💼 आर्थिक सारांश</div>
+    <!-- Hidden IDs for compat with loadHome -->
+    <div style="display:none">
+      <span id="fs-recv"></span><span id="fs-due"></span><span id="fs-exp"></span>
+      <span id="fs-profit"></span><span id="fs-share"></span><span id="h-exp"></span>
+      <span id="h-prl"></span><span id="h-pr2"></span><span id="fs-monthly-tabs"></span>
+      <span id="fs-monthly"></span>
+    </div>
 
-    <!-- Main cards row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-      <!-- Received -->
-      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
-        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">✅ हातमा आयो</div>
-        <div class="n" id="fs-recv" style="font-size:20px;font-weight:900;color:var(--g)">—</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:3px">Withdrawals बाट प्राप्त</div>
+    <!-- SITES SUMMARY ROW -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" onclick="go('sites')">
+      <div style="background:var(--ind-l);border-radius:16px;padding:14px;text-align:center;cursor:pointer">
+        <div class="n" id="h-act" style="font-size:26px;font-weight:900;color:var(--ind)">—</div>
+        <div style="font-size:11px;color:var(--gr500);font-weight:700;margin-top:2px">सक्रिय</div>
       </div>
-      <!-- Due -->
-      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
-        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">⏳ पाउन बाँकी</div>
-        <div class="n" id="fs-due" style="font-size:20px;font-weight:900;color:var(--a)">—</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:3px">कमाइ − हातमा आयो</div>
+      <div style="background:var(--gl);border-radius:16px;padding:14px;text-align:center;cursor:pointer">
+        <div class="n" id="h-comp" style="font-size:26px;font-weight:900;color:var(--g)">—</div>
+        <div style="font-size:11px;color:var(--gr500);font-weight:700;margin-top:2px">सम्पन्न</div>
+      </div>
+      <div style="background:var(--al);border-radius:16px;padding:14px;text-align:center;cursor:pointer">
+        <div class="n" id="h-hold" style="font-size:26px;font-weight:900;color:var(--a)">—</div>
+        <div style="font-size:11px;color:var(--gr500);font-weight:700;margin-top:2px">रोकिएको</div>
       </div>
     </div>
 
-    <!-- Second row -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-      <!-- Expenses -->
-      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
-        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">💪 कुल कमाइ</div>
-        <div class="n" id="fs-exp" style="font-size:20px;font-weight:900;color:var(--ind)">—</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:3px">हाजिर × ज्याला दर</div>
-      </div>
-      <!-- Profit -->
-      <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
-        <div style="font-size:10px;font-weight:700;color:var(--gr500);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">📈 शुद्ध नाफा</div>
-        <div class="n" id="fs-profit" style="font-size:20px;font-weight:900;color:var(--g)">—</div>
-        <div style="font-size:10px;color:var(--gr400);margin-top:3px" id="fs-share">हरेकको हिस्सा: —</div>
+    <!-- QUICK NAV GRID -->
+    <div style="background:var(--w);border-radius:20px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div onclick="go('sites')" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer">
+          <div style="width:64px;height:64px;border-radius:18px;background:var(--ind);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,.3)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:var(--gr700)">साइटहरू</span>
+        </div>
+        <div onclick="openQuickAtt()" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer">
+          <div style="width:64px;height:64px;border-radius:18px;background:var(--ind);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,.3)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:var(--gr700)">⚡ हाजिर</span>
+        </div>
+        <div onclick="go('workers')" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer">
+          <div style="width:64px;height:64px;border-radius:18px;background:var(--ind);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,.3)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:var(--gr700)">कामदार</span>
+        </div>
+        <div onclick="openGlobalExp()" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer">
+          <div style="width:64px;height:64px;border-radius:18px;background:var(--ind);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,.3)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:var(--gr700)">खर्च</span>
+        </div>
+        <div onclick="go('team')" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer">
+          <div style="width:64px;height:64px;border-radius:18px;background:var(--ind);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,.3)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:var(--gr700)">टोली</span>
+        </div>
+        <div onclick="openSiteModal()" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer">
+          <div style="width:64px;height:64px;border-radius:18px;background:var(--ind);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,.3)">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:var(--gr700)">नयाँ साइट</span>
+        </div>
       </div>
     </div>
 
-    <!-- Monthly breakdown -->
-    <div style="background:var(--w);border-radius:16px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100);margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div style="font-size:12px;font-weight:800;color:var(--gr700)">📅 महिना-वाइज सारांश</div>
-        <div onclick="showMonthly()" style="font-size:11px;color:var(--ind);font-weight:700;cursor:pointer">पूरा रिपोर्ट →</div>
-      </div>
-      <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px" id="fs-monthly-tabs">
-        <button onclick="setMonthTab('recv',this)" class="mtab on" style="padding:5px 12px;border-radius:20px;border:none;background:var(--ind);color:#fff;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">💰 प्राप्त</button>
-        <button onclick="setMonthTab('work',this)" class="mtab" style="padding:5px 12px;border-radius:20px;border:none;background:var(--gr100);color:var(--gr600);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">⏱ काम</button>
-        <button onclick="setMonthTab('site',this)" class="mtab" style="padding:5px 12px;border-radius:20px;border:none;background:var(--gr100);color:var(--gr600);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🏗️ साइट</button>
-      </div>
-      <div id="fs-monthly" style="margin-top:10px">
-        <div style="font-size:12px;color:var(--gr400);text-align:center;padding:8px">लोड हुँदैछ...</div>
-      </div>
+    <!-- RECENT PAYMENTS compact -->
+    <div style="background:var(--w);border-radius:20px;padding:16px;box-shadow:var(--sh);border:1px solid var(--gr100)">
+      <div style="font-size:13px;font-weight:800;color:var(--gr800);margin-bottom:10px">💳 हालका भुक्तानी</div>
+      <div class="txn-card" id="h-txn" style="padding:0"></div>
     </div>
-  </div>
 
-  <!-- MY SITES -->
-  <div style="padding:16px 16px 0">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div style="font-size:13px;font-weight:800;color:var(--gr800)">मेरा सक्रिय साइट</div>
-      <div onclick="go('sites')" style="font-size:12px;color:var(--ind);font-weight:700;cursor:pointer">सबै →</div>
-    </div>
-    <div id="h-my"></div>
-  </div>
-
-  <!-- RECENT TXN -->
-  <div style="padding:16px 16px 80px">
-    <div style="font-size:13px;font-weight:800;color:var(--gr800);margin-bottom:12px">हालका भुक्तानी</div>
-    <div class="txn-card" id="h-txn" style="padding:0"></div>
+    <!-- Hidden compat IDs -->
+    <div style="display:none" id="h-my"></div>
   </div>
 </div>
 
@@ -1509,6 +1486,12 @@ select.fi option{background:#fff}
   <button class="btn bp" onclick="saveClockEntry()">💾 सेभ</button>
   <button class="btn bs" onclick="closeM('mClock')">रद्द</button>
   <input type="hidden" id="clk-site-id">
+</div></div>
+
+<!-- MODAL: WORKER DETAIL -->
+<div class="mbo" id="mWorkerDetail"><div class="msh" style="max-height:90vh;overflow-y:auto">
+  <div class="mhd"></div>
+  <div id="wdet-body" style="padding:0 20px 20px"><div class="ld">लोड हुँदैछ...</div></div>
 </div></div>
 
 <!-- MODAL: SETTLEMENT -->
@@ -2103,6 +2086,8 @@ async function loadHome(){
     const active=sites.filter(s=>s.status==='active');
     const activeIds=new Set(active.map(s=>s.id));
     document.getElementById('h-act').textContent=active.length;
+    const compEl=document.getElementById('h-comp');if(compEl)compEl.textContent=sites.filter(s=>s.status==='completed').length;
+    const holdEl=document.getElementById('h-hold');if(holdEl)holdEl.textContent=sites.filter(s=>s.status==='hold').length;
     // Count-up for number (no Rs prefix)
     const actEl=document.getElementById('h-act');
     let n=0;const actTimer=setInterval(()=>{n++;actEl.textContent=n;if(n>=active.length)clearInterval(actTimer);},80);
@@ -2392,25 +2377,25 @@ async function loadOv(){
   const totR=pays.reduce((a,p)=>a+Number(p.amount||0),0);
   // Wages from work_entries (ज्याला tab)
   const totLManual=work.reduce((a,w)=>a+Number(w.days||0)*Number(w.daily_rate||0),0);
-  // If no manual entries, calculate from attendance
+  // Calculate wages from attendance records
   let totLAtt=0;
-  if(totLManual===0){
-    const attRecs=await dGet('attendance',['site_id','==',CS]);
-    const myRate=await getMyRate();
-    const wkrs=await dGetC('workers');
-    const wMap={};
-    attRecs.forEach(r=>(r.entries||[]).forEach(e=>{
-      if(!wMap[e.wid||e.name])wMap[e.wid||e.name]={name:e.name,days:0};
-      const m=e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0;
-      wMap[e.wid||e.name].days+=m;
-    }));
-    Object.values(wMap).forEach(w=>{
-      const wkr=wkrs.find(x=>x.name===w.name||x.id===w.wid);
-      const rate=Number(wkr?.daily_wage||myRate||0);
-      totLAtt+=w.days*rate;
-    });
-  }
-  const totL=totLManual||totLAtt;
+  const attRecs=await dGet('attendance',['site_id','==',CS]);
+  const wkrs=await dGetC('workers');
+  const defaultRate=await getMyRate();
+  const wDaysMap={};
+  attRecs.forEach(r=>(r.entries||[]).forEach(e=>{
+    const key=e.wid||e.name;
+    if(!wDaysMap[key])wDaysMap[key]={name:e.name,wid:e.wid,days:0};
+    const m=e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0;
+    wDaysMap[key].days+=m;
+  }));
+  Object.values(wDaysMap).forEach(w=>{
+    const wkr=wkrs.find(x=>x.id===w.wid||x.name===w.name);
+    const rate=Number(wkr?.daily_wage||defaultRate||0);
+    totLAtt+=w.days*rate;
+  });
+  // Use manual ज्याला entries if exist, else use attendance calculation
+  const totL=totLManual>0?totLManual:totLAtt;
   // Advance from BOTH work_entries AND worker_advances (site only)
   const totA=work.reduce((a,w)=>a+Number(w.advance_given||0),0)
             +advances.filter(a=>!a.is_personal).reduce((a,adv)=>a+Number(adv.amount||0),0);
@@ -3429,6 +3414,113 @@ async function checkAttendanceReminder(){
       addNotif('attendance',`⚠️ हाजिर reminder: ${missing.join(', ')} — आज भर्नुस्`);
     }
   }catch(e){}
+}
+
+// ══ WORKER DETAIL MODAL ══
+async function openWorkerDetail(wid,wname){
+  openM('mWorkerDetail');
+  const el=document.getElementById('wdet-body');
+  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  const [allAtt,workEntries,workerAdvances,workers]=await Promise.all([
+    dGet('attendance'),
+    dGet('work_entries',['worker_id','==',wid]),
+    dGet('worker_advances',['worker_id','==',wid]),
+    dGetC('workers')
+  ]);
+  const wkr=workers.find(w=>w.id===wid)||{name:wname};
+  const myRate=await getMyRate();
+  const rate=Number(wkr.daily_wage||myRate||0);
+
+  // Build site-wise attendance map
+  const siteMap={};
+  allAtt.forEach(r=>{
+    (r.entries||[]).forEach(e=>{
+      if(e.wid!==wid&&e.name!==wname)return;
+      const sid=r.site_id;
+      const sName=r.site_name||SITES.find(s=>s.id===sid)?.name||'—';
+      if(!siteMap[sid])siteMap[sid]={name:sName,days:0,dates:[]};
+      const m=e.status==='P'?1.5:e.status==='E'?1:(e.status==='H'||e.status==='M')?.5:0;
+      siteMap[sid].days+=m;
+      if(m>0)siteMap[sid].dates.push(r.bs_date||r.date||'');
+    });
+  });
+
+  // Advances per site
+  const advMap={};
+  workEntries.forEach(e=>{
+    const sid=e.site_id;
+    if(!advMap[sid])advMap[sid]=0;
+    advMap[sid]+=Number(e.advance_given||0);
+  });
+  workerAdvances.forEach(a=>{
+    const sid=a.site_id;
+    if(!advMap[sid])advMap[sid]=0;
+    advMap[sid]+=Number(a.amount||0);
+  });
+
+  const sites=Object.entries(siteMap);
+  const totalDays=sites.reduce((a,[,s])=>a+s.days,0);
+  const totalEarned=Math.round(totalDays*rate);
+  const totalAdv=Object.values(advMap).reduce((a,v)=>a+v,0);
+  const balance=totalEarned-totalAdv;
+
+  let html=`
+  <!-- Profile header -->
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+    <div style="width:56px;height:56px;border-radius:16px;background:var(--ind);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff">${wname[0]}</div>
+    <div>
+      <div style="font-size:20px;font-weight:900">${wname}</div>
+      <div style="font-size:12px;color:var(--gr400)">${wkr.phone||'—'} · Rs.${rate}/दिन</div>
+    </div>
+  </div>
+
+  <!-- Summary pills -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+    <div style="background:var(--ind-l);border-radius:14px;padding:14px;text-align:center">
+      <div class="n" style="font-size:22px;font-weight:900;color:var(--ind)">${totalDays}</div>
+      <div style="font-size:11px;color:var(--gr500);font-weight:700;margin-top:3px">कुल दिन</div>
+    </div>
+    <div style="background:var(--gl);border-radius:14px;padding:14px;text-align:center">
+      <div class="n" style="font-size:22px;font-weight:900;color:var(--g)">${Rs(totalEarned)}</div>
+      <div style="font-size:11px;color:var(--gr500);font-weight:700;margin-top:3px">कुल कमाइ</div>
+    </div>
+    <div style="background:var(--al);border-radius:14px;padding:14px;text-align:center">
+      <div class="n" style="font-size:22px;font-weight:900;color:var(--a)">${Rs(totalAdv)}</div>
+      <div style="font-size:11px;color:var(--gr500);font-weight:700;margin-top:3px">अग्रिम दिइयो</div>
+    </div>
+    <div style="background:${balance>0?'var(--rl)':'var(--gl)'};border-radius:14px;padding:14px;text-align:center">
+      <div class="n" style="font-size:22px;font-weight:900;color:${balance>0?'var(--r)':'var(--g)'}">${Rs(Math.abs(balance))}</div>
+      <div style="font-size:11px;color:var(--gr500);font-weight:700;margin-top:3px">${balance>0?'बाँकी':'अतिरिक्त'}</div>
+    </div>
+  </div>
+
+  <!-- Site-wise breakdown -->
+  <div style="font-size:13px;font-weight:800;color:var(--gr700);margin-bottom:10px">📍 Site-wise विवरण</div>
+  ${sites.length?sites.map(([sid,s])=>{
+    const adv=advMap[sid]||0;
+    const earned=Math.round(s.days*rate);
+    const bal=earned-adv;
+    const pct=totalDays>0?Math.min(100,Math.round(s.days/totalDays*100)):0;
+    return`<div style="background:var(--w);border:1px solid var(--gr100);border-radius:14px;padding:14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:14px;font-weight:800">${s.name}</div>
+          <div style="font-size:11px;color:var(--gr400);margin-top:2px">${s.days} दिन · अग्रिम: ${Rs(adv)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="n" style="font-size:16px;font-weight:900;color:var(--g)">${Rs(earned)}</div>
+          <div style="font-size:11px;font-weight:700;color:${bal>0?'var(--r)':'var(--g)'}">${bal>0?'बाँकी '+Rs(bal):'✅ Clear'}</div>
+        </div>
+      </div>
+      <div style="height:5px;background:var(--gr100);border-radius:4px">
+        <div style="height:100%;width:${pct}%;background:var(--ind);border-radius:4px"></div>
+      </div>
+    </div>`;
+  }).join(''):'<div style="text-align:center;padding:20px;color:var(--gr400)">हाजिर रेकर्ड छैन</div>'}
+
+  <button onclick="closeM('mWorkerDetail')" style="width:100%;padding:14px;background:var(--ind);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px">बन्द गर्नुस्</button>`;
+
+  el.innerHTML=html;
 }
 
 function dialStart(e){
@@ -4452,16 +4544,16 @@ async function loadWorkers(){
       const wid='wc'+w.id;
       return`<div class="wc" style="opacity:${w.active===false?.55:1}">
         <!-- HEADER: always visible, tap to expand -->
-        <div class="wc-hd" style="cursor:pointer" onclick="toggleColl('${wid}')">
+        <div class="wc-hd" style="cursor:pointer" onclick="openWorkerDetail('${w.id}','${w.name.replace(/'/g,"\\'")}')">
           <div class="wc-av">${w.name[0]||'?'}</div>
           <div style="flex:1">
             <div class="wc-nm">${w.name} ${w.active===false?'<span style="background:var(--al);color:#92400E;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">⏸</span>':''}</div>
             <div style="font-size:11px;color:var(--gr400);margin-top:1px">${w.phone||'—'} ${siteNames?'· 📍'+siteNames:''}</div>
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <div class="n" style="font-size:14px;font-weight:800;color:${(tE-tA)>=0?'var(--g)':'var(--r)'}">${Rs(tE-tA)}</div>
-            <div style="font-size:10px;color:var(--gr400)">बाँकी</div>
-            <span class="coll-arrow" id="arr-${wid}" style="font-size:12px;color:var(--gr400)">▼</span>
+            <div class="n" style="font-size:14px;font-weight:800;color:${(tE-tA)>0?'var(--r)':'var(--g)'}">${Rs(Math.abs(tE-tA))}</div>
+            <div style="font-size:10px;color:var(--gr400)">${(tE-tA)>0?'बाँकी':'Clear'}</div>
+            <span style="font-size:18px;color:var(--gr300)">›</span>
           </div>
         </div>
         <!-- BODY: collapsible -->
