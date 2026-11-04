@@ -3552,6 +3552,7 @@ async function openWorkerDetail(wid,wname){
     <button onclick="closeM('mWorkerDetail');const wobj=WKRS.find(x=>x.id==='${wid}');if(wobj)openEditWModal(wobj);" style="padding:12px;background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer">✏️ Edit</button>
     <button onclick="closeM('mWorkerDetail');openWAM('${wid}','${wname.replace(/'/g,"\\'")}')" style="padding:12px;background:var(--gl);color:var(--g);border:1px solid #6EE7B7;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer">📋 हाजिर</button>
   </div>
+  <button onclick="closeM('mWorkerDetail');toggleWorkerActive('${wid}',${wkr.active===false?'true':'false'})" style="width:100%;padding:12px;margin-top:8px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid ${wkr.active===false?'#6EE7B7':'#FCD34D'};background:${wkr.active===false?'var(--gl)':'var(--al)'};color:${wkr.active===false?'#065F46':'#92400E'}">${wkr.active===false?'▶ फेरि सक्रिय गर्नुस्':'⏸ Pause गर्नुस् (काममा छैन)'}</button>
   <button onclick="closeM('mWorkerDetail')" style="width:100%;padding:13px;background:var(--gr100);color:var(--gr600);border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px">बन्द गर्नुस्</button>`;
 
   el.innerHTML=html;
@@ -4669,7 +4670,7 @@ async function deleteWorker(wid, name){
 }
 async function toggleWorkerActive(wid, makeActive){
   await dUp('workers', wid, {active: makeActive===true||makeActive==='true'});
-  toast(makeActive==='true'?'कामदार सक्रिय ✓':'कामदार pause गरियो ⏸');
+  toast((makeActive===true||makeActive==='true')?'कामदार सक्रिय ✓':'कामदार pause गरियो ⏸');
   loadWorkers();
 }
 function openNewWModal(){
