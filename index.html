@@ -678,6 +678,18 @@ select.fi option{background:#fff}
 .tg-bulb{display:block;width:9px;height:14px;margin-top:1px;border-radius:50% 50% 55% 55%;background:var(--c);box-shadow:0 0 8px 3px var(--c);animation:tgBlink 1.4s ease-in-out infinite;animation-delay:calc(var(--i)*.17s)}
 .tg-txt{position:absolute;top:22px;left:0;right:0;text-align:center;font-size:12px;font-weight:800;color:#FDE68A;text-shadow:0 0 8px #F59E0B}
 @media (prefers-reduced-motion:reduce){.tg-bulb{animation:none}}
+#tg-lights{height:66px}
+.hero-bar.tg-on{padding-top:84px!important}
+.tg-svg{position:absolute;top:0;left:0;width:100%;height:66px}
+.tg-bulb{position:absolute;margin-left:-4px}
+.tg-flag{position:absolute;width:0;height:0;margin-left:-7px;border-left:7px solid transparent;border-right:7px solid transparent;border-top:18px solid var(--c);transform-origin:50% 0;animation:tgSway 2.4s ease-in-out infinite;animation-delay:calc(var(--i)*.2s)}
+.tg-txt{top:48px}
+.tg-spark{position:absolute;pointer-events:none;animation:tgTwinkle 2s ease-in-out infinite}
+.tg-glow{position:absolute;bottom:0;left:0;right:0;height:3px;z-index:3;background:linear-gradient(90deg,#EF4444,#FACC15,#22C55E,#3B82F6,#EC4899,#EF4444);background-size:200% 100%;animation:tgSlide 3s linear infinite}
+@keyframes tgSway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes tgTwinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:.9;transform:scale(1.15)}}
+@keyframes tgSlide{to{background-position:200% 0}}
+@media (prefers-reduced-motion:reduce){.tg-flag,.tg-spark,.tg-glow{animation:none}}
 </style>
 <style id="fs-scale">
 /* bigger fonts everywhere */
@@ -3782,7 +3794,7 @@ async function buildDashSlides(){
   const byD=(a,b)=>String(b.date||b.start_date||'').localeCompare(String(a.date||a.start_date||''));
   pays.sort(byD);exps.sort(byD);sites.sort(byD);
   const slide=(title,accent,rows)=>`<div style="flex:0 0 100%;scroll-snap-align:start;background:#fff;border:1px solid #DBEAFE;border-top:4px solid ${accent};border-radius:18px;padding:12px 14px;min-height:150px"><div style="font-size:13px;font-weight:800;color:${accent};margin-bottom:6px">${title}</div>${rows.length?rows.map(r=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid #F1F5F9;font-size:13px"><span style="color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r[0]}</span><b style="color:#0F172A;white-space:nowrap">${r[1]}</b></div>`).join(''):'<div style="color:#94A3B8;font-size:13px;padding:10px 0">अहिले केही छैन</div>'}</div>`;
-  const tihar=inTihar()?`<div style="flex:0 0 100%;scroll-snap-align:start;background:linear-gradient(135deg,#F97316,#EA580C 55%,#DB2777);border-radius:18px;padding:16px;min-height:150px;color:#fff;position:relative;overflow:hidden"><div style="font-size:48px;position:absolute;right:12px;top:8px">🪔</div><div style="font-size:12px;font-weight:700;opacity:.85">ANUGRAHA परिवार</div><div style="font-size:24px;font-weight:900;margin-top:4px">शुभ तिहार!</div><div style="font-size:13px;margin-top:8px;max-width:78%">🎆 दीप र रंगले जीवन उज्यालो होस्, सबैलाई तिहारको हार्दिक शुभकामना 🌼</div></div>`:'';
+  const tihar=inTihar()?`<div onclick="showTiharGift(true)" style="cursor:pointer;flex:0 0 100%;scroll-snap-align:start;background:linear-gradient(135deg,#F97316,#EA580C 55%,#DB2777);border-radius:18px;padding:16px;min-height:150px;color:#fff;position:relative;overflow:hidden"><div style="font-size:48px;position:absolute;right:12px;top:8px">🪔</div><div style="font-size:12px;font-weight:700;opacity:.85">ANUGRAHA परिवार</div><div style="font-size:24px;font-weight:900;margin-top:4px">शुभ तिहार!</div><div style="font-size:13px;margin-top:8px;max-width:78%">🎆 दीप र रंगले जीवन उज्यालो होस्, सबैलाई तिहारको हार्दिक शुभकामना 🌼</div></div>`:'';
   el.innerHTML=tihar
     +slide('💳 हालका भुक्तानी','#2563EB',pays.slice(0,3).map(p=>[p.site_name||'—',Rs(p.amount)]))
     +slide('🏗️ हालका साइट','#EA580C',sites.slice(0,3).map(s=>[s.name,s.client_name||'—']))
@@ -3798,16 +3810,23 @@ loadHome=async function(){await _lhAn();try{buildDashSlides();}catch(e){}};
 function injectTiharLights(){
   if(!inTihar()||document.getElementById('tg-lights'))return;
   const hero=document.querySelector('#pg-home .hero-bar');if(!hero)return;
-  const cols=['#EF4444','#22C55E','#3B82F6','#FACC15','#EC4899'];
-  let b='';for(let i=0;i<16;i++)b+=`<i class="tg-bulb" style="--c:${cols[i%5]};--i:${i}"></i>`;
-  hero.insertAdjacentHTML('afterbegin',`<div id="tg-lights"><div class="tg-wire"></div><div class="tg-row">${b}</div><div class="tg-txt">🪔 शुभ तिहार 🪔</div></div>`);
+  const cols=['#EF4444','#22C55E','#3B82F6','#FACC15','#EC4899','#F97316'];
+  const y1=t=>4+44*t*(1-t),y2=t=>26+44*t*(1-t);
+  let h='<svg class="tg-svg" viewBox="0 0 360 66" preserveAspectRatio="none"><path d="M0 4 Q180 26 360 4" stroke="rgba(15,23,42,.55)" stroke-width="1.5" fill="none"/><path d="M0 26 Q180 48 360 26" stroke="rgba(15,23,42,.55)" stroke-width="1.5" fill="none"/></svg>';
+  for(let i=0;i<12;i++){const t=(i+.5)/12;h+=`<i class="tg-flag" style="--c:${cols[i%6]};--i:${i};left:${t*100}%;top:${y1(t)}px"></i>`;}
+  for(let i=0;i<16;i++){const t=(i+.5)/16;h+=`<i class="tg-bulb" style="--c:${cols[(i+2)%6]};--i:${i};left:${t*100}%;top:${y2(t)}px"></i>`;}
+  hero.classList.add('tg-on');
+  hero.insertAdjacentHTML('afterbegin',`<div id="tg-lights">${h}<div class="tg-txt">🪔 शुभ तिहार 🪔</div></div>`);
+  let sp='';for(let i=0;i<10;i++)sp+=`<span class="tg-spark" style="left:${Math.random()*95}%;top:${30+Math.random()*65}%;font-size:${10+Math.random()*6}px;animation-delay:${(Math.random()*2).toFixed(2)}s">✨</span>`;
+  hero.insertAdjacentHTML('beforeend',sp+'<div class="tg-glow"></div>');
 }
 
 // ══ TIHAR GIFT POPUP ══
-function showTiharGift(){
+function showTiharGift(force){
   const key='tihar_'+todStr();
-  if(!inTihar()||localStorage.getItem(key))return;
+  if(!inTihar()||(!force&&localStorage.getItem(key)))return;
   localStorage.setItem(key,'1');
+  const prev=document.getElementById('tihar-ov');if(prev)prev.remove();
   const o=document.createElement('div');o.id='tihar-ov';
   o.style.cssText='position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;padding:24px';
   o.innerHTML=`<div id="tg-card" style="background:#fff;border-radius:28px;padding:28px 22px;text-align:center;max-width:320px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);position:relative"><div onclick="openTiharGift()" style="font-size:96px;cursor:pointer;animation:tgBounce 1s infinite">🎁</div><div style="font-size:14px;color:#64748B;font-weight:600">उपहार खोल्न थिच्नुस्</div><button onclick="document.getElementById('tihar-ov').remove()" style="position:absolute;top:10px;right:12px;border:0;background:none;font-size:22px;color:#94A3B8;cursor:pointer">✕</button></div>`;
