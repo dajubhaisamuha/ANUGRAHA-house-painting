@@ -667,6 +667,10 @@ select.fi option{background:#fff}
 /* ── PAGE TRANSITIONS ── */
 .page.on{animation:fadeSlideUp .2s ease}
 .det-tab{transition:color .15s,border-color .15s}
+.hero-bar,body.theme-orange .hero-bar{background:linear-gradient(150deg,#1D4ED8 0%,#2563EB 55%,#3B82F6 100%)!important}
+#pg-home{background:#F5F8FF}
+@keyframes tgBounce{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-12px) rotate(4deg)}}
+@keyframes tgFall{to{transform:translateY(110vh) rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -1058,6 +1062,7 @@ select.fi option{background:#fff}
   <div class="filters">
     <button class="fil on" onclick="wView('list',this)">📋 सूची</button>
     <button class="fil" onclick="wView('summary',this)">📊 Site-wise</button>
+    <button class="fil" onclick="openMonthPay()">📅 महिना हिसाब</button>
   </div>
   <div style="padding:12px 16px 80px" id="w-list"><div class="ld">लोड हुँदैछ...</div></div>
 </div>
@@ -3552,6 +3557,11 @@ async function openWorkerDetail(wid,wname){
     <button onclick="closeM('mWorkerDetail');const wobj=WKRS.find(x=>x.id==='${wid}');if(wobj)openEditWModal(wobj);" style="padding:12px;background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer">✏️ Edit</button>
     <button onclick="closeM('mWorkerDetail');openWAM('${wid}','${wname.replace(/'/g,"\\'")}')" style="padding:12px;background:var(--gl);color:var(--g);border:1px solid #6EE7B7;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer">📋 हाजिर</button>
   </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+    <button onclick="closeM('mWorkerDetail');showWorkerLedger('${wid}','${wname.replace(/'/g,"\\'")}')" style="padding:10px 4px;background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b);border-radius:12px;font-size:12px;font-weight:700;cursor:pointer">📋 पूर्ण हिसाब</button>
+    <button onclick="closeM('mWorkerDetail');printSalarySlip('${wid}','${wname.replace(/'/g,"\\'")}')" style="padding:10px 4px;background:var(--ind-l);color:var(--ind);border:1px solid var(--ind-b);border-radius:12px;font-size:12px;font-weight:700;cursor:pointer">🖨️ तलब पर्ची</button>
+    <button onclick="closeM('mWorkerDetail');if(confirm('${wname.replace(/'/g,"\\'")} हटाउने?')){delEntry('workers','${wid}','loadWorkers')}" style="padding:10px 4px;background:var(--rl);color:var(--r);border:1px solid #FCA5A5;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer">🗑 Delete</button>
+  </div>
   <button onclick="closeM('mWorkerDetail');toggleWorkerActive('${wid}',${wkr.active===false?'true':'false'})" style="width:100%;padding:12px;margin-top:8px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid ${wkr.active===false?'#6EE7B7':'#FCD34D'};background:${wkr.active===false?'var(--gl)':'var(--al)'};color:${wkr.active===false?'#065F46':'#92400E'}">${wkr.active===false?'▶ फेरि सक्रिय गर्नुस्':'⏸ Pause गर्नुस् (काममा छैन)'}</button>
   <button onclick="closeM('mWorkerDetail')" style="width:100%;padding:13px;background:var(--gr100);color:var(--gr600);border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px">बन्द गर्नुस्</button>`;
 
@@ -3592,6 +3602,95 @@ async function uploadWorkerPhoto(wid){
     reader.readAsDataURL(file);
   };
   inp.click();
+}
+
+// ══ DASHBOARD SLIDES (recent payments / sites / expenses) ══
+function inTihar(){const d=todStr();return d>='2026-11-04'&&d<='2026-11-12';}
+async function buildDashSlides(){
+  const el=document.getElementById('dash-banner');if(!el)return;
+  const [pays,sites,exps]=await Promise.all([dGet('payments'),dGetC('sites'),dGet('expenses')]);
+  const byD=(a,b)=>String(b.date||b.start_date||'').localeCompare(String(a.date||a.start_date||''));
+  pays.sort(byD);exps.sort(byD);sites.sort(byD);
+  const slide=(title,accent,rows)=>`<div style="flex:0 0 100%;scroll-snap-align:start;background:#fff;border:1px solid #DBEAFE;border-top:4px solid ${accent};border-radius:18px;padding:12px 14px;min-height:150px"><div style="font-size:13px;font-weight:800;color:${accent};margin-bottom:6px">${title}</div>${rows.length?rows.map(r=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid #F1F5F9;font-size:13px"><span style="color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r[0]}</span><b style="color:#0F172A;white-space:nowrap">${r[1]}</b></div>`).join(''):'<div style="color:#94A3B8;font-size:13px;padding:10px 0">अहिले केही छैन</div>'}</div>`;
+  const tihar=inTihar()?`<div style="flex:0 0 100%;scroll-snap-align:start;background:linear-gradient(135deg,#F97316,#EA580C 55%,#DB2777);border-radius:18px;padding:16px;min-height:150px;color:#fff;position:relative;overflow:hidden"><div style="font-size:48px;position:absolute;right:12px;top:8px">🪔</div><div style="font-size:12px;font-weight:700;opacity:.85">ANUGRAHA परिवार</div><div style="font-size:24px;font-weight:900;margin-top:4px">शुभ तिहार!</div><div style="font-size:13px;margin-top:8px;max-width:78%">🎆 दीप र रंगले जीवन उज्यालो होस्, सबैलाई तिहारको हार्दिक शुभकामना 🌼</div></div>`:'';
+  el.innerHTML=tihar
+    +slide('💳 हालका भुक्तानी','#2563EB',pays.slice(0,3).map(p=>[p.site_name||'—',Rs(p.amount)]))
+    +slide('🏗️ हालका साइट','#EA580C',sites.slice(0,3).map(s=>[s.name,s.client_name||'—']))
+    +slide('💸 हालका खर्च','#0284C7',exps.slice(0,3).map(e=>[(e.site_name||'सामान्य')+(e.category?': '+e.category:''),Rs(e.amount)]));
+  const n=el.children.length;_bannerIdx=0;el.scrollLeft=0;
+  const dots=document.getElementById('banner-dots');
+  if(dots)dots.innerHTML=Array.from({length:n}).map((_,i)=>`<div style="width:${i?6:20}px;height:4px;border-radius:4px;background:${i?'var(--gr200)':'var(--ind)'}"></div>`).join('');
+}
+const _lhAn=loadHome;
+loadHome=async function(){await _lhAn();try{buildDashSlides();}catch(e){}};
+
+// ══ TIHAR GIFT POPUP ══
+function showTiharGift(){
+  const key='tihar_'+todStr();
+  if(!inTihar()||localStorage.getItem(key))return;
+  localStorage.setItem(key,'1');
+  const o=document.createElement('div');o.id='tihar-ov';
+  o.style.cssText='position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.72);display:flex;align-items:center;justify-content:center;padding:24px';
+  o.innerHTML=`<div id="tg-card" style="background:#fff;border-radius:28px;padding:28px 22px;text-align:center;max-width:320px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);position:relative"><div onclick="openTiharGift()" style="font-size:96px;cursor:pointer;animation:tgBounce 1s infinite">🎁</div><div style="font-size:14px;color:#64748B;font-weight:600">उपहार खोल्न थिच्नुस्</div><button onclick="document.getElementById('tihar-ov').remove()" style="position:absolute;top:10px;right:12px;border:0;background:none;font-size:22px;color:#94A3B8;cursor:pointer">✕</button></div>`;
+  document.body.appendChild(o);
+}
+function openTiharGift(){
+  const c=document.getElementById('tg-card');if(!c)return;
+  c.innerHTML=`<div style="font-size:56px">🪔</div><div style="font-size:26px;font-weight:900;color:#EA580C;margin:6px 0">शुभ तिहार!</div><div style="font-size:14px;color:#334155;line-height:1.6">🎆 ANUGRAHA परिवारको तर्फबाट<br>तपाईं र परिवारमा सुख, समृद्धि र उज्यालो रहोस् 🌼</div><button onclick="document.getElementById('tihar-ov').remove()" style="margin-top:18px;padding:12px 28px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;font-size:15px;font-weight:800;cursor:pointer">धन्यवाद 🙏</button>`;
+  for(let i=0;i<36;i++){const s=document.createElement('span');s.textContent=['🪔','✨','🎆','🌼','🎉'][i%5];s.style.cssText=`position:fixed;top:-30px;left:${Math.random()*100}vw;font-size:${16+Math.random()*18}px;z-index:2001;pointer-events:none;animation:tgFall ${2.5+Math.random()*2.5}s linear forwards;animation-delay:${Math.random()*1.2}s`;document.body.appendChild(s);setTimeout(()=>s.remove(),7000);}
+}
+
+// ══ MONTHLY WORKER SETTLEMENT (Nepali month) ══
+let _mpY=0,_mpM=0,_mpRows=[];
+function openMonthPay(){
+  if(!document.getElementById('mMonthPay'))document.body.insertAdjacentHTML('beforeend','<div class="mbo" id="mMonthPay"><div class="msh" style="max-height:92vh;overflow-y:auto"><div class="mhd"></div><div id="mp-body" style="padding:0 16px 24px"></div></div></div>');
+  const b=adToBS(todStr());_mpY=b.y;_mpM=b.m;
+  openM('mMonthPay');renderMonthPay();
+}
+async function renderMonthPay(){
+  const el=document.getElementById('mp-body');
+  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  const [workers,att,advs,wes,pays,myRate]=await Promise.all([dGetC('workers'),dGet('attendance'),dGet('worker_advances'),dGet('work_entries'),dGet('worker_month_pay'),getMyRate()]);
+  const inM=d=>{if(!d)return false;const b=adToBS(d);return !!b&&b.y===_mpY&&b.m===_mpM;};
+  const mult={P:1.5,E:1,M:.5,H:.5};
+  _mpRows=workers.map(w=>{
+    const rate=Number(w.daily_wage||myRate||0);let days=0,earned=0;
+    att.forEach(r=>{if(!inM(r.date))return;(r.entries||[]).forEach(e=>{if(e.wid!==w.id&&e.name!==w.name)return;const m=mult[e.status]||0;days+=m;earned+=Number(e.hourly_wage)>0?Number(e.hourly_wage):m*rate;});});
+    const adv=advs.filter(a=>a.worker_id===w.id&&inM(a.date)).reduce((s,a)=>s+Number(a.amount||0),0)+wes.filter(x=>x.worker_id===w.id&&inM(x.date_from)).reduce((s,x)=>s+Number(x.advance_given||0),0);
+    const paid=pays.filter(p=>p.worker_id===w.id&&p.year===_mpY&&p.month===_mpM).reduce((s,p)=>s+Number(p.amount||0),0);
+    earned=Math.round(earned);return{id:w.id,name:w.name,days,earned,adv,paid,due:earned-adv-paid};
+  }).filter(r=>r.days>0||r.adv>0||r.paid>0);
+  const t=_mpRows.reduce((a,r)=>({e:a.e+r.earned,a:a.a+r.adv,p:a.p+r.paid,d:a.d+r.due}),{e:0,a:0,p:0,d:0});
+  const sel='padding:10px;border-radius:12px;border:1.5px solid var(--gr200);font-size:14px;font-weight:700;background:var(--w);color:var(--gr900)';
+  const cy=adToBS(todStr()).y;
+  el.innerHTML=`<div style="font-size:20px;font-weight:900;margin:6px 0 12px">📅 महिनाको कामदार हिसाब</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+    <select style="${sel}" onchange="_mpY=+this.value;renderMonthPay()">${[cy-2,cy-1,cy,cy+1].map(y=>`<option value="${y}" ${y===_mpY?'selected':''}>${y}</option>`).join('')}</select>
+    <select style="${sel}" onchange="_mpM=+this.value;renderMonthPay()">${NMS.map((n,i)=>`<option value="${i+1}" ${i+1===_mpM?'selected':''}>${n}</option>`).join('')}</select>
+  </div>
+  ${_mpRows.length?_mpRows.map(r=>`<div style="border:1px solid var(--gr100);border-radius:14px;padding:12px;margin-bottom:8px;background:var(--w)">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:800;font-size:15px">${r.name}</div><div style="font-size:12px;color:var(--gr500)">${r.days} दिन</div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;text-align:center;font-size:11px;color:var(--gr500)">
+      <div>कमाइ<br><b style="font-size:13px;color:var(--g)">${Rs(r.earned)}</b></div><div>अग्रिम<br><b style="font-size:13px;color:var(--a)">${Rs(r.adv)}</b></div><div>तिरेको<br><b style="font-size:13px;color:var(--ind)">${Rs(r.paid)}</b></div><div>बाँकी<br><b style="font-size:13px;color:${r.due>0?'var(--r)':'var(--g)'}">${Rs(r.due)}</b></div>
+    </div>
+    ${r.due>0?`<button onclick="payMonth('${r.id}',${r.due})" style="width:100%;margin-top:10px;padding:10px;border:0;border-radius:12px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;font-size:13px;font-weight:800;cursor:pointer">💵 तिरियो चिन्ह लगाउनुस्</button>`:'<div style="margin-top:8px;text-align:center;font-size:12px;font-weight:700;color:var(--g)">✅ Clear</div>'}
+  </div>`).join('')+`<div style="background:var(--ind-l);border-radius:14px;padding:12px;margin:12px 0;display:flex;justify-content:space-between;font-weight:800"><span>जम्मा बाँकी</span><span style="color:${t.d>0?'var(--r)':'var(--g)'}">${Rs(t.d)}</span></div>
+  <button onclick="printMonthPay()" style="width:100%;padding:12px;border:0;border-radius:12px;background:#EA580C;color:#fff;font-size:14px;font-weight:800;cursor:pointer">🖨️ PDF / Print</button>`:'<div style="text-align:center;padding:30px;color:var(--gr400)">यो महिनाको रेकर्ड छैन</div>'}
+  <button onclick="closeM('mMonthPay')" style="width:100%;margin-top:8px;padding:12px;border:0;border-radius:12px;background:var(--gr100);color:var(--gr600);font-size:13px;font-weight:700;cursor:pointer">बन्द गर्नुस्</button>`;
+}
+async function payMonth(wid,due){
+  const r=_mpRows.find(x=>x.id===wid);
+  const v=prompt((r?r.name:'')+' लाई कति तिरियो? (Rs.)',due);
+  const amt=Number(v);if(!v||!(amt>0))return;
+  await dAdd('worker_month_pay',{worker_id:wid,worker_name:r?r.name:'',year:_mpY,month:_mpM,amount:amt,date:todStr(),bs_date:bsToday(),by:ME});
+  try{addNotif('payment',`💰 ${ME} ले ${r?r.name:''} लाई ${NMS[_mpM-1]} को ज्याला ${Rs(amt)} दियो`);}catch(e){}
+  toast('✅ तिरेको रेकर्ड भयो');renderMonthPay();
+}
+function printMonthPay(){
+  const t=_mpRows.reduce((a,r)=>({e:a.e+r.earned,a:a.a+r.adv,p:a.p+r.paid,d:a.d+r.due}),{e:0,a:0,p:0,d:0});
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write(`<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>कामदार हिसाब</title><style>body{font-family:sans-serif;padding:16px;font-size:13px}h2{color:#1D4ED8;margin:0}table{width:100%;border-collapse:collapse;margin-top:12px}th{background:#1D4ED8;color:#fff;padding:7px;text-align:right}td{padding:7px;border-bottom:1px solid #ddd;text-align:right}th:first-child,td:first-child{text-align:left}tfoot td{font-weight:800;background:#EFF6FF}@media print{button{display:none}}</style></head><body><button onclick="window.print()" style="padding:10px 18px;background:#EA580C;color:#fff;border:0;border-radius:8px;margin-bottom:10px;font-weight:700">🖨️ Print / PDF</button><h2>ANUGRAHA — कामदार हिसाब</h2><div style="color:#666">${NMS[_mpM-1]} ${_mpY}</div><table><tr><th>नाम</th><th>दिन</th><th>कमाइ</th><th>अग्रिम</th><th>तिरेको</th><th>बाँकी</th></tr>${_mpRows.map(r=>`<tr><td>${r.name}</td><td>${r.days}</td><td>${r.earned}</td><td>${r.adv}</td><td>${r.paid}</td><td>${r.due}</td></tr>`).join('')}<tfoot><tr><td>जम्मा</td><td></td><td>${t.e}</td><td>${t.a}</td><td>${t.p}</td><td>${t.d}</td></tr></tfoot></table></body></html>`);
+  w.document.close();
 }
 
 function dialStart(e){
@@ -5601,6 +5700,7 @@ function boot(){
   loadHome();
   initNotifListener();
   setTimeout(initBanner,500);
+  setTimeout(showTiharGift,1500);
   // Reminders disabled - manual check only from Profile
 }
 
