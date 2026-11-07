@@ -671,6 +671,176 @@ select.fi option{background:#fff}
 #pg-home{background:#F5F8FF}
 @keyframes tgBounce{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-12px) rotate(4deg)}}
 @keyframes tgFall{to{transform:translateY(110vh) rotate(360deg)}}
+@keyframes tgBlink{0%,100%{opacity:.3}50%{opacity:1}}
+#tg-lights{position:absolute;top:0;left:0;right:0;height:46px;z-index:3;pointer-events:none}
+.tg-wire{position:absolute;top:4px;left:0;right:0;height:2px;background:rgba(15,23,42,.55)}
+.tg-row{position:absolute;top:4px;left:8px;right:8px;display:flex;justify-content:space-between}
+.tg-bulb{display:block;width:9px;height:14px;margin-top:1px;border-radius:50% 50% 55% 55%;background:var(--c);box-shadow:0 0 8px 3px var(--c);animation:tgBlink 1.4s ease-in-out infinite;animation-delay:calc(var(--i)*.17s)}
+.tg-txt{position:absolute;top:22px;left:0;right:0;text-align:center;font-size:12px;font-weight:800;color:#FDE68A;text-shadow:0 0 8px #F59E0B}
+@media (prefers-reduced-motion:reduce){.tg-bulb{animation:none}}
+</style>
+<style id="fs-scale">
+/* bigger fonts everywhere */
+body{font-size:17.5px!important}
+.sp-en{font-size:12.5px!important}
+.ob-title{font-size:26px!important}
+.ob-sub{font-size:16.5px!important}
+.ob-btn{font-size:16.5px!important}
+.ob-skip{font-size:14.5px!important}
+.lb-s{font-size:12.5px!important}
+.lf{font-size:16.5px!important}
+.l-btn{font-size:17.5px!important}
+.l-err{font-size:14.5px!important}
+.l-hint{font-size:12.5px!important}
+.lang-toggle{font-size:12.5px!important}
+.ni-i{font-size:24px!important}
+.ni-l{font-size:12.5px!important}
+.hb-avatar{font-size:19.5px!important}
+.hb-hey{font-size:15.5px!important}
+.hb-name{font-size:18.5px!important}
+.hb-btn{font-size:13.5px!important}
+.bc-lbl{font-size:13.5px!important}
+.bc-date{font-size:13.5px!important}
+.qb-l{font-size:11.5px!important}
+.msc-title{font-size:14.5px!important}
+.today-status{font-size:12.5px!important}
+.msc-v{font-size:16.5px!important}
+.msc-l{font-size:10.5px!important}
+.score-badge{font-size:12.5px!important}
+.sc-ico{font-size:22px!important}
+.sc-v{font-size:22px!important}
+.sc-l{font-size:12.5px!important}
+.sec-title{font-size:16.5px!important}
+.sec-link{font-size:14.5px!important}
+.sc-nm{font-size:17.5px!important}
+.spill{font-size:11.5px!important}
+.sc-cli{font-size:13.5px!important}
+.tp-lbl{font-size:12.5px!important}
+.tp-val{font-size:12.5px!important}
+.sc-tag{font-size:12.5px!important}
+.sc-amt{font-size:16.5px!important}
+#dial-label{font-size:9.5px!important}
+.rfab-main{font-size:26px!important}
+.rfab-lbl{font-size:13.5px!important}
+.rfab-btn{font-size:19.5px!important}
+.ni-l{font-size:11px!important}
+.ni-l{font-size:11px!important}
+.pt-t{font-size:24px!important}
+.pt-s{font-size:13.5px!important}
+.page-hero-title{font-size:22px!important}
+.page-hero-sub{font-size:12.5px!important}
+.fil{font-size:13.5px!important}
+.mtit{font-size:22px!important}
+.fl{font-size:12.5px!important}
+.fi{font-size:16.5px!important}
+.fbs{font-size:14.5px!important}
+.fbs-top{font-size:16.5px!important}
+.fbs-top:empty::before{font-size:14.5px!important}
+.fi-ad-small{font-size:13.5px!important}
+.fn{font-size:14.5px!important}
+.bsp-sel{font-size:15.5px!important}
+.bsp-ad{font-size:12.5px!important}
+.bsp-clear{font-size:12.5px!important}
+.btn{font-size:16.5px!important}
+.bsm{font-size:13.5px!important}
+.det-back{font-size:14.5px!important}
+.det-nm{font-size:23px!important}
+.det-mt{font-size:12.5px!important}
+.dtab{font-size:12.5px!important}
+.ir{font-size:15.5px!important}
+.pr{font-size:15.5px!important}
+.li-i{font-size:19.5px!important}
+.li-t{font-size:15.5px!important}
+.li-s{font-size:12.5px!important}
+.pos{font-size:15.5px!important}
+.neg{font-size:15.5px!important}
+.wc-av{font-size:19.5px!important}
+.wc-nm{font-size:17.5px!important}
+.wc-ph{font-size:13.5px!important}
+.ws-v{font-size:15.5px!important}
+.ws-l{font-size:10.5px!important}
+.adn-btn{font-size:19.5px!important}
+.adn-bs{font-size:17.5px!important}
+.adn-ad{font-size:12.5px!important}
+.sac-nm{font-size:16.5px!important}
+.sac-s{font-size:12.5px!important}
+.saved-t{font-size:12.5px!important}
+.awr-nm{font-size:14.5px!important}
+.ao{font-size:13.5px!important}
+.atm{font-size:12.5px!important}
+.sac-save{font-size:15.5px!important}
+.esb-hn{font-size:16.5px!important}
+.esb-ht{font-size:17.5px!important}
+.esb-ico{font-size:22px!important}
+.esb-cn{font-size:14.5px!important}
+.esb-cs{font-size:12.5px!important}
+.esb-amt{font-size:15.5px!important}
+.tc-av{font-size:19.5px!important}
+.tc-nm{font-size:21px!important}
+.tc-sv{font-size:22px!important}
+.tc-sl{font-size:11.5px!important}
+.tc-row{font-size:15.5px!important}
+.prof-av-edit{font-size:12.5px!important}
+.prof-nm{font-size:26px!important}
+.prof-role{font-size:13.5px!important}
+.si-ico{font-size:19.5px!important}
+.si-t{font-size:15.5px!important}
+.si-s{font-size:13.5px!important}
+.si-arr{font-size:17.5px!important}
+.es-t{font-size:16.5px!important}
+.es-s{font-size:14.5px!important}
+.ld{font-size:14.5px!important}
+#toast{font-size:14.5px!important}
+.pt-t{font-size:24px!important}
+.pt-s{font-size:13.5px!important}
+.ms-v{font-size:17.5px!important}
+.ms-l{font-size:10.5px!important}
+.txn-i{font-size:19.5px!important}
+.txn-nm{font-size:15.5px!important}
+.txn-s{font-size:12.5px!important}
+.txn-amt{font-size:15.5px!important}
+.txn-dt{font-size:11.5px!important}
+.coll-arrow{font-size:15.5px!important}
+#photo-viewer-caption{font-size:13.5px!important}
+#photo-viewer-close{font-size:24px!important}
+.cp-opt{font-size:19.5px!important}
+.tg-txt{font-size:13.5px!important}
+[style*="font-size:16px"]{font-size:17.5px!important}
+[style*="font-size: 16px"]{font-size:17.5px!important}
+[style*="font-size:11px"]{font-size:12.5px!important}
+[style*="font-size: 11px"]{font-size:12.5px!important}
+[style*="font-size:24px"]{font-size:26px!important}
+[style*="font-size: 24px"]{font-size:26px!important}
+[style*="font-size:15px"]{font-size:16.5px!important}
+[style*="font-size: 15px"]{font-size:16.5px!important}
+[style*="font-size:13px"]{font-size:14.5px!important}
+[style*="font-size: 13px"]{font-size:14.5px!important}
+[style*="font-size:22px"]{font-size:24px!important}
+[style*="font-size: 22px"]{font-size:24px!important}
+[style*="font-size:18px"]{font-size:19.5px!important}
+[style*="font-size: 18px"]{font-size:19.5px!important}
+[style*="font-size:14px"]{font-size:15.5px!important}
+[style*="font-size: 14px"]{font-size:15.5px!important}
+[style*="font-size:17px"]{font-size:18.5px!important}
+[style*="font-size: 17px"]{font-size:18.5px!important}
+[style*="font-size:12px"]{font-size:13.5px!important}
+[style*="font-size: 12px"]{font-size:13.5px!important}
+[style*="font-size:10px"]{font-size:11.5px!important}
+[style*="font-size: 10px"]{font-size:11.5px!important}
+[style*="font-size:9px"]{font-size:10.5px!important}
+[style*="font-size: 9px"]{font-size:10.5px!important}
+[style*="font-size:20px"]{font-size:22px!important}
+[style*="font-size: 20px"]{font-size:22px!important}
+[style*="font-size:8px"]{font-size:9.5px!important}
+[style*="font-size: 8px"]{font-size:9.5px!important}
+[style*="font-size:9.5px"]{font-size:11px!important}
+[style*="font-size: 9.5px"]{font-size:11px!important}
+[style*="font-size:21px"]{font-size:23px!important}
+[style*="font-size: 21px"]{font-size:23px!important}
+[style*="font-size:19px"]{font-size:21px!important}
+[style*="font-size: 19px"]{font-size:21px!important}
+[style*="font-size:26px"]{font-size:28px!important}
+[style*="font-size: 26px"]{font-size:28px!important}
 </style>
 </head>
 <body>
@@ -3624,6 +3794,15 @@ async function buildDashSlides(){
 const _lhAn=loadHome;
 loadHome=async function(){await _lhAn();try{buildDashSlides();}catch(e){}};
 
+// ══ TIHAR LIGHTS (blinking RGB string on the dashboard top) ══
+function injectTiharLights(){
+  if(!inTihar()||document.getElementById('tg-lights'))return;
+  const hero=document.querySelector('#pg-home .hero-bar');if(!hero)return;
+  const cols=['#EF4444','#22C55E','#3B82F6','#FACC15','#EC4899'];
+  let b='';for(let i=0;i<16;i++)b+=`<i class="tg-bulb" style="--c:${cols[i%5]};--i:${i}"></i>`;
+  hero.insertAdjacentHTML('afterbegin',`<div id="tg-lights"><div class="tg-wire"></div><div class="tg-row">${b}</div><div class="tg-txt">🪔 शुभ तिहार 🪔</div></div>`);
+}
+
 // ══ TIHAR GIFT POPUP ══
 function showTiharGift(){
   const key='tihar_'+todStr();
@@ -5700,6 +5879,7 @@ function boot(){
   loadHome();
   initNotifListener();
   setTimeout(initBanner,500);
+  injectTiharLights();
   setTimeout(showTiharGift,1500);
   // Reminders disabled - manual check only from Profile
 }
