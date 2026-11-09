@@ -689,6 +689,11 @@ select.fi option{background:#fff}
 @keyframes tgSway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
 @keyframes tgTwinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:.9;transform:scale(1.15)}}
 @keyframes tgSlide{to{background-position:200% 0}}
+@keyframes nbScroll{to{transform:translateX(-100%)}}
+.nb-t{display:inline-block;white-space:nowrap;padding-left:100%;animation:nbScroll 48s linear infinite}
+@keyframes ptWave{to{transform:translateX(60px)}}
+.pt-wave{animation:ptWave 2.2s linear infinite}
+@media (prefers-reduced-motion:reduce){.nb-t,.pt-wave{animation:none;padding-left:0}}
 @media (prefers-reduced-motion:reduce){.tg-flag,.tg-spark,.tg-glow{animation:none}}
 </style>
 <style id="fs-scale">
@@ -2223,7 +2228,9 @@ function endOnboard(){
 // ══ ROUTER ══
 // go() function is defined below with native transitions
 // Auto-show BS on all date inputs when modal opens
+let _ignorePop=false;
 const openM=id=>{
+  if(!document.querySelector('.mbo.open')){history.pushState({modal:id},'',location.pathname);}
   document.getElementById(id).classList.add('open');
   setTimeout(()=>{
     document.getElementById(id).querySelectorAll('input[type="date"]').forEach(inp=>{
@@ -2234,7 +2241,7 @@ const openM=id=>{
     });
   },50);
 };
-const closeM=id=>document.getElementById(id).classList.remove('open');
+const closeM=id=>{const el=document.getElementById(id);if(!el||!el.classList.contains('open'))return;el.classList.remove('open');if(!document.querySelector('.mbo.open')&&history.state&&history.state.modal){_ignorePop=true;history.back();setTimeout(()=>_ignorePop=false,600);}};
 document.querySelectorAll('.mbo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
 // ══ DB ══
@@ -2559,7 +2566,7 @@ async function saveSite(){
   const d={name:nm,client_name:cl,client_phone:document.getElementById('sph').value.trim(),location:document.getElementById('sloc').value.trim(),contract_type:t,brought_by:document.getElementById('sby').value,status:document.getElementById('sst').value,start_date:ssd,bs_start:fBS(ssd),end_date:document.getElementById('sed').value,notes:document.getElementById('snote').value.trim()};
   if(t==='full'||t==='labour')d.contract_amount=+document.getElementById('sa').value||0;
   else if(t==='sqft'){d.sqft=+document.getElementById('ssq').value||0;d.sqft_rate=+document.getElementById('srt').value||0;d.contract_amount=d.sqft*d.sqft_rate;}
-  await dAdd('sites',d);clearCache('sites');closeM('mSite');toast('साइट सेभ ✓');loadSites();
+  await dAdd('sites',d);clearCache('sites');closeM('mSite');toast('साइट सेभ ✓');loadSites();celebrateNewSite(d.name);
 }
 
 // ══ SITE DETAIL ══
@@ -2815,6 +2822,7 @@ async function loadOv(){
     </div>
     <!-- CHECKLISTS for this site -->
     <div id="site-checklists-${CS}"></div>
+    <div id="shade-book-${CS}"></div>
     ${s.notes?`<div style="background:var(--blue-l);padding:12px;border-radius:12px;font-size:13px;color:#0369A1;border:1px solid #BAE6FD">📝 ${s.notes}</div>`:''}
     ${personalAdv.length?`<div style="background:var(--al);padding:12px 14px;border-radius:12px;font-size:13px;color:#92400E;border:1px solid #FCD34D;margin-top:8px">⚠️ व्यक्तिगत अग्रिम (return गर्नुपर्ने): ${personalAdv.map(a=>`${a.worker_name}: ${Rs(a.amount)}`).join(', ')}</div>`:''}
   </div>`;
@@ -2822,6 +2830,8 @@ async function loadOv(){
   setTimeout(()=>loadWorkerPaymentStatus(CS),100);
   // Load site checklists
   setTimeout(()=>loadSiteChecklists(CS),200);
+  setTimeout(()=>loadShadeBook(CS),300);
+  setTimeout(()=>renderPaintBucket(CS),120);
 }
 
 async function loadPays(){
@@ -3440,7 +3450,7 @@ async function saveChecklist(){
   closeM('mChecklist');
 }
 
-function generateChecklistImage(items, siteName, fromSite=false){
+function generateChecklistImageOld(items, siteName, fromSite=false){
   if(typeof items==='string')try{items=JSON.parse(items);}catch{items=[];}
   if(!items||!items.length){toast('Items छैन',false);return;}
   const canvas=document.createElement('canvas');
@@ -3775,13 +3785,17 @@ async function uploadWorkerPhoto(wid){
   inp.type='file';inp.accept='image/*';
   inp.onchange=async()=>{
     const file=inp.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=async e=>{
-      const b64=e.target.result;
-      await db.collection('workers').doc(wid).update({photo:b64}).catch(()=>{});
-      toast('✅ Photo save भयो!');loadWorkers();
+    const url=URL.createObjectURL(file),img=new Image();
+    img.onload=async()=>{
+      const m=Math.min(1,320/Math.max(img.width,img.height)),c=document.createElement('canvas');
+      c.width=Math.round(img.width*m);c.height=Math.round(img.height*m);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+      try{await db.collection('workers').doc(wid).update({photo:c.toDataURL('image/jpeg',.75)});}
+      catch(err){toast('Photo save भएन: '+(err.code||err.message),false);return;}
+      clearCache('workers');toast('✅ Photo save भयो!');closeM('mWorkerDetail');loadWorkers();
     };
-    reader.readAsDataURL(file);
+    img.onerror=()=>toast('फोटो खोल्न सकिएन',false);
+    img.src=url;
   };
   inp.click();
 }
@@ -3889,6 +3903,248 @@ function printMonthPay(){
   const w=window.open('','_blank');if(!w)return;
   w.document.write(`<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>कामदार हिसाब</title><style>body{font-family:sans-serif;padding:16px;font-size:13px}h2{color:#1D4ED8;margin:0}table{width:100%;border-collapse:collapse;margin-top:12px}th{background:#1D4ED8;color:#fff;padding:7px;text-align:right}td{padding:7px;border-bottom:1px solid #ddd;text-align:right}th:first-child,td:first-child{text-align:left}tfoot td{font-weight:800;background:#EFF6FF}@media print{button{display:none}}</style></head><body><button onclick="window.print()" style="padding:10px 18px;background:#EA580C;color:#fff;border:0;border-radius:8px;margin-bottom:10px;font-weight:700">🖨️ Print / PDF</button><h2>ANUGRAHA — कामदार हिसाब</h2><div style="color:#666">${NMS[_mpM-1]} ${_mpY}</div><table><tr><th>नाम</th><th>दिन</th><th>कमाइ</th><th>अग्रिम</th><th>तिरेको</th><th>बाँकी</th></tr>${_mpRows.map(r=>`<tr><td>${r.name}</td><td>${r.days}</td><td>${r.earned}</td><td>${r.adv}</td><td>${r.paid}</td><td>${r.due}</td></tr>`).join('')}<tfoot><tr><td>जम्मा</td><td></td><td>${t.e}</td><td>${t.a}</td><td>${t.p}</td><td>${t.d}</td></tr></tfoot></table></body></html>`);
   w.document.close();
+}
+
+const _e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function confettiBurst(n){
+  for(let i=0;i<n;i++){const s=document.createElement('span');s.textContent=['🎉','🎊','✨','🌼','🪔'][i%5];s.style.cssText=`position:fixed;top:-30px;left:${Math.random()*100}vw;font-size:${16+Math.random()*18}px;z-index:2001;pointer-events:none;animation:tgFall ${2.5+Math.random()*2.5}s linear forwards;animation-delay:${Math.random()*1.2}s`;document.body.appendChild(s);setTimeout(()=>s.remove(),7000);}
+}
+
+// ══ 1) SITE COMPLETION CELEBRATION + SHARE CARD ══
+function celebrateSite(id){
+  const s=SITES.find(x=>x.id===id)||{};
+  const o=document.createElement('div');o.id='cel-ov';
+  o.style.cssText='position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.75);display:flex;align-items:center;justify-content:center;padding:24px';
+  o.innerHTML=`<div style="background:#fff;border-radius:28px;padding:26px 20px;text-align:center;max-width:330px;width:100%"><div style="font-size:64px">🎉</div><div style="font-size:24px;font-weight:900;color:#1D4ED8;margin:4px 0">काम सम्पन्न!</div><div style="font-size:16px;font-weight:800;color:#EA580C">${_e(s.name)}</div><div style="font-size:13px;color:#64748B;margin:6px 0 16px">टिमलाई बधाई छ! 🙌</div><button onclick="siteDoneCard('${id}')" style="width:100%;padding:13px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;font-size:15px;font-weight:800;cursor:pointer">📸 सम्पन्न कार्ड (Share)</button><button onclick="document.getElementById('cel-ov').remove()" style="width:100%;margin-top:8px;padding:12px;border:0;border-radius:14px;background:#F1F5F9;color:#475569;font-size:14px;font-weight:700;cursor:pointer">बन्द गर्नुस्</button></div>`;
+  document.body.appendChild(o);confettiBurst(50);
+}
+async function siteDoneCard(id){
+  const s=SITES.find(x=>x.id===id)||{};
+  const W=720,H=960,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#1D4ED8');g.addColorStop(1,'#3B82F6');x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle='#F97316';x.fillRect(0,H-130,W,130);
+  x.textAlign='center';x.fillStyle='#fff';x.beginPath();x.arc(W/2,150,72,0,7);x.fill();
+  x.font='76px serif';x.fillStyle='#000';x.fillText('🏠',W/2,177);
+  x.fillStyle='#fff';x.font='bold 46px sans-serif';x.fillText('ANUGRAHA',W/2,292);
+  x.font='24px sans-serif';x.fillStyle='rgba(255,255,255,.8)';x.fillText('House Painting Services',W/2,330);
+  x.font='bold 66px sans-serif';x.fillStyle='#FDE68A';x.fillText('काम सम्पन्न! 🎉',W/2,470);
+  x.fillStyle='#fff';x.font='bold 44px sans-serif';x.fillText((s.name||'').slice(0,26),W/2,560);
+  const days=s.start_date?Math.max(1,Math.round((Date.now()-new Date(s.start_date))/86400000)+1):0;
+  x.font='28px sans-serif';x.fillStyle='rgba(255,255,255,.9)';
+  [s.client_name?'ग्राहक: '+s.client_name:'',s.location?'ठाउँ: '+s.location:'',days?`अवधि: ${days} दिन`:'','मिति: '+bsToday()].filter(Boolean).forEach((t,i)=>x.fillText(t,W/2,630+i*46));
+  x.font='bold 30px sans-serif';x.fillStyle='#fff';x.fillText('Your Satisfaction, Our Commitment 🙏',W/2,H-52);
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  const file=new File([blob],'site-complete.png',{type:'image/png'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'काम सम्पन्न'});return;}catch(e){}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='site-complete.png';a.click();
+}
+
+// ══ 2) WORKER STREAK BADGES ══
+let _wBadge={};
+async function computeBadges(){
+  const [att,wk]=await Promise.all([dGet('attendance'),dGetC('workers')]);
+  const dm={};
+  att.forEach(r=>{if(!r.date)return;const m=dm[r.date]=dm[r.date]||{};(r.entries||[]).forEach(e=>{const k=e.wid||e.name;if(['P','E','M','H'].includes(e.status))m[k]=true;else if(!(k in m))m[k]=false;});});
+  const dates=Object.keys(dm).sort(),cur=adToBS(todStr()),mm={};
+  wk.forEach(w=>{const has=d=>dm[d][w.id]===true||dm[d][w.name]===true;let st=0;for(let i=dates.length-1;i>=0&&has(dates[i]);i--)st++;
+    let md=0;dates.forEach(d=>{const b=adToBS(d);if(b&&b.y===cur.y&&b.m===cur.m&&has(d))md++;});mm[w.id]={st,md};});
+  const best=Math.max(0,...Object.values(mm).map(v=>v.md));
+  Object.keys(mm).forEach(id=>{const v=mm[id];_wBadge[id]=[v.st>=7?`🔥 ${v.st} दिन लगातार`:v.st>=3?`✨ ${v.st} दिन लगातार`:'',(best>=5&&v.md===best)?'⭐ महिनाको उत्कृष्ट':'',v.md>=25?'🏅 २५+ दिन':''].filter(Boolean);});
+}
+const _lw=loadWorkers;
+loadWorkers=async function(){
+  await _lw();
+  try{await computeBadges();document.querySelectorAll('.wc-hd[onclick^="openWorkerDetail("]').forEach(h=>{
+    const id=(h.getAttribute('onclick').match(/openWorkerDetail\('([^']+)'/)||[])[1],b=_wBadge[id],nm=h.querySelector('.wc-nm');
+    if(b&&b.length&&nm&&!nm.querySelector('.wbd'))nm.insertAdjacentHTML('beforeend',`<div class="wbd" style="font-size:11px;font-weight:700;color:#EA580C;margin-top:2px">${b.join(' · ')}</div>`);});}catch(e){}
+};
+const _owd=openWorkerDetail;
+openWorkerDetail=async function(wid,wname){
+  await _owd(wid,wname);
+  const b=_wBadge[wid],el=document.getElementById('wdet-body');
+  if(b&&b.length&&el)el.insertAdjacentHTML('afterbegin',`<div style="text-align:center;font-size:13px;font-weight:800;color:#EA580C;background:#FFF7ED;border-radius:12px;padding:8px;margin-bottom:12px">${b.join(' · ')}</div>`);
+};
+
+// ══ 3) SHADE BOOK (room-wise colours per site) ══
+async function loadShadeBook(sid){
+  const el=document.getElementById('shade-book-'+sid);if(!el)return;
+  const rows=(await dGet('shade_book',['site_id','==',sid])).sort((a,b)=>String(a.room).localeCompare(String(b.room)));
+  const btn='border:0;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer';
+  el.innerHTML=`<div class="ic" style="margin:10px 0"><div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:800">🎨 रङको किताब <span style="font-size:11px;color:var(--gr400)">(${rows.length})</span></div><div style="display:flex;gap:6px"><button onclick="printShade('${sid}')" style="${btn};background:var(--gr100);color:var(--gr600)">🖨️</button><button onclick="openShade('${sid}')" style="${btn};background:var(--ind);color:#fff">＋ थप्नुस्</button></div></div>${rows.map(r=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--gr100)"><div style="width:34px;height:34px;border-radius:10px;background:${_e(r.hex||'#ddd')};border:1px solid rgba(0,0,0,.12);flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:800">${_e(r.room)} <span style="font-weight:600;color:var(--gr500)">· ${_e(r.color)}</span></div><div style="font-size:11px;color:var(--gr500)">${_e([r.code,r.brand,r.finish].filter(Boolean).join(' · '))}${r.note?'<br>'+_e(r.note):''}</div></div><button onclick="delShade('${r.id}','${sid}')" style="border:0;background:none;color:var(--r);font-size:16px;cursor:pointer">🗑</button></div>`).join('')||'<div style="padding:0 16px 14px;font-size:12px;color:var(--gr400)">कोठा अनुसार रङ र शेड कोड राख्नुस्</div>'}</div>`;
+}
+function openShade(sid){
+  if(!document.getElementById('mShade'))document.body.insertAdjacentHTML('beforeend',`<div class="mbo" id="mShade"><div class="msh" style="max-height:92vh;overflow-y:auto"><div class="mhd"></div><div style="padding:0 18px 22px"><div style="font-size:20px;font-weight:900;margin:6px 0 12px">🎨 रङ थप्नुस्</div><input type="hidden" id="sh-sid">
+  <div class="fg"><label class="fl">कोठा / भाग</label><input class="fi" id="sh-room" list="sh-rooms" placeholder="जस्तै: बैठक कोठा"><datalist id="sh-rooms"><option value="बैठक कोठा"><option value="शयन कोठा"><option value="भान्सा"><option value="बाहिरी भित्ता"><option value="छत"><option value="करिडोर"></datalist></div>
+  <div class="fg"><label class="fl">रङको नाम</label><input class="fi" id="sh-color" placeholder="जस्तै: Warm Beige"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="fg"><label class="fl">शेड कोड</label><input class="fi" id="sh-code" placeholder="8123"></div><div class="fg"><label class="fl">ब्रान्ड / प्रोडक्ट</label><input class="fi" id="sh-brand" placeholder="Royal Play"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div class="fg"><label class="fl">फिनिस</label><select class="fi" id="sh-finish"><option>Matt</option><option>Sheen</option><option>Gloss</option><option>Enamel</option></select></div><div class="fg"><label class="fl">रङको नमुना</label><input class="fi" id="sh-hex" type="color" value="#F5E6D3" style="padding:4px;height:46px"></div></div>
+  <div class="fg"><label class="fl">नोट</label><input class="fi" id="sh-note" placeholder="२ कोट, पुटी सहित"></div>
+  <button class="btn bp" onclick="saveShade()">💾 सेभ</button><button class="btn bs" onclick="closeM('mShade')">रद्द</button></div></div></div>`);
+  ['sh-room','sh-color','sh-code','sh-brand','sh-note'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('sh-sid').value=sid;openM('mShade');
+}
+async function saveShade(){
+  const g=i=>document.getElementById(i).value.trim(),sid=g('sh-sid');
+  if(!g('sh-room')||!g('sh-color')){toast('कोठा र रङको नाम चाहिन्छ',false);return;}
+  const s=SITES.find(x=>x.id===sid)||{};
+  await dAdd('shade_book',{site_id:sid,site_name:s.name||'',room:g('sh-room'),color:g('sh-color'),code:g('sh-code'),brand:g('sh-brand'),finish:g('sh-finish'),hex:g('sh-hex'),note:g('sh-note'),date:todStr(),bs_date:bsToday(),by:ME});
+  closeM('mShade');toast('🎨 रङ सेभ ✓');loadShadeBook(sid);
+}
+async function delShade(id,sid){
+  if(!confirm('यो रङ हटाउने?'))return;
+  await db.collection('shade_book').doc(id).delete();loadShadeBook(sid);
+}
+async function printShade(sid){
+  const s=SITES.find(x=>x.id===sid)||{},rows=(await dGet('shade_book',['site_id','==',sid])).sort((a,b)=>String(a.room).localeCompare(String(b.room)));
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write(`<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>रङको किताब</title><style>body{font-family:sans-serif;padding:16px}h2{color:#1D4ED8;margin:0}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}th{background:#1D4ED8;color:#fff}.c{width:28px;height:28px;border-radius:6px;border:1px solid #999}@media print{button{display:none}}</style></head><body><button onclick="window.print()" style="padding:10px 18px;background:#EA580C;color:#fff;border:0;border-radius:8px;margin-bottom:10px;font-weight:700">🖨️ Print / PDF</button><h2>ANUGRAHA — रङको किताब</h2><div style="color:#666">${_e(s.name)} · ${_e(s.client_name)}</div><table><tr><th></th><th>कोठा</th><th>रङ</th><th>कोड</th><th>ब्रान्ड</th><th>फिनिस</th></tr>${rows.map(r=>`<tr><td><div class="c" style="background:${_e(r.hex||'#ddd')}"></div></td><td>${_e(r.room)}</td><td>${_e(r.color)}</td><td>${_e(r.code)}</td><td>${_e(r.brand)}</td><td>${_e(r.finish)}</td></tr>`).join('')}</table></body></html>`);
+  w.document.close();
+}
+
+// ══ LIGHT CHECKLIST IMAGE (replaces the old dark one) ══
+function generateChecklistImage(items,siteName,fromSite){
+  if(typeof items==='string')try{items=JSON.parse(items);}catch(e){items=[];}
+  if(!items||!items.length){toast('Items छैन',false);return;}
+  const W=720,ROW=58,HEAD=170,FOOT=70,H=HEAD+items.length*ROW+FOOT,c=document.createElement('canvas');
+  c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle='#FFFFFF';x.fillRect(0,0,W,H);
+  const g=x.createLinearGradient(0,0,W,HEAD);g.addColorStop(0,'#1D4ED8');g.addColorStop(1,'#3B82F6');x.fillStyle=g;x.fillRect(0,0,W,HEAD);
+  x.fillStyle='#F97316';x.beginPath();x.arc(72,82,44,0,7);x.fill();x.fillStyle='#fff';x.font='40px sans-serif';x.textAlign='center';x.fillText('🏠',72,96);
+  x.textAlign='left';x.fillStyle='#fff';x.font='bold 36px sans-serif';x.fillText('ANUGRAHA',140,72);
+  x.font='bold 24px sans-serif';x.fillStyle='#FDE68A';x.fillText('सामग्री चेकलिस्ट',140,108);
+  x.font='20px sans-serif';x.fillStyle='rgba(255,255,255,.9)';x.fillText(`${siteName||''} · ${bsToday()}`,140,142);
+  items.forEach((it,i)=>{
+    const y=HEAD+i*ROW;
+    x.fillStyle=i%2?'#F8FAFC':'#FFFFFF';x.fillRect(0,y,W,ROW);
+    x.strokeStyle='#16A34A';x.lineWidth=3;x.strokeRect(28,y+16,26,26);
+    x.beginPath();x.moveTo(33,y+29);x.lineTo(40,y+36);x.lineTo(50,y+21);x.strokeStyle='#16A34A';x.stroke();
+    x.textAlign='left';x.fillStyle='#0F172A';x.font='bold 26px sans-serif';x.fillText(String(it.name||''),72,y+38);
+    if(it.qty){x.textAlign='right';x.fillStyle='#EA580C';x.font='bold 24px sans-serif';x.fillText('× '+it.qty,W-28,y+38);}
+    x.strokeStyle='#E2E8F0';x.lineWidth=1;x.beginPath();x.moveTo(28,y+ROW);x.lineTo(W-28,y+ROW);x.stroke();
+  });
+  const fy=H-FOOT;x.fillStyle='#1D4ED8';x.fillRect(0,fy,W,FOOT);
+  x.textAlign='center';x.fillStyle='#fff';x.font='20px sans-serif';x.fillText(`${items.length} वटा सामग्री · ANUGRAHA House Painting`,W/2,fy+42);
+  c.toBlob(async blob=>{
+    const file=new File([blob],'checklist.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'सामग्री चेकलिस्ट'});return;}catch(e){}}
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='checklist_'+todStr()+'.png';a.click();
+  },'image/png');
+  if(!fromSite)toast('📸 Image बन्दैछ…');
+}
+
+// ══ NEW SITE CONGRATULATIONS ══
+function celebrateNewSite(name){
+  const o=document.createElement('div');o.id='new-site-ov';
+  o.style.cssText='position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.6);display:flex;align-items:center;justify-content:center;padding:24px';
+  o.innerHTML=`<div style="background:#fff;border-radius:28px;padding:26px 20px;text-align:center;max-width:330px;width:100%;position:relative;overflow:hidden"><div style="font-size:64px;animation:tgBounce 1.2s ease-in-out infinite">🏠</div><div style="font-size:24px;font-weight:900;color:#1D4ED8;margin:6px 0">बधाई छ! 🎉</div><div style="font-size:15px;font-weight:800;color:#EA580C">${_e(name||'नयाँ साइट')}</div><div style="font-size:13px;color:#64748B;margin:6px 0 16px">नयाँ काम सुरु भयो, शुभकामना! 🙌</div><button onclick="document.getElementById('new-site-ov').remove()" style="width:100%;padding:12px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;font-size:15px;font-weight:800;cursor:pointer">धन्यवाद 🙏</button></div>`;
+  document.body.appendChild(o);confettiBurst(45);
+}
+
+// ══ PAINT BUCKET (fills down as days pass, by time) ══
+function renderPaintBucket(sid){
+  const host=document.getElementById('sum-body')||document.getElementById('c-fin');if(!host||!SITES)return;
+  const s=SITES.find(x=>x.id===sid);if(!s||!s.start_date)return;
+  const tp=getTimeProgress(s);if(!tp)return;
+  const pct=s.status==='completed'?100:Math.max(0,Math.min(100,100-(tp.pct||0)));
+  const fillY=12+ (100-pct)*0.88;
+  const col=pct>40?'#2563EB':pct>15?'#F59E0B':'#DC2626';
+  const old=document.getElementById('paint-bucket');if(old)old.remove();
+  const box=document.createElement('div');box.id='paint-bucket';box.style.cssText='margin:12px 12px 0;background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:12px;display:flex;align-items:center;gap:14px';
+  box.innerHTML=`<svg width="74" height="90" viewBox="0 0 74 90"><defs><clipPath id="pb-clip"><path d="M10 26 L64 26 L58 86 Q58 88 56 88 L18 88 Q16 88 16 86 Z"/></clipPath></defs><path d="M10 26 L64 26 L58 86 Q58 88 56 88 L18 88 Q16 88 16 86 Z" fill="#F1F5F9" stroke="#94A3B8" stroke-width="2"/><g clip-path="url(#pb-clip)"><rect x="0" y="${fillY}" width="74" height="90" fill="${col}"/><g class="pt-wave"><path d="M-20 ${fillY} Q-5 ${fillY-5} 10 ${fillY} T40 ${fillY} T70 ${fillY} T100 ${fillY} V96 H-20 Z" fill="${col}" opacity=".85"/></g></g><path d="M12 26 Q37 4 62 26" stroke="#64748B" stroke-width="3" fill="none"/></svg>`;
+  host.insertAdjacentElement('afterbegin',box);
+}
+
+// ══ NOTICE BOARD (scrolling headlines from the Notices collection) ══
+async function loadNotices(){
+  document.querySelectorAll('button[onclick="addNotice()"],button[onclick="openNoticeManager()"],#nb-add').forEach(e=>e.remove());
+  const hero=document.querySelector('#pg-home .hero-bar');if(!hero)return;
+  let list=[];try{list=(await dGet('notices')).filter(n=>n.active!==false).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));}catch(e){}
+  const old=document.getElementById('nb-board');if(old)old.remove();
+  const adm=isSubein()&&!document.getElementById('nb-add');
+  if(adm)hero.insertAdjacentHTML('afterend',`<button id="nb-add" onclick="openNoticeManager()" style="display:block;margin:8px 16px 0;padding:8px 14px;border:0;border-radius:10px;background:#1D4ED8;color:#fff;font-size:12px;font-weight:700;cursor:pointer">📢 सूचना व्यवस्थापन</button>`);
+  if(!list.length)return;
+  const txt=list.map(n=>`${_e(n.title)}`).join('<span style="color:#FACC15;padding:0 10px">◆</span>');
+  const nbc=await getNoticeColor();
+  const nbs=await getNoticeSize();
+  const bar=document.createElement('div');bar.id='nb-board';
+  bar.style.cssText='position:sticky;top:0;z-index:40;background:linear-gradient(90deg,#1E3A8A,#1D4ED8);color:#fff;font-size:13px;font-weight:700;overflow:hidden;padding:8px 0';
+  bar.innerHTML=`<div class="nb-t">${txt}</div>`;
+  bar.style.background=nbc;
+  bar.style.fontSize=nbs;
+  hero.insertAdjacentElement('afterend',bar);
+}
+function isSubein(){return String(ME||'').replace(/\s+/g,'').toUpperCase()==='SUBEIN';}
+// ══ NOTICE MANAGER (one button → list → add / edit / hide / delete) ══
+const NB_COLORS={blue:['#1E3A8A','#1D4ED8'],orange:['#9A3412','#EA580C'],green:['#14532D','#16A34A'],red:['#7F1D1D','#DC2626'],purple:['#4C1D95','#7C3AED']};
+async function getNoticeColor(){
+  try{const d=await db.collection('settings').doc('notice').get();const k=(d.exists&&d.data().color)||'blue';const p=NB_COLORS[k]||NB_COLORS.blue;return `linear-gradient(90deg,${p[0]},${p[1]})`;}
+  catch(e){return 'linear-gradient(90deg,#1E3A8A,#1D4ED8)';}
+}
+function noticeColorPicker(){
+  if(!isSubein())return '';
+  return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap"><span style="font-size:12px;font-weight:700;color:#64748B">पट्टीको रङ:</span>${Object.keys(NB_COLORS).map(k=>`<button onclick="setNoticeColor('${k}')" style="width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #CBD5E1;background:linear-gradient(90deg,${NB_COLORS[k][0]},${NB_COLORS[k][1]});cursor:pointer"></button>`).join('')}</div>`;
+}
+async function setNoticeColor(k){
+  await db.collection('settings').doc('notice').set({color:k},{merge:true});
+  toast('रङ परिवर्तन भयो ✓');loadNotices();
+}
+const NB_SIZES={s:'12px',m:'13px',l:'16px'};
+async function getNoticeSize(){
+  try{const d=await db.collection('settings').doc('notice').get();return NB_SIZES[(d.exists&&d.data().size)||'m']||'13px';}
+  catch(e){return '13px';}
+}
+function noticeSizePicker(){
+  if(!isSubein())return '';
+  const btns=[['s','12px'],['m','14px'],['l','18px']].map(([k,fs])=>`<button onclick="setNoticeSize('${k}')" style="padding:6px 14px;border:1px solid #CBD5E1;border-radius:10px;background:#fff;font-weight:800;cursor:pointer;font-size:${fs}">Aa</button>`).join('');
+  return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><span style="font-size:12px;font-weight:700;color:#64748B">अक्षरको साइज:</span>${btns}</div>`;
+}
+async function setNoticeSize(k){
+  await db.collection('settings').doc('notice').set({size:k},{merge:true});
+  toast('साइज परिवर्तन भयो ✓');loadNotices();
+}
+async function openNoticeManager(){
+  if(!isSubein()){toast('सूचना व्यवस्थापनको अधिकार छैन',false);return;}
+  if(!document.getElementById('mNoticeMgr'))document.body.insertAdjacentHTML('beforeend','<div class="mbo" id="mNoticeMgr"><div class="msh" style="max-height:92vh;overflow-y:auto"><div class="mhd"></div><div id="nm-body" style="padding:0 18px 24px"></div><div style="padding:0 18px 24px"><button onclick="closeM(\'mNoticeMgr\')" style="width:100%;padding:12px;border:0;border-radius:14px;background:#F1F5F9;color:#475569;font-size:14px;font-weight:700;cursor:pointer">रद्द गर्नुस्</button></div></div></div>');
+  openM('mNoticeMgr');renderNoticeManager();
+}
+async function renderNoticeManager(){
+  const el=document.getElementById('nm-body');
+  el.innerHTML='<div class="ld">लोड हुँदैछ...</div>';
+  const list=(await dGet('notices')).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+  const btn='border:0;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer';
+  el.innerHTML=`<div style="font-size:20px;font-weight:900;margin:6px 0 12px">📢 सूचनाहरू</div>
+  <button onclick="noticeForm()" style="width:100%;padding:12px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:12px">＋ नयाँ सूचना थप्नुस्</button>
+  ${noticeColorPicker()}${noticeSizePicker()}${list.length?list.map(n=>`<div style="display:flex;align-items:center;gap:10px;border:1px solid #E2E8F0;border-radius:14px;padding:10px 12px;margin-bottom:8px;background:#fff;opacity:${n.active===false?.5:1}">
+    <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:800;color:#0F172A;word-break:break-word">${_e(n.title)}</div><div style="font-size:11px;color:#64748B;margin-top:2px">${_e(n.bs_date||'')} · ${_e(n.by||'')}${n.active===false?' · लुकाइएको':''}</div></div>
+    <button onclick="noticeForm('${n.id}')" style="${btn};background:#EFF6FF;color:#1D4ED8">✏️</button>
+    <button onclick="toggleNotice('${n.id}',${n.active===false?'true':'false'})" style="${btn};background:#FFF7ED;color:#EA580C">${n.active===false?'👁':'🙈'}</button>
+    <button onclick="deleteNotice('${n.id}')" style="${btn};background:#FEF2F2;color:#DC2626">🗑</button>
+  </div>`).join(''):'<div style="text-align:center;padding:24px;color:#94A3B8;font-size:13px">अहिले कुनै सूचना छैन</div>'}`;
+}
+function noticeForm(id){
+  const cur=id?null:null;
+  Promise.resolve(id?db.collection('notices').doc(id).get().then(s=>s.data()):null).then(n=>{
+    const t=prompt('सूचना लेख्नुस्:',n?n.title:'');
+    if(!t||!t.trim()){return;}
+    const p=id?dUp('notices',id,{title:t.trim()}):dAdd('notices',{title:t.trim(),by:ME,date:todStr(),bs_date:bsToday(),active:true});
+    p.then(()=>{toast(id?'सूचना सच्याइयो ✓':'सूचना थपियो ✓');renderNoticeManager();loadNotices();});
+  });
+}
+async function toggleNotice(id,show){
+  await dUp('notices',id,{active:show===true||show==='true'});
+  toast(show===true||show==='true'?'सूचना देखाइयो':'सूचना लुकाइयो');renderNoticeManager();loadNotices();
+}
+async function deleteNotice(id){
+  if(!confirm('यो सूचना पूरै मेटाउने?'))return;
+  await db.collection('notices').doc(id).delete();
+  toast('सूचना मेटियो');renderNoticeManager();loadNotices();
+}
+async function addNotice(){
+  if(!isSubein()){toast('सूचना थप्ने अधिकार छैन',false);return;}
+  const title=prompt('सूचना लेख्नुस् (जस्तै: बैठक शुक्रबार ४ बजे):');
+  if(!title||!title.trim())return;
+  await dAdd('notices',{title:title.trim(),by:ME,date:todStr(),bs_date:bsToday(),active:true});
+  toast('सूचना थपियो ✓');loadNotices();
 }
 
 function dialStart(e){
@@ -4647,6 +4903,7 @@ async function doSt(st){
   if(idx>-1)Object.assign(SITES[idx],d);
   closeM('mSt');toast('स्थिति अपडेट ✓');
   clearCache('sites');loadOv();
+  if(st==='completed')setTimeout(()=>celebrateSite(id),500);
 }
 
 // ══ WORKER ADVANCE (mid-work) ══
@@ -5899,6 +6156,7 @@ function boot(){
   initNotifListener();
   setTimeout(initBanner,500);
   injectTiharLights();
+  loadNotices();
   setTimeout(showTiharGift,1500);
   // Reminders disabled - manual check only from Profile
 }
@@ -6052,7 +6310,14 @@ function pushHistory(p){
   if(!_fromPop)history.pushState({page:p},'',location.pathname);
 }
 window.addEventListener('popstate',()=>{
+  if(_ignorePop){_ignorePop=false;return;}
   _fromPop=true;
+  const openMb=[...document.querySelectorAll('.mbo.open')].pop();
+  if(openMb){
+    openMb.classList.remove('open');
+    setTimeout(()=>{if(!openMb.classList.contains('open'))openMb.style.display='none';},300);
+    _fromPop=false;return;
+  }
   const det=document.getElementById('det');
   if(det&&det.style.display==='block'){
     det.style.display='none';
