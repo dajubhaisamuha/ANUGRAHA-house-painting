@@ -695,6 +695,13 @@ select.fi option{background:#fff}
 .pt-wave{animation:ptWave 2.2s linear infinite}
 @media (prefers-reduced-motion:reduce){.nb-t,.pt-wave{animation:none;padding-left:0}}
 @media (prefers-reduced-motion:reduce){.tg-flag,.tg-spark,.tg-glow{animation:none}}
+
+@keyframes spWord{0%{opacity:0;transform:translateY(22px) scale(.85);filter:blur(6px)}100%{opacity:1;transform:none;filter:blur(0)}}
+@keyframes spShimmer{to{background-position:200% 0}}
+@keyframes spGlow{0%,100%{text-shadow:0 0 0 rgba(249,115,22,0)}50%{text-shadow:0 0 18px rgba(249,115,22,.55)}}
+@keyframes spTag{0%{opacity:0;letter-spacing:12px}100%{opacity:1;letter-spacing:4px}}
+#sp-type-text{background-size:200% auto}
+@media (prefers-reduced-motion:reduce){#sp-type-text,#sp-type-wrap,#sp-en{animation:none!important;opacity:1}}
 </style>
 <style id="fs-scale">
 /* bigger fonts everywhere */
@@ -3801,14 +3808,15 @@ async function uploadWorkerPhoto(wid){
 }
 
 // ══ DASHBOARD SLIDES (recent payments / sites / expenses) ══
-function inTihar(){const d=todStr();return d>='2026-11-04'&&d<='2026-11-12';}
+function festival(){const d=todStr();if(d>='2026-11-15'&&d<='2026-11-18')return{key:'chhath',name:'छठ',emo:'🌅',title:'शुभ छठ!',sub:'🌅 सूर्य देवताको आशिर्वादले परिवारमा सुख, शान्ति र समृद्धि होस् 🙏',ico:'🌾'};if(d>='2026-11-04'&&d<='2026-11-12')return{key:'tihar',name:'तिहार',emo:'🪔',title:'शुभ तिहार!',sub:'🎆 दीप र रंगले जीवन उज्यालो होस्, सबैलाई तिहारको हार्दिक शुभकामना 🌼',ico:'🪔'};return null;}
+function inTihar(){return festival()!==null;}
 async function buildDashSlides(){
   const el=document.getElementById('dash-banner');if(!el)return;
   const [pays,sites,exps]=await Promise.all([dGet('payments'),dGetC('sites'),dGet('expenses')]);
   const byD=(a,b)=>String(b.date||b.start_date||'').localeCompare(String(a.date||a.start_date||''));
   pays.sort(byD);exps.sort(byD);sites.sort(byD);
   const slide=(title,accent,rows)=>`<div style="flex:0 0 100%;scroll-snap-align:start;background:#fff;border:1px solid #DBEAFE;border-top:4px solid ${accent};border-radius:18px;padding:12px 14px;min-height:150px"><div style="font-size:13px;font-weight:800;color:${accent};margin-bottom:6px">${title}</div>${rows.length?rows.map(r=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid #F1F5F9;font-size:13px"><span style="color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r[0]}</span><b style="color:#0F172A;white-space:nowrap">${r[1]}</b></div>`).join(''):'<div style="color:#94A3B8;font-size:13px;padding:10px 0">अहिले केही छैन</div>'}</div>`;
-  const tihar=inTihar()?`<div onclick="showTiharGift(true)" style="cursor:pointer;flex:0 0 100%;scroll-snap-align:start;background:linear-gradient(135deg,#F97316,#EA580C 55%,#DB2777);border-radius:18px;padding:16px;min-height:150px;color:#fff;position:relative;overflow:hidden"><div style="font-size:48px;position:absolute;right:12px;top:8px">🪔</div><div style="font-size:12px;font-weight:700;opacity:.85">ANUGRAHA परिवार</div><div style="font-size:24px;font-weight:900;margin-top:4px">शुभ तिहार!</div><div style="font-size:13px;margin-top:8px;max-width:78%">🎆 दीप र रंगले जीवन उज्यालो होस्, सबैलाई तिहारको हार्दिक शुभकामना 🌼</div></div>`:'';
+  const fz=festival();const tihar=fz?`<div onclick="showTiharGift(true)" style="cursor:pointer;flex:0 0 100%;scroll-snap-align:start;background:linear-gradient(135deg,#F97316,#EA580C 55%,#DB2777);border-radius:18px;padding:16px;min-height:150px;color:#fff;position:relative;overflow:hidden"><div style="font-size:48px;position:absolute;right:12px;top:8px">🪔</div><div style="font-size:12px;font-weight:700;opacity:.85">ANUGRAHA परिवार</div><div style="font-size:24px;font-weight:900;margin-top:4px">${fz.title}</div><div style="font-size:13px;margin-top:8px;max-width:78%">${fz.sub}</div></div>`:'';
   el.innerHTML=tihar
     +slide('💳 हालका भुक्तानी','#2563EB',pays.slice(0,3).map(p=>[p.site_name||'—',Rs(p.amount)]))
     +slide('🏗️ हालका साइट','#EA580C',sites.slice(0,3).map(s=>[s.name,s.client_name||'—']))
@@ -3830,14 +3838,14 @@ function injectTiharLights(){
   for(let i=0;i<12;i++){const t=(i+.5)/12;h+=`<i class="tg-flag" style="--c:${cols[i%6]};--i:${i};left:${t*100}%;top:${y1(t)}px"></i>`;}
   for(let i=0;i<16;i++){const t=(i+.5)/16;h+=`<i class="tg-bulb" style="--c:${cols[(i+2)%6]};--i:${i};left:${t*100}%;top:${y2(t)}px"></i>`;}
   hero.classList.add('tg-on');
-  hero.insertAdjacentHTML('afterbegin',`<div id="tg-lights">${h}<div class="tg-txt">🪔 शुभ तिहार 🪔</div></div>`);
+  hero.insertAdjacentHTML('afterbegin',`<div id="tg-lights">${h}<div class="tg-txt">${festival().emo} ${festival().title} ${festival().emo}</div></div>`);
   let sp='';for(let i=0;i<10;i++)sp+=`<span class="tg-spark" style="left:${Math.random()*95}%;top:${30+Math.random()*65}%;font-size:${10+Math.random()*6}px;animation-delay:${(Math.random()*2).toFixed(2)}s">✨</span>`;
   hero.insertAdjacentHTML('beforeend',sp+'<div class="tg-glow"></div>');
 }
 
 // ══ TIHAR GIFT POPUP ══
 function showTiharGift(force){
-  const key='tihar_'+todStr();
+  const fz0=festival();const key='fest_'+(fz0?fz0.key:'')+todStr();
   if(!inTihar()||(!force&&localStorage.getItem(key)))return;
   localStorage.setItem(key,'1');
   const prev=document.getElementById('tihar-ov');if(prev)prev.remove();
@@ -3848,7 +3856,7 @@ function showTiharGift(force){
 }
 function openTiharGift(){
   const c=document.getElementById('tg-card');if(!c)return;
-  c.innerHTML=`<div style="font-size:56px">🪔</div><div style="font-size:26px;font-weight:900;color:#EA580C;margin:6px 0">शुभ तिहार!</div><div style="font-size:14px;color:#334155;line-height:1.6">🎆 ANUGRAHA परिवारको तर्फबाट<br>तपाईं र परिवारमा सुख, समृद्धि र उज्यालो रहोस् 🌼</div><button onclick="document.getElementById('tihar-ov').remove()" style="margin-top:18px;padding:12px 28px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;font-size:15px;font-weight:800;cursor:pointer">धन्यवाद 🙏</button>`;
+  c.innerHTML=`<div style="font-size:56px">🪔</div><div style="font-size:26px;font-weight:900;color:#EA580C;margin:6px 0">${festival()?festival().title:''}</div><div style="font-size:14px;color:#334155;line-height:1.6">${festival()?festival().emo:''} ANUGRAHA परिवारको तर्फबाट<br>तपाईं र परिवारमा सुख, समृद्धि र उज्यालो रहोस् ${festival()?festival().ico:''}</div><button onclick="document.getElementById('tihar-ov').remove()" style="margin-top:18px;padding:12px 28px;border:0;border-radius:14px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;font-size:15px;font-weight:800;cursor:pointer">धन्यवाद 🙏</button>`;
   for(let i=0;i<36;i++){const s=document.createElement('span');s.textContent=['🪔','✨','🎆','🌼','🎉'][i%5];s.style.cssText=`position:fixed;top:-30px;left:${Math.random()*100}vw;font-size:${16+Math.random()*18}px;z-index:2001;pointer-events:none;animation:tgFall ${2.5+Math.random()*2.5}s linear forwards;animation-delay:${Math.random()*1.2}s`;document.body.appendChild(s);setTimeout(()=>s.remove(),7000);}
 }
 
@@ -6189,24 +6197,15 @@ async function autoAddMemberAsWorker(){
 
 // ══ SPLASH BRUSH ANIMATION ══
 function animateSplashBrush(){
-  const word='अनुग्रह';
   const el=document.getElementById('sp-type-text');
+  const wrap=document.getElementById('sp-type-wrap');
   const enEl=document.getElementById('sp-en');
   if(!el)return;
-  let i=0;
-  el.textContent='';
-  const speed=130; // ms per character
-  function typeChar(){
-    if(i<word.length){
-      el.textContent+=word[i];
-      i++;
-      setTimeout(typeChar,speed);
-    }else{
-      // Done typing — fade in subtitle
-      setTimeout(()=>{if(enEl)enEl.style.opacity='1';},150);
-    }
-  }
-  setTimeout(typeChar,200);
+  el.textContent='अनुग्रह';
+  el.style.animation='spWord 1.1s cubic-bezier(.2,.8,.2,1) both, spShimmer 3s linear 1.1s infinite';
+  if(wrap)wrap.style.animation='spGlow 2.4s ease-in-out infinite';
+  const cur=document.getElementById('sp-cursor');if(cur)cur.style.display='none';
+  if(enEl)enEl.style.animation='spTag .9s ease .9s both';
 }
 
 window.addEventListener('load',async()=>{
