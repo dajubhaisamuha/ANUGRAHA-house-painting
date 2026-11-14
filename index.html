@@ -117,7 +117,7 @@ body.dark-mode .bs{background:var(--gr100);color:var(--gr700);border-color:var(-
 @keyframes spin{to{transform:rotate(360deg)}}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-.page{display:none;background:var(--bg);padding-bottom:calc(var(--nh)+24px);overflow-y:auto;height:calc(100vh - var(--nh));-webkit-overflow-scrolling:touch}
+.page{display:none;background:var(--bg);padding-bottom:calc(var(--nh) + 24px);overflow-y:auto;height:calc(100vh - var(--nh));-webkit-overflow-scrolling:touch}
 .page.on{display:block}
 body{font-family:'Baloo 2','Noto Sans Devanagari','Inter',sans-serif;background:var(--bg);color:var(--gr900);-webkit-font-smoothing:antialiased;font-size:16px;font-weight:600}
 input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-serif}
@@ -278,11 +278,11 @@ input,select,textarea,button{font-family:'Noto Sans Devanagari','Inter',sans-ser
 #dial{width:72px;height:72px;cursor:pointer;user-select:none;-webkit-user-select:none}
 #dial-ring{transition:transform .3s cubic-bezier(.34,1.2,.64,1);transform-style:preserve-3d;will-change:transform}
 #dial-label{font-size:8px;font-weight:800;color:var(--ind);text-transform:uppercase;letter-spacing:1px;margin-top:4px;text-align:center;min-width:70px}
-.rfab-wrap{position:fixed;bottom:calc(var(--nh)+14px);right:16px;z-index:200;display:none}
+.rfab-wrap{position:fixed;bottom:calc(var(--nh) + 14px);right:16px;z-index:200;display:none}
 .rfab-main{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#F97316,#C2410C);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(249,115,22,.45);display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;position:relative;z-index:2}
 .rfab-main:active{transform:scale(.92)}
 .rfab-main.open{transform:rotate(45deg);background:linear-gradient(135deg,#374151,#1F2937)}
-.rfab-items{position:fixed;bottom:calc(var(--nh)+80px);right:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-end;pointer-events:none;z-index:201}
+.rfab-items{position:fixed;bottom:calc(var(--nh) + 80px);right:16px;display:flex;flex-direction:column;gap:10px;align-items:flex-end;pointer-events:none;z-index:201}
 .rfab-item{display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(16px) scale(.85);transition:all .25s cubic-bezier(.34,1.3,.64,1);pointer-events:none}
 .rfab-item.show{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
 .rfab-item:nth-child(1){transition-delay:.05s}
@@ -495,7 +495,7 @@ select.fi option{background:#fff}
 .es-t{font-size:15px;font-weight:700;color:var(--gr700);margin-bottom:6px}
 .es-s{font-size:13px;color:var(--gr400);line-height:1.7}
 .ld{text-align:center;padding:30px;color:var(--gr300);font-size:13px}
-#toast{position:fixed;bottom:calc(var(--nh)+18px);left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:22px;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:var(--shl)}
+#toast{position:fixed;bottom:calc(var(--nh) + 18px);left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:22px;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:var(--shl)}
 .plain-top{padding:50px 20px 14px;background:var(--w);border-bottom:1px solid var(--gr200)}
 .pt-t{font-size:22px;font-weight:800}
 .pt-s{font-size:12px;color:var(--gr500);margin-top:3px;font-weight:500}
@@ -702,6 +702,8 @@ select.fi option{background:#fff}
 @keyframes spTag{0%{opacity:0;letter-spacing:12px}100%{opacity:1;letter-spacing:4px}}
 #sp-type-text{background-size:200% auto}
 @media (prefers-reduced-motion:reduce){#sp-type-text,#sp-type-wrap,#sp-en{animation:none!important;opacity:1}}
+
+
 </style>
 <style id="fs-scale">
 /* bigger fonts everywhere */
@@ -3971,6 +3973,7 @@ openWorkerDetail=async function(wid,wname){
   await _owd(wid,wname);
   const b=_wBadge[wid],el=document.getElementById('wdet-body');
   if(b&&b.length&&el)el.insertAdjacentHTML('afterbegin',`<div style="text-align:center;font-size:13px;font-weight:800;color:#EA580C;background:#FFF7ED;border-radius:12px;padding:8px;margin-bottom:12px">${b.join(' · ')}</div>`);
+  renderWorkerMonth(wid,wname);
 };
 
 // ══ 3) SHADE BOOK (room-wise colours per site) ══
@@ -4170,6 +4173,55 @@ function dashSearch(q){
   const r=(SITES||[]).filter(x=>(x.name||'').toLowerCase().includes(q)||(x.client_name||'').toLowerCase().includes(q)).slice(0,6);
   el.innerHTML=r.length?r.map(x=>`<div onclick="openDet('${x.id}')" style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#fff;border:1px solid #E2E8F0;border-radius:12px;margin-bottom:6px;font-size:14px;cursor:pointer"><b>${_e(x.name)}</b><span style="color:#EA580C;font-weight:700">${L[x.status]||x.status||''}</span></div>`).join(''):'<div style="font-size:13px;color:#94A3B8;padding:6px">कुनै साइट भेटिएन</div>';
 }
+// ══ WORKER MONTHLY ATTENDANCE (inside the worker popup, all sites together) ══
+let _wmY=null,_wmM=null,_wmWid=null,_wmName=null;
+function wmShift(dir){
+  let m=_wmM+dir,y=_wmY;
+  if(m<1){m=12;y--;}if(m>12){m=1;y++;}
+  _wmY=y;_wmM=m;renderWorkerMonth(_wmWid,_wmName);
+}
+async function renderWorkerMonth(wid,wname){
+  const el=document.getElementById('wdet-body');if(!el)return;
+  const cur=adToBS(todStr());
+  if(_wmWid!==wid||_wmY===null){_wmY=cur.y;_wmM=cur.m;_wmWid=wid;_wmName=wname;}
+  const old=document.getElementById('wm-sec');if(old)old.remove();
+  const att=await dGet('attendance');
+  const mult={P:1.5,E:1,M:.5,H:.5};
+  const ic={P:'🌞 पूरा',M:'🌅 बिहान',E:'☀️ दिउँसो',H:'🔶 आधा',A:'❌ अनुपस्थित',V:'🏖 बिदा'};
+  const rows=[];
+  att.forEach(r=>{
+    if(!r.date)return;
+    const b=adToBS(r.date);if(!b||b.y!==_wmY||b.m!==_wmM)return;
+    const e=(r.entries||[]).find(x=>x.wid===wid||(x.name&&x.name===wname));
+    if(!e)return;
+    rows.push({d:b.d,bs:r.bs_date||fBS(r.date),site:r.site_name||'—',st:e.status,tin:e.tin||'',tout:e.tout||''});
+  });
+  rows.sort((a,b)=>a.d-b.d);
+  const days=rows.reduce((s,x)=>s+(mult[x.st]||0),0);
+  const bySite={};rows.forEach(x=>{bySite[x.site]=(bySite[x.site]||0)+(mult[x.st]||0);});
+  const btn='border:0;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:800;background:#EFF6FF;color:#1D4ED8;cursor:pointer';
+  const html=`<div id="wm-sec" style="margin-top:16px;border-top:2px solid #E2E8F0;padding-top:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <button onclick="wmShift(-1)" style="${btn}">◀</button>
+      <div style="font-size:15px;font-weight:900;color:#0F172A">📅 ${NMS[_wmM-1]} ${_wmY}</div>
+      <button onclick="wmShift(1)" style="${btn}">▶</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:#EFF6FF;border-radius:12px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:#1D4ED8">${days}</div><div style="font-size:11px;color:#64748B;font-weight:700">कुल दिन</div></div>
+      <div style="background:#FFF7ED;border-radius:12px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:900;color:#EA580C">${Object.keys(bySite).length}</div><div style="font-size:11px;color:#64748B;font-weight:700">साइट</div></div>
+    </div>
+    ${Object.keys(bySite).length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${Object.entries(bySite).map(([n,v])=>`<span style="background:#F1F5F9;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;color:#334155">${_e(n)}: ${v} दिन</span>`).join('')}</div>`:''}
+    ${rows.length?rows.map(x=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #EEF1F6">
+      <div style="width:36px;text-align:center"><div style="font-size:16px;font-weight:900;color:#0F172A">${x.d}</div><div style="font-size:9px;color:#94A3B8">गते</div></div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:800;color:#0F172A">${_e(x.site)}</div><div style="font-size:11px;color:#64748B">${_e(x.bs)}${x.tin?' · ⏰ '+_e(x.tin)+(x.tout?' → '+_e(x.tout):''):''}</div></div>
+      <div style="font-size:12px;font-weight:800;color:${x.st==='A'?'#DC2626':'#15803D'};white-space:nowrap">${ic[x.st]||_e(x.st)}</div>
+    </div>`).join(''):'<div style="text-align:center;padding:18px;color:#94A3B8;font-size:13px">यो महिनामा हाजिर छैन</div>'}
+  </div>`;
+  el.insertAdjacentHTML('beforeend',html);
+}
+
+// Estimate: site change hook (materials are added with the search below, no extra load needed)
+function loadEstMaterials(){}
 function dialStart(e){
   dialStartX=e.touches[0].clientX;
   dialDragging=false;
@@ -6197,15 +6249,23 @@ async function autoAddMemberAsWorker(){
 
 // ══ SPLASH BRUSH ANIMATION ══
 function animateSplashBrush(){
+  const word='अनुग्रह';
   const el=document.getElementById('sp-type-text');
   const wrap=document.getElementById('sp-type-wrap');
   const enEl=document.getElementById('sp-en');
   if(!el)return;
-  el.textContent='अनुग्रह';
-  el.style.animation='spWord 1.1s cubic-bezier(.2,.8,.2,1) both, spShimmer 3s linear 1.1s infinite';
+  let i=0;el.textContent='';
+  el.style.animation='spShimmer 3s linear infinite';
   if(wrap)wrap.style.animation='spGlow 2.4s ease-in-out infinite';
-  const cur=document.getElementById('sp-cursor');if(cur)cur.style.display='none';
-  if(enEl)enEl.style.animation='spTag .9s ease .9s both';
+  const cur=document.getElementById('sp-cursor');if(cur)cur.style.display='';
+  function typeChar(){
+    if(i<word.length){el.textContent+=word[i];i++;setTimeout(typeChar,130);}
+    else{
+      if(cur)cur.style.display='none';
+      if(enEl)enEl.style.animation='spTag .9s ease both';
+    }
+  }
+  setTimeout(typeChar,200);
 }
 
 window.addEventListener('load',async()=>{
